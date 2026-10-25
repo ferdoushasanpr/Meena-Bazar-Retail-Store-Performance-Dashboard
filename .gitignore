@@ -1,0 +1,18 @@
+# Angular / Node.js
+**/node_modules/
+**/dist/
+**/.angular/
+
+# .NET build output
+**/bin/
+**/obj/
+
+# Environment and secrets
+**/appsettings.Development.json
+.env
+.env.*
+
+# IDE files
+.vs/
+.vscode/
+.idea/
