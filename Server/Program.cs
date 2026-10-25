@@ -15,6 +15,7 @@ builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IStoreService, StoreService>();
 builder.Services.AddScoped<ISaleService, SaleService>();
+builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
