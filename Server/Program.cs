@@ -42,5 +42,8 @@ app.MapStoreEndpoints();
 // ==================== SALE ENDPOINTS ====================
 app.MapSaleEndpoints();
 
+// ==================== TRANSACTION ENDPOINTS ====================
+app.MapTransactionEndpoints();
+
 
 app.Run();
