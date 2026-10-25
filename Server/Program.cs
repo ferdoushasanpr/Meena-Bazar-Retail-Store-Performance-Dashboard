@@ -39,4 +39,8 @@ app.MapProductEndpoints();
 // ==================== STORE ENDPOINTS ====================
 app.MapStoreEndpoints();
 
+// ==================== SALE ENDPOINTS ====================
+app.MapSaleEndpoints();
+
+
 app.Run();
