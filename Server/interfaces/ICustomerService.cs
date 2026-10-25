@@ -1,6 +1,6 @@
 using Server.Models;
 
-namespace Server.Services;
+namespace Server.Interfaces;
 
 public interface ICustomerService
 {

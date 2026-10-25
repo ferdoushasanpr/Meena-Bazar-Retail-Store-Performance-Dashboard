@@ -1,6 +1,6 @@
-namespace Server.Models
+namespace Server.Models;
 
-class Product
+public class Product
 {
     public string product_id { get; set; } = null!;
     public string product_name { get; set; } = null!;

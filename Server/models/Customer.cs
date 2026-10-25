@@ -1,6 +1,6 @@
 namespace Server.Models;
 
-class Customer
+public class Customer
 {
     public string customer_id { get; set; } = null!;
     public string first_name { get; set; } = null!;

@@ -1,6 +1,6 @@
 namespace Server.Models;
 
-class Sale
+public class Sale
 {
     public string order_id { get; set; } = null!;
     public DateTime order_datetime { get; set; }

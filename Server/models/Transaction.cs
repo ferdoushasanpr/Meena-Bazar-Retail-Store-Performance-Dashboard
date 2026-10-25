@@ -1,6 +1,6 @@
 namespace Server.Models;
 
-class Transaction
+public class Transaction
 {
     public string order_item_id { get; set; } = null!;
     public string order_id { get; set; } = null!;
