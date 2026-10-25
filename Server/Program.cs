@@ -36,4 +36,7 @@ app.MapCustomerEndpoints();
 // ==================== PRODUCT ENDPOINTS ====================
 app.MapProductEndpoints();
 
+// ==================== STORE ENDPOINTS ====================
+app.MapStoreEndpoints();
+
 app.Run();
