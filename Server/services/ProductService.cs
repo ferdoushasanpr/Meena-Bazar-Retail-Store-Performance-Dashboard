@@ -3,6 +3,8 @@ using Server.Data;
 using Server.Interfaces;
 using Server.Models;
 
+namespace Server.Services;
+
 public class ProductService : IProductService
 {
     private readonly ApplicationDbContext _context;
