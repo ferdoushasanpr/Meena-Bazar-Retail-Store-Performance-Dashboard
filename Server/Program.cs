@@ -31,7 +31,9 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 // ==================== CUSTOMER ENDPOINTS ====================
-
 app.MapCustomerEndpoints();
+
+// ==================== PRODUCT ENDPOINTS ====================
+app.MapProductEndpoints();
 
 app.Run();
