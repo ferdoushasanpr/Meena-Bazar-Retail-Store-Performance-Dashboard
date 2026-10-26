@@ -1,0 +1,86 @@
+<header class="topbar-wrapper">
+    <!-- Top Navigation Bar -->
+    <div class="topbar-row">
+        <!-- Left: Breadcrumbs & Status -->
+        <div class="left-group">
+            <nav class="breadcrumb">
+                <span class="breadcrumb-parent">Overview</span>
+                <span class="breadcrumb-divider">/</span>
+                <span class="breadcrumb-current">Dashboard</span>
+            </nav>
+
+            <div class="vertical-divider"></div>
+
+            <div class="status-indicator">
+                <span class="blue-dot"></span>
+                <span class="status-text">Updated 2m ago</span>
+            </div>
+        </div>
+
+        <!-- Right: Filters & Action Controls -->
+        <div class="right-group">
+            <!-- Date Selector Dropdown -->
+            <button class="dropdown-btn" type="button">
+                <i class="fa-regular fa-calendar icon-left"></i>
+                <span>{{ selectedDateRange }}</span>
+                <i class="fa-solid fa-chevron-down icon-right"></i>
+            </button>
+
+            <!-- Store Selector Dropdown -->
+            <button class="dropdown-btn" type="button">
+                <i class="fa-solid fa-store icon-left"></i>
+                <span>{{ selectedStore }}</span>
+                <i class="fa-solid fa-chevron-down icon-right"></i>
+            </button>
+
+            <!-- Notification Bell -->
+            <button class="icon-btn" type="button" aria-label="Notifications">
+                <i class="fa-regular fa-bell"></i>
+                <span class="bell-dot"></span>
+            </button>
+
+            <!-- Refresh Icon -->
+            <button class="icon-btn" type="button" aria-label="Refresh" (click)="onRefresh()">
+                <i class="fa-solid fa-rotate-right"></i>
+            </button>
+
+            <!-- Export CSV Button -->
+            <button class="btn-action" type="button" (click)="onExportCSV()">
+                <i class="fa-solid fa-download icon-left"></i>
+                <span>Export CSV</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Page Header Title Bar -->
+    <div class="header-row">
+        <!-- Title & Subtitle -->
+        <div class="title-group">
+            <div class="title-heading">
+                <h1 class="page-title">Sales Overview</h1>
+                <span class="role-badge">EXECUTIVE REGIONAL</span>
+            </div>
+            <p class="page-description">
+                Monitor revenue, transactions, and retail performance across your stores.
+            </p>
+        </div>
+
+        <!-- Header Actions -->
+        <div class="action-group">
+            <!-- Last Updated Status Pill -->
+            <div class="info-pill">
+                <span class="blue-dot"></span>
+                <span class="pill-text">Last updated: <strong>{{ lastUpdatedTime }}</strong></span>
+                <button class="pill-refresh-btn" type="button" aria-label="Refresh Status" (click)="onRefresh()">
+                    <i class="fa-solid fa-rotate-right"></i>
+                </button>
+            </div>
+
+            <!-- Export Summary Button -->
+            <button class="btn-action primary-action" type="button" (click)="onExportSummary()">
+                <i class="fa-solid fa-cloud-arrow-down icon-left"></i>
+                <span>Export Summary</span>
+            </button>
+        </div>
+    </div>
+</header>

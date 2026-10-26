@@ -1,0 +1,242 @@
+:host {
+    display: block;
+    width: 100%;
+}
+
+.topbar-wrapper {
+    background-color: #060b13;
+    color: #a0aec0;
+    padding: 16px 28px 24px 28px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    border-bottom: 1px solid #0f1826;
+    box-sizing: border-box;
+}
+
+/* --- Top Navigation Row --- */
+.topbar-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 20px;
+}
+
+.left-group,
+.right-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Breadcrumb Navigation */
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.88rem;
+}
+
+.breadcrumb-parent {
+    color: #64748b;
+}
+
+.breadcrumb-divider {
+    color: #475569;
+}
+
+.breadcrumb-current {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+/* Dividers & Indicators */
+.vertical-divider {
+    width: 1px;
+    height: 16px;
+    background-color: #1a273b;
+    margin: 0 4px;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.82rem;
+}
+
+.blue-dot {
+    width: 7px;
+    height: 7px;
+    background-color: #38bdf8;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.status-text {
+    color: #64748b;
+}
+
+/* Dropdown Buttons */
+.dropdown-btn {
+    background-color: #0f1927;
+    border: 1px solid #1c2b40;
+    border-radius: 8px;
+    color: #e2e8f0;
+    padding: 7px 12px;
+    font-size: 0.84rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.dropdown-btn:hover {
+    background-color: #162438;
+}
+
+.icon-left {
+    color: #8fa0b5;
+    font-size: 0.9rem;
+}
+
+.icon-right {
+    color: #64748b;
+    font-size: 0.75rem;
+    margin-left: 2px;
+}
+
+/* Icon Buttons */
+.icon-btn {
+    background-color: transparent;
+    border: none;
+    color: #8fa0b5;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    font-size: 0.95rem;
+    transition: background-color 0.15s ease;
+}
+
+.icon-btn:hover {
+    background-color: #0f1927;
+    color: #ffffff;
+}
+
+.bell-dot {
+    position: absolute;
+    top: 7px;
+    right: 7px;
+    width: 6px;
+    height: 6px;
+    background-color: #38bdf8;
+    border-radius: 50%;
+}
+
+/* Buttons */
+.btn-action {
+    background-color: #0f1927;
+    border: 1px solid #1c2b40;
+    border-radius: 8px;
+    color: #e2e8f0;
+    padding: 7px 14px;
+    font-size: 0.84rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.btn-action:hover {
+    background-color: #162438;
+    color: #ffffff;
+}
+
+/* --- Page Header Row --- */
+.header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 8px;
+}
+
+.title-heading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.page-title {
+    color: #ffffff;
+    font-size: 1.55rem;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: -0.3px;
+}
+
+.role-badge {
+    background-color: #23224b;
+    color: #93c5fd;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 12px;
+    letter-spacing: 0.5px;
+}
+
+.page-description {
+    color: #64748b;
+    font-size: 0.88rem;
+    margin: 6px 0 0 0;
+}
+
+/* Action Group */
+.action-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.info-pill {
+    background-color: #0b1422;
+    border: 1px solid #17263b;
+    border-radius: 8px;
+    padding: 6px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.82rem;
+    color: #8fa0b5;
+}
+
+.info-pill strong {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.pill-refresh-btn {
+    background: transparent;
+    border: none;
+    color: #64748b;
+    cursor: pointer;
+    padding: 0 0 0 4px;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+}
+
+.pill-refresh-btn:hover {
+    color: #ffffff;
+}
+
+.primary-action {
+    background-color: #0f1927;
+    color: #ffffff;
+}
