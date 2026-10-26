@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Server.Data;
 using Server.Interfaces;
-using Server.Models;
 using Server.Routes;
 using Server.Services;
 
@@ -26,6 +25,12 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint(
+            "/openapi/v1.json",
+            "Retail Store API v1");
+    });
 }
 
 app.UseHttpsRedirection();
