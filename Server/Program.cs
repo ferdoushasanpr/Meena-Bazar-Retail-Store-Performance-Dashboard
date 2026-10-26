@@ -35,19 +35,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// ==================== CUSTOMER ENDPOINTS ====================
+// ==================== ENDPOINTS ====================
 app.MapCustomerEndpoints();
-
-// ==================== PRODUCT ENDPOINTS ====================
 app.MapProductEndpoints();
-
-// ==================== STORE ENDPOINTS ====================
 app.MapStoreEndpoints();
-
-// ==================== SALE ENDPOINTS ====================
 app.MapSaleEndpoints();
-
-// ==================== TRANSACTION ENDPOINTS ====================
 app.MapTransactionEndpoints();
 
 
