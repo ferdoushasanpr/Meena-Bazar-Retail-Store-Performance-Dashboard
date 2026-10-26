@@ -39,35 +39,51 @@ public class AnalyticsService : IAnalyticsService
     public async Task<IEnumerable<StoreCategorySales>>
         GetSalesByStoreAndCategoryAsync()
     {
-        return await (
-            from s in _context.DemoSales.AsNoTracking()
-            join st in _context.DemoStores.AsNoTracking()
-                on s.store_id equals st.store_id
-            join t in _context.DemoTransactions.AsNoTracking()
-                on s.order_id equals t.order_id
-            join p in _context.DemoProducts.AsNoTracking()
-                on t.product_id equals p.product_id
-            where s.order_status == "Completed"
-            group new { s, st, t, p } by new
-            {
-                st.store_id,
-                st.store_name,
-                p.category
-            }
-            into g
-            select new StoreCategorySales
-            {
-                store_id = g.Key.store_id,
-                store_name = g.Key.store_name,
-                category = g.Key.category,
-                TotalSales = g.Sum(x =>
-                    x.t.line_net_amount + x.t.line_vat_amount),
-                UnitsSold = g.Sum(x => (int)x.t.quantity),
-                NumberOfTransactions = g
-                    .Select(x => x.s.order_id)
-                    .Distinct()
-                    .Count()
-            })
+        var query =
+        from s in _context.DemoSales
+            .AsNoTracking()
+            .Where(s => s.order_status == "Completed")
+        join st in _context.DemoStores.AsNoTracking()
+            on s.store_id equals st.store_id
+        join t in _context.DemoTransactions.AsNoTracking()
+            on s.order_id equals t.order_id
+        join p in _context.DemoProducts.AsNoTracking()
+            on t.product_id equals p.product_id
+        group new
+        {
+            s.order_id,
+            st.store_id,
+            st.store_name,
+            p.category,
+            t.quantity,
+            t.line_net_amount,
+            t.line_vat_amount
+        }
+        by new
+        {
+            st.store_id,
+            st.store_name,
+            p.category
+        }
+        into g
+        select new StoreCategorySales
+        {
+            store_id = g.Key.store_id,
+            store_name = g.Key.store_name,
+            category = g.Key.category,
+
+            TotalSales = g.Sum(x =>
+                x.line_net_amount + x.line_vat_amount),
+
+            UnitsSold = g.Sum(x => (int)x.quantity),
+
+            NumberOfTransactions = g
+                .Select(x => x.order_id)
+                .Distinct()
+                .Count()
+        };
+
+        return await query
             .OrderBy(x => x.store_name)
             .ThenByDescending(x => x.TotalSales)
             .ToListAsync();
@@ -191,31 +207,32 @@ public class AnalyticsService : IAnalyticsService
     public async Task<IEnumerable<MonthlySalesTrend>>
         GetMonthlySalesTrendAsync()
     {
-        return await _context.DemoSales
-            .AsNoTracking()
-            .GroupBy(s => new
-            {
-                Year = s.order_datetime.Year,
-                Month = s.order_datetime.Month
-            })
-            .Select(g => new MonthlySalesTrend
-            {
-                YEAR = g.Key.Year,
-                MONTH = g.Key.Month.ToString(),
-                Total_Sales = g.Count(),
-                Total_Revenue = g.Sum(s => s.total_amount)
-            })
-            .OrderBy(x => x.YEAR)
-            .ThenBy(x => int.Parse(x.MONTH))
-            .Select(x => new MonthlySalesTrend
-            {
-                YEAR = x.YEAR,
-                MONTH = new DateTime(x.YEAR, int.Parse(x.MONTH), 1)
-                    .ToString("MMMM"),
-                Total_Sales = x.Total_Sales,
-                Total_Revenue = x.Total_Revenue
-            })
-            .ToListAsync();
+        var salesData = await _context.DemoSales
+        .AsNoTracking()
+        .GroupBy(s => new
+        {
+            Year = s.order_datetime.Year,
+            Month = s.order_datetime.Month
+        })
+        .Select(g => new
+        {
+            YEAR = g.Key.Year,
+            MONTH = g.Key.Month,
+            Total_Sales = g.Count(),
+            Total_Revenue = g.Sum(s => s.total_amount)
+        })
+        .OrderBy(x => x.YEAR)
+        .ThenBy(x => x.MONTH)
+        .ToListAsync();
+
+        return salesData.Select(x => new MonthlySalesTrend
+        {
+            YEAR = x.YEAR,
+            MONTH = new DateTime(x.YEAR, x.MONTH, 1)
+                .ToString("MMMM"),
+            Total_Sales = x.Total_Sales,
+            Total_Revenue = x.Total_Revenue
+        });
     }
 
     // Query 12: KPI summary with date and optional store filters.

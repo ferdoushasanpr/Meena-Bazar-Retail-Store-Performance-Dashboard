@@ -11,12 +11,13 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException(
         "Connection string 'DefaultConnection' was not found.");
 
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString, sqlOptions => sqlOptions.CommandTimeout(180)));
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IStoreService, StoreService>();
 builder.Services.AddScoped<ISaleService, SaleService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
+builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
@@ -41,6 +42,7 @@ app.MapProductEndpoints();
 app.MapStoreEndpoints();
 app.MapSaleEndpoints();
 app.MapTransactionEndpoints();
+app.MapAnalyticsEndpoints();
 
 
 app.Run();
