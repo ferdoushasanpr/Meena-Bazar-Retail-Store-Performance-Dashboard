@@ -1,0 +1,39 @@
+<aside class="sidebar">
+    <!-- Brand / Header -->
+    <div class="brand-container">
+        <div class="logo-box">
+            <i class="fa-solid fa-chart-line logo-icon"></i>
+        </div>
+        <span class="brand-name">Meena Bazar Retail Store</span>
+    </div>
+
+    <!-- Navigation Groups -->
+    <nav class="nav-container">
+        @for (section of menuSections; track section.sectionTitle) {
+        <div class="menu-section">
+            <h3 class="section-title">{{ section.sectionTitle }}</h3>
+
+            <ul class="menu-list">
+                @for (item of section.items; track item.title) {
+                <li>
+                    <button class="nav-item" [class.active]="item.title === activeItem" (click)="selectItem(item.title)"
+                        type="button">
+                        <i [class]="item.icon + ' nav-icon'"></i>
+                        <span class="nav-text">{{ item.title }}</span>
+                    </button>
+                </li>
+                }
+            </ul>
+        </div>
+        }
+    </nav>
+
+    <!-- User Profile Section -->
+    <div class="user-profile">
+        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=100"
+            alt="User Avatar" class="avatar" />
+        <div class="user-info">
+            <span class="user-name">Marcus Vance</span>
+        </div>
+    </div>
+</aside>
