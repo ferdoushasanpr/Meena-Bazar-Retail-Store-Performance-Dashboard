@@ -1,0 +1,18 @@
+<div class="metric-card">
+    <div class="card-header">
+        <span class="card-title">{{ card().title }}</span>
+
+        <div class="icon-wrapper">
+            <i [class]="card().icon"></i>
+        </div>
+    </div>
+
+    <div class="card-value">
+        {{ card().value }}
+    </div>
+
+    <div class="card-comparison">
+        <i [class]="card().visualIcon" aria-hidden="true">
+        </i>
+    </div>
+</div>

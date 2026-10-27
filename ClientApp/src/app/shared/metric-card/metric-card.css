@@ -1,0 +1,73 @@
+.metric-card {
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    min-height: 180px;
+
+    background: #131e32;
+    border: 1px solid #1e2d4a;
+    border-radius: 12px;
+    padding: 18px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #94a3b8;
+    letter-spacing: 0.5px;
+}
+
+.icon-wrapper {
+    background: rgba(30, 41, 59, 0.8);
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #38bdf8;
+    font-size: 14px;
+}
+
+.card-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 12px 0;
+}
+
+.card-comparison {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 12px;
+}
+
+.comparison-icon {
+    margin-left: auto;
+    font-size: 24px;
+}
+
+.sparkline-icon {
+    color: #38bdf8;
+}
+
+.bars-icon {
+    color: #818cf8;
+}
+
+.gauge-icon {
+    color: #38bdf8;
+}

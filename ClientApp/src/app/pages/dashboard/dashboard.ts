@@ -1,8 +1,10 @@
-import { AfterViewInit, Component, ElementRef, inject, OnInit, signal, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, computed, ElementRef, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Chart, registerables } from 'chart.js';
 import { SalesService } from '../../services/sales-service';
 import { SalesData } from '../../models/sales';
+import { MetricCardProps } from '../../models/matric-card';
+import { MetricCard } from '../../shared/metric-card/metric-card';
 
 Chart.register(...registerables);
 
@@ -14,7 +16,7 @@ interface CategorySales {
 }
 
 @Component({
-  imports: [FormsModule],
+  imports: [FormsModule, MetricCard],
   selector: 'app-dashboard',
   styleUrl: './dashboard.css',
   templateUrl: './dashboard.html',
@@ -55,6 +57,46 @@ export class Dashboard implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.loadSalesKpiData();
   }
+
+  totalSalesCard = computed((): MetricCardProps => {
+    const sales = this.salesKpiData();
+
+    return {
+      title: 'TOTAL SALES',
+      icon: 'fa-solid fa-wallet',
+      value: `$${sales.totalSales.toFixed(2)}`,
+      visualIcon: 'fa-solid fa-chart-line comparison-icon sparkline-icon'
+    };
+  });
+
+  transactionsCard = computed((): MetricCardProps => {
+    const sales = this.salesKpiData();
+
+    return {
+      title: 'TRANSACTIONS',
+      icon: 'fa-solid fa-receipt',
+      value: sales.numberOfTransactions.toLocaleString(),
+      visualIcon: 'fa-solid fa-chart-column comparison-icon bars-icon'
+    };
+  });
+
+  averageBasketCard = computed((): MetricCardProps => {
+    const sales = this.salesKpiData();
+
+    return {
+      title: 'AVG. BASKET VALUE',
+      icon: 'fa-solid fa-bag-shopping',
+      value: `$${sales.averageBasketValue.toFixed(2)}`,
+      visualIcon: 'fa-solid fa-chart-line comparison-icon sparkline-icon'
+    };
+  });
+
+  avgDailySalesCard = {
+    title: 'AVG DAILY SALES',
+    icon: 'fa-solid fa-chart-line',
+    value: '$8,286.00',
+    visualIcon: 'fa-solid fa-gauge-high comparison-icon gauge-icon'
+  };
 
   loadSalesKpiData(): void {
     this.businessKpiService.getSalesData().subscribe({
