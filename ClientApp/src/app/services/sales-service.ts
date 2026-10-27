@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { SalesData } from '../models/sales';
+import { SalesCategoryData, SalesData } from '../models/sales';
 
 @Injectable({
     providedIn: 'root'
@@ -9,9 +9,13 @@ import { SalesData } from '../models/sales';
 export class SalesService {
     private http = inject(HttpClient);
 
-    private readonly apiUrl = 'http://localhost:5253/analytics/kpis';
+    private readonly apiUrlBase = 'http://localhost:5253/analytics';
 
     getSalesData(): Observable<SalesData> {
-        return this.http.get<SalesData>(this.apiUrl);
+        return this.http.get<SalesData>(`${this.apiUrlBase}/kpis`);
+    }
+
+    getSalesCategoryData(): Observable<SalesCategoryData[]> {
+        return this.http.get<SalesCategoryData[]>(`${this.apiUrlBase}/categories`);
     }
 }
