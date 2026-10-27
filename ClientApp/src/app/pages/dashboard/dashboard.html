@@ -126,7 +126,6 @@
                     <h2 class="chart-title">Sales by Category</h2>
                     <p class="chart-subtitle">Revenue contribution across verticals</p>
                 </div>
-                <button class="icon-btn-ghost"><i class="fa-solid fa-ellipsis-vertical"></i></button>
             </div>
 
             <!-- Donut Container with Center Overlay Text -->
@@ -134,28 +133,41 @@
                 <canvas #categoryChartCanvas></canvas>
                 <div class="donut-center-text">
                     <span class="center-label">TOTAL SALES</span>
-                    <span class="center-value">$248.6k</span>
-                    <span class="center-badge">+12.8%</span>
+                    <span class="center-value">${{(salesKpiData().totalSales / 1000).toFixed(2)}}k</span>
                 </div>
             </div>
 
             <!-- Category List Breakdown -->
             <div class="category-list">
-                @for (cat of categories; track cat.name) {
+                @for (cat of salesCategoryData(); track cat.category; let i = $index) {
                 <div class="category-row">
                     <div class="cat-info">
                         <div class="cat-left">
-                            <span class="cat-dot" [style.background-color]="cat.color"></span>
-                            <span class="cat-name">{{ cat.name }}</span>
+                            <span class="cat-dot" [style.background-color]="categoryColors[i % categoryColors.length]">
+                            </span>
+
+                            <span class="cat-name">{{ cat.category }}</span>
                         </div>
+
                         <div class="cat-right">
-                            <span class="cat-amount">${{ cat.amount }}</span>
-                            <span class="cat-percent">{{ cat.percentage }}%</span>
+                            <span class="cat-amount">
+                                Revenue: ${{ (cat.total_Sales).toFixed(2) }}
+                            </span>
+
+                            <span class="cat-amount">
+                                Transactions: {{ cat.total_Transactions }}
+                            </span>
+
+                            <span class="cat-percent">
+                                {{ getCategoryPercentage(cat.total_Sales) }}%
+                            </span>
                         </div>
                     </div>
+
                     <div class="cat-progress-track">
-                        <div class="cat-progress-fill" [style.width.%]="cat.percentage"
-                            [style.background-color]="cat.color"></div>
+                        <div class="cat-progress-fill" [style.width.%]="getCategoryPercentage(cat.total_Sales)"
+                            [style.background-color]="categoryColors[i % categoryColors.length]">
+                        </div>
                     </div>
                 </div>
                 }

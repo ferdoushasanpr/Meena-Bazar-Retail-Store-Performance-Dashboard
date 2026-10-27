@@ -2,7 +2,7 @@ import { AfterViewInit, Component, computed, ElementRef, inject, OnInit, signal,
 import { FormsModule } from '@angular/forms';
 import { Chart, registerables } from 'chart.js';
 import { SalesService } from '../../services/sales-service';
-import { SalesData } from '../../models/sales';
+import { SalesCategoryData, SalesData } from '../../models/sales';
 import { MetricCardProps } from '../../models/matric-card';
 import { MetricCard } from '../../shared/metric-card/metric-card';
 
@@ -27,12 +27,6 @@ export class Dashboard implements OnInit, AfterViewInit {
 
   private businessKpiService = inject(SalesService);
 
-  salesKpiData = signal<SalesData>({
-    totalSales: 0.0,
-    numberOfTransactions: 0,
-    averageBasketValue: 0.0
-  });
-
   // Filters & State
   selectedTimeRange = 'Last 30 Days';
   timeRanges = ['Today', 'Last 7 Days', 'Last 30 Days', 'This Month', 'Previous Month', 'All Time'];
@@ -41,22 +35,40 @@ export class Dashboard implements OnInit, AfterViewInit {
   totalStoresCount = 18;
   selectedViewMode: 'Daily' | 'Weekly' | 'Monthly' = 'Daily';
 
+  salesKpiData = signal<SalesData>({
+    totalSales: 0.0,
+    numberOfTransactions: 0,
+    averageBasketValue: 0.0
+  });
+
   // Categories Data
-  categories: CategorySales[] = [
-    { name: 'Electronics', amount: 84520, percentage: 34, color: '#38bdf8' },
-    { name: 'Grocery & Fresh', amount: 64633, percentage: 26, color: '#6366f1' },
-    { name: 'Apparel & Footwear', amount: 44746, percentage: 18, color: '#14b8a6' },
-    { name: 'Home & Living', amount: 29830, percentage: 12, color: '#a855f7' },
-    { name: 'Beauty & Health', amount: 17401, percentage: 7, color: '#f97316' }
+  salesCategoryData = signal<SalesCategoryData[]>([]);
+
+  categoryColors: string[] = [
+    '#38bdf8',
+    '#6366f1',
+    '#14b8a6',
+    '#a855f7',
+    '#f97316',
+    '#f43f5e',
+    '#eab308'
   ];
+
+  getCategoryPercentage(totalSales: number): number {
+    const total = this.salesCategoryData().reduce(
+      (sum, category) => sum + category.total_Sales,
+      0
+    );
+
+    return total > 0
+      ? Number(((totalSales / total) * 100).toFixed(1))
+      : 0;
+  }
+
 
   // Chart instances
   private trendChart!: Chart;
   private categoryChart!: Chart;
-
-  ngOnInit(): void {
-    this.loadSalesKpiData();
-  }
 
   totalSalesCard = computed((): MetricCardProps => {
     const sales = this.salesKpiData();
@@ -98,10 +110,34 @@ export class Dashboard implements OnInit, AfterViewInit {
     visualIcon: 'fa-solid fa-gauge-high comparison-icon gauge-icon'
   };
 
+  ngOnInit(): void {
+    this.loadSalesKpiData();
+    this.loadSalesCategoryData();
+  }
+
   loadSalesKpiData(): void {
     this.businessKpiService.getSalesData().subscribe({
       next: (response) => { this.salesKpiData.set(response) },
       error: (error) => { console.error(error) }
+    });
+  }
+
+  loadSalesCategoryData(): void {
+    this.businessKpiService.getSalesCategoryData().subscribe({
+      next: (response) => {
+        this.salesCategoryData.set(response);
+
+        if (this.categoryChart) {
+          this.categoryChart.data.labels = response.map(c => c.category);
+          this.categoryChart.data.datasets[0].data =
+            response.map(c => c.total_Sales);
+
+          this.categoryChart.update();
+        }
+      },
+      error: (error) => {
+        console.error(error);
+      }
     });
   }
 
@@ -210,13 +246,15 @@ export class Dashboard implements OnInit, AfterViewInit {
     const ctx = this.categoryChartCanvas.nativeElement.getContext('2d');
     if (!ctx) return;
 
+    const categoryData = this.salesCategoryData();
+
     this.categoryChart = new Chart(ctx, {
       type: 'doughnut',
       data: {
-        labels: this.categories.map(c => c.name),
+        labels: categoryData.map(c => c.category),
         datasets: [{
-          data: this.categories.map(c => c.percentage),
-          backgroundColor: this.categories.map(c => c.color),
+          data: categoryData.map(c => c.total_Sales),
+          backgroundColor: this.categoryColors,
           borderWidth: 4,
           borderColor: '#111827',
           hoverOffset: 4
@@ -230,7 +268,18 @@ export class Dashboard implements OnInit, AfterViewInit {
           legend: { display: false },
           tooltip: {
             callbacks: {
-              label: (ctx) => ` ${ctx.label}: ${ctx.raw}%`
+              label: (ctx) => {
+                const value = Number(ctx.raw);
+                const total = categoryData.reduce(
+                  (sum, category) => sum + category.total_Sales,
+                  0
+                );
+                const percentage = total > 0
+                  ? ((value / total) * 100).toFixed(1)
+                  : '0.0';
+
+                return ` ${ctx.label}: $${value.toLocaleString()} (${percentage}%)`;
+              }
             }
           }
         }
