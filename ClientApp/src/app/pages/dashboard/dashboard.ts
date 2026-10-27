@@ -1,6 +1,8 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Chart, registerables } from 'chart.js';
+import { SalesService } from '../../services/sales-service';
+import { SalesData } from '../../models/sales';
 
 Chart.register(...registerables);
 
@@ -20,6 +22,14 @@ interface CategorySales {
 export class Dashboard implements OnInit, AfterViewInit {
   @ViewChild('trendChartCanvas') trendChartCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('categoryChartCanvas') categoryChartCanvas!: ElementRef<HTMLCanvasElement>;
+
+  private businessKpiService = inject(SalesService);
+
+  salesKpiData = signal<SalesData>({
+    totalSales: 0.0,
+    numberOfTransactions: 0,
+    averageBasketValue: 0.0
+  });
 
   // Filters & State
   selectedTimeRange = 'Last 30 Days';
@@ -42,7 +52,16 @@ export class Dashboard implements OnInit, AfterViewInit {
   private trendChart!: Chart;
   private categoryChart!: Chart;
 
-  ngOnInit(): void { }
+  ngOnInit(): void {
+    this.loadSalesKpiData();
+  }
+
+  loadSalesKpiData(): void {
+    this.businessKpiService.getSalesData().subscribe({
+      next: (response) => { this.salesKpiData.set(response) },
+      error: (error) => { console.error(error) }
+    });
+  }
 
   ngAfterViewInit(): void {
     this.initTrendChart();

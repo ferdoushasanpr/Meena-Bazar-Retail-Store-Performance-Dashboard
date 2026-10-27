@@ -58,7 +58,7 @@
                 <span class="card-title">TOTAL SALES</span>
                 <div class="icon-wrapper"><i class="fa-solid fa-wallet"></i></div>
             </div>
-            <div class="card-value">$248,590.00</div>
+            <div class="card-value">${{(salesKpiData().totalSales).toFixed(2)}}</div>
             <div class="card-comparison">
                 <span class="badge badge-success"><i class="fa-solid fa-arrow-up"></i> +12.8%</span>
                 <span class="prev-text">vs. prev $220,381</span>
@@ -84,7 +84,7 @@
                 <span class="card-title">TRANSACTIONS</span>
                 <div class="icon-wrapper"><i class="fa-solid fa-receipt"></i></div>
             </div>
-            <div class="card-value">8,426</div>
+            <div class="card-value">{{salesKpiData().numberOfTransactions}}</div>
             <div class="card-comparison">
                 <span class="badge badge-success"><i class="fa-solid fa-arrow-up"></i> +8.4%</span>
                 <span class="prev-text">vs. prev 7,773</span>
@@ -112,7 +112,7 @@
                 <span class="card-title">AVG. BASKET VALUE</span>
                 <div class="icon-wrapper"><i class="fa-solid fa-bag-shopping"></i></div>
             </div>
-            <div class="card-value">$29.51</div>
+            <div class="card-value">${{(salesKpiData().averageBasketValue).toFixed(2)}}</div>
             <div class="card-comparison">
                 <span class="badge badge-success"><i class="fa-solid fa-arrow-up"></i> +4.1%</span>
                 <span class="prev-text">vs. prev $28.35</span>

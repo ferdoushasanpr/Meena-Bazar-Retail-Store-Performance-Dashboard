@@ -11,7 +11,7 @@ export class SalesService {
 
     private readonly apiUrl = 'http://localhost:5253/analytics/kpis';
 
-    getKpiData(): Observable<SalesData> {
+    getSalesData(): Observable<SalesData> {
         return this.http.get<SalesData>(this.apiUrl);
     }
 }
