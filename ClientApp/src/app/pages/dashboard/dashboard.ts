@@ -2,7 +2,7 @@ import { AfterViewInit, Component, computed, ElementRef, inject, OnInit, signal,
 import { FormsModule } from '@angular/forms';
 import { Chart, registerables } from 'chart.js';
 import { SalesService } from '../../services/sales-service';
-import { SalesCategoryData, SalesData } from '../../models/sales';
+import { DailySalesData, SalesCategoryData, SalesData } from '../../models/sales';
 import { MetricCardProps } from '../../models/matric-card';
 import { MetricCard } from '../../shared/metric-card/metric-card';
 import { DonutChart } from '../../shared/donut-chart/donut-chart';
@@ -22,20 +22,22 @@ export class Dashboard implements OnInit, AfterViewInit {
 
   // Filters & State
   selectedTimeRange = 'Last 30 Days';
-  timeRanges = ['Today', 'Last 7 Days', 'Last 30 Days', 'This Month', 'Previous Month', 'All Time'];
+  timeRanges = ['All Time', 'Today', 'Last 7 Days', 'Last 30 Days', 'This Month', 'Previous Month'];
   compareChecked = true;
   selectedStoresCount = 5;
   totalStoresCount = 18;
-  selectedViewMode: 'Daily' | 'Weekly' | 'Monthly' = 'Daily';
+  selectedViewMode: 'Daily' | 'Monthly' | 'Yearly' = 'Daily';
 
+  // Sales Data
   salesKpiData = signal<SalesData>({
     totalSales: 0.0,
     numberOfTransactions: 0,
     averageBasketValue: 0.0
   });
 
-  // Categories Data
   salesCategoryData = signal<SalesCategoryData[]>([]);
+
+  dailySalesData = signal<DailySalesData[]>([]);
 
   // Chart instances
   private trendChart!: Chart;
@@ -84,6 +86,7 @@ export class Dashboard implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.loadSalesKpiData();
     this.loadSalesCategoryData();
+    this.loadDailySalesData();
   }
 
   loadSalesKpiData(): void {
@@ -104,6 +107,34 @@ export class Dashboard implements OnInit, AfterViewInit {
     });
   }
 
+  loadDailySalesData(): void {
+    this.businessKpiService.getDailySalesData().subscribe({
+      next: (response) => {
+        this.dailySalesData.set(response);
+
+        if (this.trendChart) {
+          this.trendChart.data.labels = response.map(item =>
+            new Date(item.salesDate).toLocaleDateString('en-US', {
+              month: 'short',
+              day: '2-digit'
+            })
+          );
+
+          this.trendChart.data.datasets[0].data = response.map(
+            item => item.totalSales
+          );
+
+          this.trendChart.update();
+        } else if (this.trendChartCanvas) {
+          this.initTrendChart();
+        }
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+  }
+
   ngAfterViewInit(): void {
     this.initTrendChart();
   }
@@ -113,49 +144,32 @@ export class Dashboard implements OnInit, AfterViewInit {
     const ctx = this.trendChartCanvas.nativeElement.getContext('2d');
     if (!ctx) return;
 
-    // Gradient background for current period line
-    const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-    gradient.addColorStop(0, 'rgba(124, 58, 237, 0.45)');
-    gradient.addColorStop(1, 'rgba(124, 58, 237, 0.0)');
+    const dailySales = this.dailySalesData();
 
-    const labels = ['Oct 01', 'Oct 06', 'Oct 12', 'Oct 18', 'Oct 24', 'Oct 27', 'Oct 30'];
+    const labels = dailySales.map(item =>
+      new Date(item.salesDate).toLocaleDateString('en-US', {
+        month: 'short',
+        day: '2-digit'
+      })
+    );
+
+    const sales = dailySales.map(item => item.totalSales);
 
     this.trendChart = new Chart(ctx, {
       type: 'line',
       data: {
-        labels: labels,
+        labels,
         datasets: [
           {
-            label: 'Current Period ($248.6k)',
-            data: [4200, 6800, 4800, 8900, 6500, 11480, 10200],
+            label: 'Total Sales',
+            data: sales,
             borderColor: '#8b5cf6',
-            borderWidth: 3,
-            backgroundColor: gradient,
-            fill: true,
-            tension: 0.45,
-            pointBackgroundColor: '#8b5cf6',
-            pointBorderColor: '#ffffff',
-            pointRadius: (ctx) => (ctx.dataIndex === 5 ? 6 : 0),
-            pointHoverRadius: 8
-          },
-          {
-            label: 'Previous Period ($220.4k)',
-            data: [3800, 5200, 6100, 5900, 7800, 6900, 8100],
-            borderColor: '#64748b',
+            backgroundColor: 'rgba(139, 92, 246, 0.15)',
             borderWidth: 2,
-            borderDash: [4, 4],
-            fill: false,
-            tension: 0.4,
-            pointRadius: 0
-          },
-          {
-            label: 'Target Benchmark ($265.0k)',
-            data: [8500, 8500, 8500, 8500, 8500, 8500, 8500],
-            borderColor: '#475569',
-            borderWidth: 1.5,
-            borderDash: [6, 6],
-            fill: false,
-            pointRadius: 0
+            fill: true,
+            tension: 0.3,
+            pointRadius: 3,
+            pointBackgroundColor: '#8b5cf6'
           }
         ]
       },
@@ -163,40 +177,31 @@ export class Dashboard implements OnInit, AfterViewInit {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: { display: false },
+          legend: {
+            display: false
+          },
           tooltip: {
-            enabled: true,
-            backgroundColor: '#0f172a',
-            borderColor: '#334155',
-            borderWidth: 1,
-            titleColor: '#e2e8f0',
-            bodyColor: '#cbd5e1',
-            padding: 12,
-            displayColors: false,
             callbacks: {
-              title: (items) => `${items[0].label}, 2024  +18.4% YoY`,
-              label: (item) => [
-                `Gross Sales:   $${item.formattedValue}`,
-                `Transactions:  388 orders`,
-                `Basket AOV:     $29.58`
-              ]
+              label: (item) => `Sales: $${Number(item.raw).toFixed(2)}`
             }
           }
         },
         scales: {
           x: {
-            grid: { color: 'rgba(255, 255, 255, 0.05)' },
-            ticks: { color: '#94a3b8', font: { size: 12 } }
+            title: {
+              display: true,
+              text: 'Sales Date'
+            }
           },
           y: {
-            grid: { color: 'rgba(255, 255, 255, 0.05)' },
-            ticks: {
-              color: '#94a3b8',
-              font: { size: 12 },
-              callback: (value) => '$' + (Number(value) / 1000) + 'k'
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Total Sales ($)'
             },
-            min: 0,
-            max: 16000
+            ticks: {
+              callback: (value) => `$${value}`
+            }
           }
         }
       }

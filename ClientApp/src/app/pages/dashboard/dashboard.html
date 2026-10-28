@@ -72,29 +72,30 @@
             <div class="chart-header">
                 <div>
                     <h2 class="chart-title">Sales Performance Trend</h2>
-                    <p class="chart-subtitle">Daily gross turnover with comparative periods and run-rate forecast</p>
+                    <p class="chart-subtitle">Daily sales revenue over time</p>
                 </div>
+
                 <div class="chart-controls">
                     <div class="toggle-group">
                         <button class="toggle-btn" [class.active]="selectedViewMode === 'Daily'"
-                            (click)="selectedViewMode = 'Daily'">Daily</button>
-                        <button class="toggle-btn" [class.active]="selectedViewMode === 'Weekly'"
-                            (click)="selectedViewMode = 'Weekly'">Weekly</button>
+                            (click)="selectedViewMode = 'Daily'">
+                            Daily
+                        </button>
+
                         <button class="toggle-btn" [class.active]="selectedViewMode === 'Monthly'"
-                            (click)="selectedViewMode = 'Monthly'">Monthly</button>
-                    </div>
-                    <div class="icon-toggle">
-                        <button class="icon-btn active"><i class="fa-solid fa-chart-line"></i></button>
-                        <button class="icon-btn"><i class="fa-solid fa-chart-simple"></i></button>
+                            (click)="selectedViewMode = 'Monthly'">
+                            Monthly
+                        </button>
+
+                        <button class="toggle-btn" [class.active]="selectedViewMode === 'Yearly'"
+                            (click)="selectedViewMode = 'Yearly'">
+                            Weekly
+                        </button>
                     </div>
                 </div>
             </div>
 
-            <div class="targets-pill">
-                <span class="dot blue"></span> Targets
-            </div>
-
-            <!-- Trend Canvas Container -->
+            <!-- Trend Chart -->
             <div class="canvas-container">
                 <canvas #trendChartCanvas></canvas>
             </div>
@@ -103,21 +104,15 @@
             <div class="chart-legend-footer">
                 <div class="legend-item">
                     <span class="legend-line solid-purple"></span>
-                    <span>Current Period (<strong>$248.6k</strong>)</span>
+                    <span>Total Sales</span>
                 </div>
-                <div class="legend-item">
-                    <span class="legend-line dotted-gray"></span>
-                    <span>Previous Period (<strong>$220.4k</strong>)</span>
-                </div>
-                <div class="legend-item">
-                    <span class="legend-line dashed-gray"></span>
-                    <span>Target Benchmark (<strong>$265.0k</strong>)</span>
-                </div>
+
                 <div class="legend-info">
-                    <i class="fa-regular fa-circle-question"></i> Rolling 30-day baseline
+                    {{ dailySalesData().length }} days of sales data
                 </div>
             </div>
         </div>
+
 
         <!-- Right Chart: Sales by Category -->
         <app-donut-chart [data]="salesCategoryData()" [salesData]="salesKpiData()" />
