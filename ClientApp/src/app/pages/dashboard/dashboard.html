@@ -21,35 +21,6 @@
         </div>
     </header>
 
-    <!-- Filter Control Bar -->
-    <section class="filter-bar">
-        <div class="time-pills">
-            @for (range of timeRanges; track range) {
-            <button class="pill-btn" [class.active]="selectedTimeRange === range" (click)="setTimeRange(range)">
-                {{ range }}
-            </button>
-            }
-        </div>
-
-        <div class="filter-controls">
-            <button class="btn btn-dropdown">
-                <i class="fa-solid fa-store"></i>
-                <span><strong>{{ selectedStoresCount }} Stores Selected</strong> <small>{{ selectedStoresCount }}/{{
-                        totalStoresCount }}</small></span>
-                <i class="fa-solid fa-chevron-down"></i>
-            </button>
-
-            <label class="checkbox-label">
-                <input type="checkbox" [(ngModel)]="compareChecked">
-                <span>Compare: <strong>Prev Period (30d)</strong></span>
-            </label>
-
-            <button class="btn-text">
-                <i class="fa-solid fa-arrow-rotate-left"></i> Reset Filters
-            </button>
-        </div>
-    </section>
-
     <!-- Metric Cards Grid (4 Columns) -->
     <section class="metrics-grid">
         <!-- Card 1: Total Sales -->
@@ -72,7 +43,7 @@
         <app-trend-chart class="trend-chart" [dailyData]="dailySalesData()" [monthlyData]="monthlySalesData()" />
 
         <!-- Left column: Bar chart below trend chart -->
-        <app-horizontal-bar-chart class="bar-chart" />
+        <app-horizontal-bar-chart class="bar-chart" [storesData]="storesSalesData()" />
 
         <!-- Right column: Donut chart spanning both rows -->
         <app-donut-chart class="donut-chart" [data]="salesCategoryData()" [salesData]="salesKpiData()" />

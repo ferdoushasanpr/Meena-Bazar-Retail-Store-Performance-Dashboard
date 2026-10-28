@@ -23,3 +23,10 @@ export interface MonthlySalesData {
     total_Sales: number,
     total_Revenue: number
 }
+
+export interface StoreSalesData {
+    store_id: string,
+    store_name: string,
+    total_Transactions: number,
+    total_Sales: number
+}

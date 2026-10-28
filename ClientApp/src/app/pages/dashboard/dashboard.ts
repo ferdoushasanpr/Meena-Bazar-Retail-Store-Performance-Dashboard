@@ -1,7 +1,7 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SalesService } from '../../services/sales-service';
-import { DailySalesData, MonthlySalesData, SalesCategoryData, SalesData } from '../../models/sales';
+import { DailySalesData, MonthlySalesData, SalesCategoryData, SalesData, StoreSalesData } from '../../models/sales';
 import { MetricCardProps } from '../../models/matric-card';
 import { MetricCard } from '../../shared/metric-card/metric-card';
 import { DonutChart } from '../../shared/donut-chart/donut-chart';
@@ -17,13 +17,6 @@ import { HorizontalBarChart } from '../../shared/horizontal-bar-chart/horizontal
 export class Dashboard implements OnInit {
   private businessKpiService = inject(SalesService);
 
-  // Filters & State
-  selectedTimeRange = 'Last 30 Days';
-  timeRanges = ['All Time', 'Today', 'Last 7 Days', 'Last 30 Days', 'This Month', 'Previous Month'];
-  compareChecked = true;
-  selectedStoresCount = 5;
-  totalStoresCount = 18;
-
   // Sales Data
   salesKpiData = signal<SalesData>({
     totalSales: 0.0,
@@ -34,6 +27,7 @@ export class Dashboard implements OnInit {
   salesCategoryData = signal<SalesCategoryData[]>([]);
   dailySalesData = signal<DailySalesData[]>([]);
   monthlySalesData = signal<MonthlySalesData[]>([]);
+  storesSalesData = signal<StoreSalesData[]>([]);
 
 
   totalSalesCard = computed((): MetricCardProps => {
@@ -81,6 +75,7 @@ export class Dashboard implements OnInit {
     this.loadSalesCategoryData();
     this.loadDailySalesData();
     this.loadMonthlySalesData();
+    this.loadStoresSalesData();
   }
 
   loadSalesKpiData(): void {
@@ -123,8 +118,14 @@ export class Dashboard implements OnInit {
     });
   }
 
-
-  setTimeRange(range: string): void {
-    this.selectedTimeRange = range;
+  loadStoresSalesData(): void {
+    this.businessKpiService.getStoresSalesData().subscribe({
+      next: (response) => {
+        this.storesSalesData.set(response);
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
   }
 }

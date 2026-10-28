@@ -1,159 +1,177 @@
-import { Component, ElementRef, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {
+  Component,
+  computed,
+  ElementRef,
+  input,
+  ViewChild,
+  AfterViewInit,
+  OnDestroy,
+  OnChanges,
+  SimpleChanges
+} from '@angular/core';
 import { Chart, registerables } from 'chart.js';
+import { StoreSalesData } from '../../models/sales';
 
-// Register Chart.js components
 Chart.register(...registerables);
 
-export interface StorePerformance {
-  id: string;
-  rank: number;
-  name: string;
-  badge?: string;
-  transactions: number;
-  variance: number; // percentage change e.g. +18.2 or -2.1
-  sales: number;    // gross sales amount
-}
-
 @Component({
-  imports: [],
   selector: 'app-horizontal-bar-chart',
+  imports: [],
   styleUrl: './horizontal-bar-chart.css',
   templateUrl: './horizontal-bar-chart.html',
 })
-export class HorizontalBarChart {
-  @ViewChild('storesChartCanvas') storesChartCanvas!: ElementRef<HTMLCanvasElement>;
+export class HorizontalBarChart
+  implements AfterViewInit, OnDestroy, OnChanges {
+
+  @ViewChild('storesChartCanvas')
+  storesChartCanvas!: ElementRef<HTMLCanvasElement>;
+
+  storesData = input.required<StoreSalesData[]>();
 
   chartInstance?: Chart;
+  private viewInitialized = false;
 
-  // Metadata
-  totalStoresCount: number = 18;
+  totalStoresCount = computed(() => this.storesData().length);
 
-  // Dynamic Store Data
-  stores: StorePerformance[] = [
-    {
-      id: 'st-01',
-      rank: 1,
-      name: 'Downtown Flagship',
-      badge: 'TOP PERFORMER',
-      transactions: 2410,
-      variance: 18.2,
-      sales: 78410
-    },
-    {
-      id: 'st-02',
-      rank: 2,
-      name: 'City Center Galleria',
-      transactions: 1890,
-      variance: 11.4,
-      sales: 56230
-    },
-    {
-      id: 'st-03',
-      rank: 3,
-      name: 'Northside Mega Mall',
-      transactions: 1620,
-      variance: 7.9,
-      sales: 44890
-    },
-    {
-      id: 'st-04',
-      rank: 4,
-      name: 'Riverside Plaza',
-      transactions: 1380,
-      variance: -2.1,
-      sales: 38150
-    },
-    {
-      id: 'st-05',
-      rank: 5,
-      name: 'West End Farmers Market',
-      transactions: 1126,
-      variance: 4.5,
-      sales: 30910
-    }
-  ];
-
-  // Dynamic getters
   get maxSales(): number {
-    return Math.max(...this.stores.map(s => s.sales));
+    const sales = this.storesData().map(
+      store => store.total_Sales
+    );
+
+    return sales.length ? Math.max(...sales) : 0;
   }
 
   get averageSales(): number {
-    if (!this.stores.length) return 0;
-    const total = this.stores.reduce((acc, s) => acc + s.sales, 0);
-    return total / this.stores.length;
+    const stores = this.storesData();
+
+    if (!stores.length) return 0;
+
+    const total = stores.reduce(
+      (sum, store) => sum + store.total_Sales,
+      0
+    );
+
+    return total / stores.length;
   }
 
   get formattedAvgSales(): string {
-    return (this.averageSales / 1000).toFixed(1) + 'k';
+    return this.averageSales.toLocaleString('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
   }
 
   ngAfterViewInit(): void {
+    this.viewInitialized = true;
     this.initChart();
   }
 
-  ngOnDestroy(): void {
-    if (this.chartInstance) {
-      this.chartInstance.destroy();
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['storesData'] && this.viewInitialized) {
+      this.updateChart();
     }
   }
 
-  // Calculate dynamic bar progress percentage relative to maximum sales volume
+  ngOnDestroy(): void {
+    this.chartInstance?.destroy();
+  }
+
   getBarWidthPercentage(sales: number): number {
+    if (this.maxSales <= 0) return 0;
+
     return (sales / this.maxSales) * 100;
   }
 
-  // Format rank numbers (e.g., 1 -> "01")
   formatRank(rank: number): string {
-    return rank < 10 ? `0${rank}` : `${rank}`;
+    return String(rank).padStart(2, '0');
   }
 
-  // Determine bar color theme dynamically based on rank and variance
-  getBarColorClass(store: StorePerformance): string {
-    if (store.rank === 1) return 'bar-purple';
-    if (store.variance < 0 || store.rank >= 4) return 'bar-slate';
-    return 'bar-cyan';
+  getBarColorClass(index: number): string {
+    if (index === 0) return 'bar-purple';
+    if (index < 3) return 'bar-cyan';
+    return 'bar-slate';
   }
 
-  // Optional Chart.js horizontal bar chart initialization for canvas integration
   private initChart(): void {
-    if (!this.storesChartCanvas) return;
+    const canvas = this.storesChartCanvas?.nativeElement;
+    const ctx = canvas?.getContext('2d');
 
-    const ctx = this.storesChartCanvas.nativeElement.getContext('2d');
     if (!ctx) return;
+
+    const stores = this.storesData();
 
     this.chartInstance = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: this.stores.map(s => s.name),
-        datasets: [{
-          label: 'Sales Volume ($)',
-          data: this.stores.map(s => s.sales),
-          backgroundColor: this.stores.map(s =>
-            s.rank === 1 ? '#818cf8' : (s.variance < 0 || s.rank >= 4 ? '#475569' : '#38bdf8')
-          ),
-          borderRadius: 4,
-          barThickness: 8
-        }]
+        labels: stores.map(store => store.store_name),
+        datasets: [
+          {
+            label: 'Sales Volume ($)',
+            data: stores.map(store => store.total_Sales),
+            backgroundColor: stores.map((_, index) =>
+              this.getBarColorClass(index)
+            ),
+            borderRadius: 4,
+            barThickness: 12
+          }
+        ]
       },
       options: {
         indexAxis: 'y',
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: { display: false },
+          legend: {
+            display: false
+          },
           tooltip: {
             callbacks: {
-              label: (context) => `$${context.raw?.toLocaleString()}`
+              label: context =>
+                `$${Number(context.raw).toLocaleString('en-US', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2
+                })}`
             }
           }
         },
         scales: {
-          x: { display: false, grid: { display: false } },
-          y: { display: false, grid: { display: false } }
+          x: {
+            display: false,
+            beginAtZero: true,
+            grid: {
+              display: false
+            }
+          },
+          y: {
+            display: false,
+            grid: {
+              display: false
+            }
+          }
         }
       }
     });
+  }
+
+  private updateChart(): void {
+    if (!this.chartInstance) {
+      this.initChart();
+      return;
+    }
+
+    const stores = this.storesData();
+    const chart = this.chartInstance;
+
+    chart.data.labels = stores.map(store => store.store_name);
+
+    chart.data.datasets[0].data = stores.map(
+      store => store.total_Sales
+    );
+
+    chart.data.datasets[0].backgroundColor = stores.map(
+      (_, index) => this.getBarColorClass(index)
+    );
+
+    chart.update();
   }
 }
