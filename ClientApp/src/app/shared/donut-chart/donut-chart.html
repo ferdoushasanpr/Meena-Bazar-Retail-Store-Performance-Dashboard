@@ -1,0 +1,53 @@
+<div class="chart-card category-chart-card">
+    <div class="chart-header">
+        <div>
+            <h2 class="chart-title">Sales by Category</h2>
+            <p class="chart-subtitle">Revenue contribution across verticals</p>
+        </div>
+    </div>
+
+    <!-- Donut Container with Center Overlay Text -->
+    <div class="donut-wrapper">
+        <canvas #categoryChartCanvas></canvas>
+        <div class="donut-center-text">
+            <span class="center-label">TOTAL SALES</span>
+            <span class="center-value">${{(salesData().totalSales / 1000).toFixed(2)}}k</span>
+        </div>
+    </div>
+
+    <!-- Category List Breakdown -->
+    <div class="category-list">
+        @for (cat of data(); track cat.category; let i = $index) {
+        <div class="category-row">
+            <div class="cat-info">
+                <div class="cat-left">
+                    <span class="cat-dot" [style.background-color]="categoryColors[i % categoryColors.length]">
+                    </span>
+
+                    <span class="cat-name">{{ cat.category }}</span>
+                </div>
+
+                <div class="cat-right">
+                    <span class="cat-amount">
+                        Revenue: ${{ (cat.total_Sales).toFixed(2) }}
+                    </span>
+
+                    <span class="cat-amount">
+                        Transactions: {{ cat.total_Transactions }}
+                    </span>
+
+                    <span class="cat-percent">
+                        {{ getCategoryPercentage(cat.total_Sales) }}%
+                    </span>
+                </div>
+            </div>
+
+            <div class="cat-progress-track">
+                <div class="cat-progress-fill" [style.width.%]="getCategoryPercentage(cat.total_Sales)"
+                    [style.background-color]="categoryColors[i % categoryColors.length]">
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+</div>

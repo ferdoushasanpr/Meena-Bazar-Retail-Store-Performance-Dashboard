@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { SalesCategoryData, SalesData } from '../models/sales';
+import { DailySalesData, MonthlySalesData, SalesCategoryData, SalesData } from '../models/sales';
 
 @Injectable({
     providedIn: 'root'
@@ -17,5 +17,13 @@ export class SalesService {
 
     getSalesCategoryData(): Observable<SalesCategoryData[]> {
         return this.http.get<SalesCategoryData[]>(`${this.apiUrlBase}/categories`);
+    }
+
+    getDailySalesData(): Observable<DailySalesData[]> {
+        return this.http.get<DailySalesData[]>(`${this.apiUrlBase}/daily-trend`);
+    }
+
+    getMonthlySalesData(): Observable<MonthlySalesData[]> {
+        return this.http.get<MonthlySalesData[]>(`${this.apiUrlBase}/monthly-trend`);
     }
 }

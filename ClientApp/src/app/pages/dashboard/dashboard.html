@@ -66,112 +66,15 @@
     </section>
 
     <!-- Charts Layout (2 Columns) -->
+
     <section class="charts-section">
-        <!-- Left Chart: Sales Performance Trend -->
-        <div class="chart-card main-chart-card">
-            <div class="chart-header">
-                <div>
-                    <h2 class="chart-title">Sales Performance Trend</h2>
-                    <p class="chart-subtitle">Daily gross turnover with comparative periods and run-rate forecast</p>
-                </div>
-                <div class="chart-controls">
-                    <div class="toggle-group">
-                        <button class="toggle-btn" [class.active]="selectedViewMode === 'Daily'"
-                            (click)="selectedViewMode = 'Daily'">Daily</button>
-                        <button class="toggle-btn" [class.active]="selectedViewMode === 'Weekly'"
-                            (click)="selectedViewMode = 'Weekly'">Weekly</button>
-                        <button class="toggle-btn" [class.active]="selectedViewMode === 'Monthly'"
-                            (click)="selectedViewMode = 'Monthly'">Monthly</button>
-                    </div>
-                    <div class="icon-toggle">
-                        <button class="icon-btn active"><i class="fa-solid fa-chart-line"></i></button>
-                        <button class="icon-btn"><i class="fa-solid fa-chart-simple"></i></button>
-                    </div>
-                </div>
-            </div>
+        <!-- Left column: Trend chart -->
+        <app-trend-chart class="trend-chart" [dailyData]="dailySalesData()" [monthlyData]="monthlySalesData()" />
 
-            <div class="targets-pill">
-                <span class="dot blue"></span> Targets
-            </div>
+        <!-- Left column: Bar chart below trend chart -->
+        <app-horizontal-bar-chart class="bar-chart" />
 
-            <!-- Trend Canvas Container -->
-            <div class="canvas-container">
-                <canvas #trendChartCanvas></canvas>
-            </div>
-
-            <!-- Chart Legend Footer -->
-            <div class="chart-legend-footer">
-                <div class="legend-item">
-                    <span class="legend-line solid-purple"></span>
-                    <span>Current Period (<strong>$248.6k</strong>)</span>
-                </div>
-                <div class="legend-item">
-                    <span class="legend-line dotted-gray"></span>
-                    <span>Previous Period (<strong>$220.4k</strong>)</span>
-                </div>
-                <div class="legend-item">
-                    <span class="legend-line dashed-gray"></span>
-                    <span>Target Benchmark (<strong>$265.0k</strong>)</span>
-                </div>
-                <div class="legend-info">
-                    <i class="fa-regular fa-circle-question"></i> Rolling 30-day baseline
-                </div>
-            </div>
-        </div>
-
-        <!-- Right Chart: Sales by Category -->
-        <div class="chart-card category-chart-card">
-            <div class="chart-header">
-                <div>
-                    <h2 class="chart-title">Sales by Category</h2>
-                    <p class="chart-subtitle">Revenue contribution across verticals</p>
-                </div>
-            </div>
-
-            <!-- Donut Container with Center Overlay Text -->
-            <div class="donut-wrapper">
-                <canvas #categoryChartCanvas></canvas>
-                <div class="donut-center-text">
-                    <span class="center-label">TOTAL SALES</span>
-                    <span class="center-value">${{(salesKpiData().totalSales / 1000).toFixed(2)}}k</span>
-                </div>
-            </div>
-
-            <!-- Category List Breakdown -->
-            <div class="category-list">
-                @for (cat of salesCategoryData(); track cat.category; let i = $index) {
-                <div class="category-row">
-                    <div class="cat-info">
-                        <div class="cat-left">
-                            <span class="cat-dot" [style.background-color]="categoryColors[i % categoryColors.length]">
-                            </span>
-
-                            <span class="cat-name">{{ cat.category }}</span>
-                        </div>
-
-                        <div class="cat-right">
-                            <span class="cat-amount">
-                                Revenue: ${{ (cat.total_Sales).toFixed(2) }}
-                            </span>
-
-                            <span class="cat-amount">
-                                Transactions: {{ cat.total_Transactions }}
-                            </span>
-
-                            <span class="cat-percent">
-                                {{ getCategoryPercentage(cat.total_Sales) }}%
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="cat-progress-track">
-                        <div class="cat-progress-fill" [style.width.%]="getCategoryPercentage(cat.total_Sales)"
-                            [style.background-color]="categoryColors[i % categoryColors.length]">
-                        </div>
-                    </div>
-                </div>
-                }
-            </div>
-        </div>
+        <!-- Right column: Donut chart spanning both rows -->
+        <app-donut-chart class="donut-chart" [data]="salesCategoryData()" [salesData]="salesKpiData()" />
     </section>
 </div>

@@ -1,0 +1,132 @@
+:host {
+    display: block;
+    height: 100%;
+    min-height: 0;
+}
+
+.chart-card {
+    box-sizing: border-box;
+    height: 100%;
+    min-height: 0;
+    background: #131e32;
+    border: 1px solid #1e2d4a;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 14px;
+}
+
+.chart-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+}
+
+.chart-subtitle {
+    font-size: 12px;
+    color: #64748b;
+    margin: 4px 0 0 0;
+}
+
+/* Donut & Category Breakdown */
+.donut-wrapper {
+    position: relative;
+    height: 210px;
+    margin: 10px 0;
+}
+
+.donut-center-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.center-label {
+    font-size: 10px;
+    color: #64748b;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+.center-value {
+    font-size: 22px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 2px 0;
+}
+
+.category-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.category-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.cat-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+}
+
+.cat-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cat-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.cat-name {
+    color: #cbd5e1;
+}
+
+.cat-right {
+    display: flex;
+    gap: 10px;
+}
+
+.cat-amount {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.cat-percent {
+    color: #64748b;
+    width: 30px;
+    text-align: right;
+}
+
+.cat-progress-track {
+    background: #0f172a;
+    height: 5px;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.cat-progress-fill {
+    height: 100%;
+    border-radius: 3px;
+}

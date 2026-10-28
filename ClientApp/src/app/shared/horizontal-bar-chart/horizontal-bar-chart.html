@@ -1,0 +1,61 @@
+<!-- Top Performing Stores Card (Positioned below Trend Chart) -->
+<div class="chart-card stores-card">
+    <!-- Card Header -->
+    <div class="stores-header">
+        <div class="header-left">
+            <h2 class="chart-title">Top Performing Stores</h2>
+            <p class="chart-subtitle">Ranked by gross sales volume and period variance</p>
+        </div>
+        <div class="avg-badge">
+            <span>Avg: <strong>${{ formattedAvgSales }}/store</strong></span>
+        </div>
+    </div>
+
+    <!-- Store Performance List -->
+    <div class="stores-list">
+        @for (store of stores; track store.id) {
+        <div class="store-item">
+            <!-- Item Info Row -->
+            <div class="store-info-row">
+                <div class="store-meta">
+                    <span class="store-rank">{{ formatRank(store.rank) }}</span>
+                    <span class="store-name">{{ store.name }}</span>
+                    @if (store.badge) {
+                    <span class="badge-tag tag-purple">{{ store.badge }}</span>
+                    }
+                </div>
+                <div class="store-metrics">
+                    <span class="metric-txns">{{ store.transactions }} txns</span>
+                    <span class="metric-variance" [class.negative]="store.variance < 0">
+                        {{ store.variance > 0 ? '+' : '' }}{{ store.variance }}%
+                    </span>
+                    <span class="metric-sales">${{ store.sales }}</span>
+                </div>
+            </div>
+
+            <!-- Dynamic Progress Bar -->
+            <div class="store-progress-track">
+                <div class="store-progress-fill" [class]="getBarColorClass(store)"
+                    [style.width.%]="getBarWidthPercentage(store.sales)">
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+
+    <!-- Optional Hidden Canvas for Chart.js Integration -->
+    <div class="chart-canvas-hidden">
+        <canvas #storesChartCanvas></canvas>
+    </div>
+
+    <!-- Card Footer -->
+    <div class="stores-footer">
+        <span class="footer-count">
+            Displaying {{ stores.length }} of {{ totalStoresCount }} licensed physical locations
+        </span>
+        <button class="footer-link-btn">
+            <span>View All {{ totalStoresCount }} Stores</span>
+            <i class="fa-solid fa-arrow-right"></i>
+        </button>
+    </div>
+</div>
