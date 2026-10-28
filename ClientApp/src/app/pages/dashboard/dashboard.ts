@@ -28,15 +28,14 @@ export class Dashboard implements OnInit, AfterViewInit {
   totalStoresCount = 18;
   selectedViewMode: 'Daily' | 'Monthly' | 'Yearly' = 'Daily';
 
-  // Sales Data
   salesKpiData = signal<SalesData>({
     totalSales: 0.0,
     numberOfTransactions: 0,
     averageBasketValue: 0.0
   });
 
+  // Categories Data
   salesCategoryData = signal<SalesCategoryData[]>([]);
-
   dailySalesData = signal<DailySalesData[]>([]);
 
   // Chart instances
