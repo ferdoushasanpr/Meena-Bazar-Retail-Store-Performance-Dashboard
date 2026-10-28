@@ -133,12 +133,16 @@ export class TrendChart implements AfterViewInit, OnDestroy {
     } else if (this.selectedViewMode === 'Monthly') {
       const data = this.monthlyData();
 
-      labels = data.map(item =>
-        new Date(item.month).toLocaleDateString('en-US', {
-          year: 'numeric',
-          month: 'short'
-        })
-      );
+      labels = data.map(item => {
+        const monthNames = [
+          'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+          'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+        ];
+
+        const monthIndex = new Date(`${item.month} 1, 2000`).getMonth();
+
+        return `${monthNames[monthIndex]} ${item.year}`;
+      });
 
       sales = data.map(item => item.total_Sales);
     }
