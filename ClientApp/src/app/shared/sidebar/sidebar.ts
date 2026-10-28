@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 interface MenuItem {
   title: string;
@@ -13,7 +14,7 @@ interface MenuSection {
 }
 
 @Component({
-  imports: [],
+  imports: [RouterLink],
   selector: 'app-sidebar',
   styleUrl: './sidebar.css',
   templateUrl: './sidebar.html',
@@ -25,24 +26,24 @@ export class Sidebar {
     {
       sectionTitle: 'OVERVIEW',
       items: [
-        { title: 'Dashboard', icon: 'fa-solid fa-border-all', active: true },
-        { title: 'Sales Analytics', icon: 'fa-solid fa-chart-line' },
-        { title: 'Store Performance', icon: 'fa-solid fa-store' },
-        { title: 'Product Categories', icon: 'fa-solid fa-layer-group' }
+        { title: 'Dashboard', route: '/dashboard', icon: 'fa-solid fa-border-all', active: true },
+        { title: 'Sales Analytics', route: '/sales-analytics', icon: 'fa-solid fa-chart-line' },
+        { title: 'Store Performance', route: '/sales-performance', icon: 'fa-solid fa-store' },
+        { title: 'Product Categories', route: '/categories', icon: 'fa-solid fa-layer-group' }
       ]
     },
     {
       sectionTitle: 'OPERATIONS',
       items: [
-        { title: 'Transactions', icon: 'fa-solid fa-receipt' },
-        { title: 'Reports & Exports', icon: 'fa-solid fa-file-lines' }
+        { title: 'Transactions', route: '/transactions', icon: 'fa-solid fa-receipt' },
+        { title: 'Reports & Exports', route: '/report-export', icon: 'fa-solid fa-file-lines' }
       ]
     },
     {
       sectionTitle: 'SYSTEM',
       items: [
-        { title: 'Data Explorer', icon: 'fa-solid fa-database' },
-        { title: 'Settings', icon: 'fa-solid fa-gear' }
+        { title: 'Data Explorer', route: '/data-explorer', icon: 'fa-solid fa-database' },
+        { title: 'Settings', route: '/settings', icon: 'fa-solid fa-gear' }
       ]
     }
   ];

@@ -16,11 +16,11 @@
             <ul class="menu-list">
                 @for (item of section.items; track item.title) {
                 <li>
-                    <button class="nav-item" [class.active]="item.title === activeItem" (click)="selectItem(item.title)"
-                        type="button">
+                    <a [routerLink]="item.route" class="nav-item" [class.active]="item.title === activeItem"
+                        (click)="selectItem(item.title)">
                         <i [class]="item.icon + ' nav-icon'"></i>
                         <span class="nav-text">{{ item.title }}</span>
-                    </button>
+                    </a>
                 </li>
                 }
             </ul>
