@@ -6,9 +6,10 @@ import { MetricCardProps } from '../../models/matric-card';
 import { MetricCard } from '../../shared/metric-card/metric-card';
 import { DonutChart } from '../../shared/donut-chart/donut-chart';
 import { TrendChart } from '../../shared/trend-chart/trend-chart';
+import { HorizontalBarChart } from '../../shared/horizontal-bar-chart/horizontal-bar-chart';
 
 @Component({
-  imports: [FormsModule, MetricCard, TrendChart, DonutChart],
+  imports: [FormsModule, MetricCard, TrendChart, DonutChart, HorizontalBarChart],
   selector: 'app-dashboard',
   styleUrl: './dashboard.css',
   templateUrl: './dashboard.html',
