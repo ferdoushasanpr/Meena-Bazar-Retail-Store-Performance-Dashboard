@@ -218,8 +218,37 @@
 /* Main Charts Grid */
 .charts-section {
     display: grid;
-    grid-template-columns: 1.8fr 1fr;
+    grid-template-columns: minmax(0, 1.8fr) minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas:
+        "trend donut"
+        "bars  donut";
     gap: 16px;
+    align-items: stretch;
+}
+
+/* Chart positions */
+.trend-chart {
+    grid-area: trend;
+    min-width: 0;
+}
+
+.bar-chart {
+    grid-area: bars;
+    min-width: 0;
+}
+
+.donut-chart {
+    grid-area: donut;
+    min-width: 0;
+    height: 100%;
+}
+
+/* Make component hosts fill their grid cells */
+.trend-chart,
+.bar-chart,
+.donut-chart {
+    display: block;
 }
 
 .dot {
@@ -247,7 +276,12 @@
     }
 
     .charts-section {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: auto;
+        grid-template-areas:
+            "trend"
+            "bars"
+            "donut";
     }
 }
 

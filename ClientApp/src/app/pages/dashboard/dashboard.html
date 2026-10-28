@@ -66,12 +66,15 @@
     </section>
 
     <!-- Charts Layout (2 Columns) -->
-    <section class="charts-section">
-        <!-- Left Chart: Sales Performance Trend -->
-        <app-trend-chart [dailyData]="dailySalesData()" [monthlyData]="monthlySalesData()" />
 
-        <!-- Right Chart: Sales by Category -->
-        <app-donut-chart [data]="salesCategoryData()" [salesData]="salesKpiData()" />
+    <section class="charts-section">
+        <!-- Left column: Trend chart -->
+        <app-trend-chart class="trend-chart" [dailyData]="dailySalesData()" [monthlyData]="monthlySalesData()" />
+
+        <!-- Left column: Bar chart below trend chart -->
+        <app-horizontal-bar-chart class="bar-chart" />
+
+        <!-- Right column: Donut chart spanning both rows -->
+        <app-donut-chart class="donut-chart" [data]="salesCategoryData()" [salesData]="salesKpiData()" />
     </section>
-    <app-horizontal-bar-chart />
 </div>
