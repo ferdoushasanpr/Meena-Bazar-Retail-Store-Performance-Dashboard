@@ -222,86 +222,6 @@
     gap: 16px;
 }
 
-.chart-card {
-    background: #131e32;
-    border: 1px solid #1e2d4a;
-    border-radius: 12px;
-    padding: 20px;
-}
-
-.chart-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 14px;
-}
-
-.chart-title {
-    font-size: 17px;
-    font-weight: 700;
-    color: #ffffff;
-    margin: 0;
-}
-
-.chart-subtitle {
-    font-size: 12px;
-    color: #64748b;
-    margin: 4px 0 0 0;
-}
-
-.chart-controls {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.toggle-group {
-    background: #0f172a;
-    padding: 3px;
-    border-radius: 6px;
-    display: flex;
-}
-
-.toggle-btn {
-    background: transparent;
-    border: none;
-    color: #94a3b8;
-    padding: 5px 10px;
-    font-size: 12px;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.toggle-btn.active {
-    background: #1e293b;
-    color: #ffffff;
-    font-weight: 600;
-}
-
-.icon-toggle {
-    background: #0f172a;
-    padding: 3px;
-    border-radius: 6px;
-    display: flex;
-}
-
-.icon-toggle .icon-btn.active {
-    color: #38bdf8;
-}
-
-.targets-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: #0f172a;
-    border: 1px solid #1e293b;
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 12px;
-    color: #cbd5e1;
-    margin-bottom: 12px;
-}
-
 .dot {
     width: 6px;
     height: 6px;
@@ -312,45 +232,6 @@
     background-color: #38bdf8;
 }
 
-.canvas-container {
-    height: 280px;
-    position: relative;
-}
-
-.chart-legend-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 12px;
-    padding-top: 16px;
-}
-
-.legend-info {
-    color: #94a3b8;
-    font-size: 12px;
-}
-
-.solid-purple {
-    display: inline-block;
-    width: 20px;
-    height: 3px;
-    background-color: #8b5cf6;
-    border-radius: 2px;
-}
-
-.legend-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.legend-line {
-    width: 16px;
-    height: 2px;
-    display: inline-block;
-}
-
 .dotted-gray {
     border-top: 2px dotted #64748b;
 }
@@ -358,26 +239,6 @@
 .dashed-gray {
     border-top: 2px dashed #475569;
 }
-
-.chart-scroll-container {
-    width: 100%;
-    overflow-x: auto;
-    overflow-y: hidden;
-    position: relative;
-    scrollbar-width: thin;
-    scrollbar-color: #64748b #1e293b;
-}
-
-.chart-scroll-content {
-    height: 320px;
-    min-width: 100%;
-    position: relative;
-}
-
-.chart-scroll-content canvas {
-    display: block;
-}
-
 
 /* Responsive Scaling */
 @media (max-width: 1200px) {
