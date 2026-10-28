@@ -72,7 +72,7 @@
         <app-trend-chart class="trend-chart" [dailyData]="dailySalesData()" [monthlyData]="monthlySalesData()" />
 
         <!-- Left column: Bar chart below trend chart -->
-        <app-horizontal-bar-chart class="bar-chart" />
+        <app-horizontal-bar-chart class="bar-chart" [storesData]="storesSalesData()" />
 
         <!-- Right column: Donut chart spanning both rows -->
         <app-donut-chart class="donut-chart" [data]="salesCategoryData()" [salesData]="salesKpiData()" />

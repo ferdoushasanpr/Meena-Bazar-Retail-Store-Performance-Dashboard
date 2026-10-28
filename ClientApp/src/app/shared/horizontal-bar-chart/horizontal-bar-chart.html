@@ -13,30 +13,25 @@
 
     <!-- Store Performance List -->
     <div class="stores-list">
-        @for (store of stores; track store.id) {
+        @for (store of storesData(); track store.store_id; let i = $index) {
         <div class="store-item">
             <!-- Item Info Row -->
             <div class="store-info-row">
                 <div class="store-meta">
-                    <span class="store-rank">{{ formatRank(store.rank) }}</span>
-                    <span class="store-name">{{ store.name }}</span>
-                    @if (store.badge) {
-                    <span class="badge-tag tag-purple">{{ store.badge }}</span>
-                    }
+                    <span class="store-rank">{{ formatRank(i + 1) }}</span>
+                    <span class="store-name">{{ store.store_name }}</span>
                 </div>
                 <div class="store-metrics">
-                    <span class="metric-txns">{{ store.transactions }} txns</span>
-                    <span class="metric-variance" [class.negative]="store.variance < 0">
-                        {{ store.variance > 0 ? '+' : '' }}{{ store.variance }}%
-                    </span>
-                    <span class="metric-sales">${{ store.sales }}</span>
+                    <span class="metric-txns">{{ store.total_Transactions }} txns</span>
+                    <span class="metric-variance">—</span>
+                    <span class="metric-sales">${{ store.total_Sales }}</span>
                 </div>
             </div>
 
             <!-- Dynamic Progress Bar -->
             <div class="store-progress-track">
-                <div class="store-progress-fill" [class]="getBarColorClass(store)"
-                    [style.width.%]="getBarWidthPercentage(store.sales)">
+                <div class="store-progress-fill" [class]="getBarColorClass(i)"
+                    [style.width.%]="getBarWidthPercentage(store.total_Sales)">
                 </div>
             </div>
         </div>
@@ -51,10 +46,10 @@
     <!-- Card Footer -->
     <div class="stores-footer">
         <span class="footer-count">
-            Displaying {{ stores.length }} of {{ totalStoresCount }} licensed physical locations
+            Displaying {{ totalStoresCount() }} licensed physical locations
         </span>
         <button class="footer-link-btn">
-            <span>View All {{ totalStoresCount }} Stores</span>
+            <span>View All {{ totalStoresCount() }} Stores</span>
             <i class="fa-solid fa-arrow-right"></i>
         </button>
     </div>

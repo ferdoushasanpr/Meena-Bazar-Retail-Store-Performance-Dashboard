@@ -219,7 +219,7 @@
 .charts-section {
     display: grid;
     grid-template-columns: minmax(0, 1.8fr) minmax(0, 1fr);
-    grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: auto auto;
     grid-template-areas:
         "trend donut"
         "bars  donut";

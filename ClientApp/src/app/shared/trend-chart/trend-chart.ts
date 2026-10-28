@@ -144,7 +144,7 @@ export class TrendChart implements AfterViewInit, OnDestroy {
         return `${monthNames[monthIndex]} ${item.year}`;
       });
 
-      sales = data.map(item => item.total_Sales);
+      sales = data.map(item => item.total_Revenue);
     }
 
     this.trendChart.data.labels = labels;
