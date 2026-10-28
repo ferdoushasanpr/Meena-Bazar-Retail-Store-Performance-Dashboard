@@ -17,13 +17,6 @@ import { HorizontalBarChart } from '../../shared/horizontal-bar-chart/horizontal
 export class Dashboard implements OnInit {
   private businessKpiService = inject(SalesService);
 
-  // Filters & State
-  selectedTimeRange = 'Last 30 Days';
-  timeRanges = ['All Time', 'Today', 'Last 7 Days', 'Last 30 Days', 'This Month', 'Previous Month'];
-  compareChecked = true;
-  selectedStoresCount = 5;
-  totalStoresCount = 18;
-
   // Sales Data
   salesKpiData = signal<SalesData>({
     totalSales: 0.0,
@@ -134,10 +127,5 @@ export class Dashboard implements OnInit {
         console.error(error);
       }
     });
-  }
-
-
-  setTimeRange(range: string): void {
-    this.selectedTimeRange = range;
   }
 }
