@@ -72,24 +72,30 @@
             <div class="chart-header">
                 <div>
                     <h2 class="chart-title">Sales Performance Trend</h2>
-                    <p class="chart-subtitle">Daily sales revenue over time</p>
+                    <p class="chart-subtitle">
+                        {{ selectedViewMode === 'Daily'
+                        ? 'Daily sales revenue over time'
+                        : selectedViewMode === 'Monthly'
+                        ? 'Monthly sales revenue over time'
+                        : 'Yearly sales revenue over time' }}
+                    </p>
                 </div>
 
                 <div class="chart-controls">
                     <div class="toggle-group">
                         <button class="toggle-btn" [class.active]="selectedViewMode === 'Daily'"
-                            (click)="selectedViewMode = 'Daily'">
+                            (click)="setViewMode('Daily')">
                             Daily
                         </button>
 
                         <button class="toggle-btn" [class.active]="selectedViewMode === 'Monthly'"
-                            (click)="selectedViewMode = 'Monthly'">
+                            (click)="setViewMode('Monthly')">
                             Monthly
                         </button>
 
                         <button class="toggle-btn" [class.active]="selectedViewMode === 'Yearly'"
-                            (click)="selectedViewMode = 'Yearly'">
-                            Weekly
+                            (click)="setViewMode('Yearly')">
+                            Yearly
                         </button>
                     </div>
                 </div>
@@ -108,7 +114,11 @@
                 </div>
 
                 <div class="legend-info">
-                    {{ dailySalesData().length }} days of sales data
+                    {{ selectedViewMode === 'Daily'
+                    ? dailySalesData().length + ' days of sales data'
+                    : selectedViewMode === 'Monthly'
+                    ? monthlySalesData().length + ' months of sales data'
+                    : 'Yearly sales data' }}
                 </div>
             </div>
         </div>

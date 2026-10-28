@@ -2,7 +2,7 @@ import { AfterViewInit, Component, computed, ElementRef, inject, OnInit, signal,
 import { FormsModule } from '@angular/forms';
 import { Chart, registerables } from 'chart.js';
 import { SalesService } from '../../services/sales-service';
-import { DailySalesData, SalesCategoryData, SalesData } from '../../models/sales';
+import { DailySalesData, MonthlySalesData, SalesCategoryData, SalesData } from '../../models/sales';
 import { MetricCardProps } from '../../models/matric-card';
 import { MetricCard } from '../../shared/metric-card/metric-card';
 import { DonutChart } from '../../shared/donut-chart/donut-chart';
@@ -28,15 +28,16 @@ export class Dashboard implements OnInit, AfterViewInit {
   totalStoresCount = 18;
   selectedViewMode: 'Daily' | 'Monthly' | 'Yearly' = 'Daily';
 
+  // Sales Data
   salesKpiData = signal<SalesData>({
     totalSales: 0.0,
     numberOfTransactions: 0,
     averageBasketValue: 0.0
   });
 
-  // Categories Data
   salesCategoryData = signal<SalesCategoryData[]>([]);
   dailySalesData = signal<DailySalesData[]>([]);
+  monthlySalesData = signal<MonthlySalesData[]>([]);
 
   // Chart instances
   private trendChart!: Chart;
@@ -86,6 +87,11 @@ export class Dashboard implements OnInit, AfterViewInit {
     this.loadSalesKpiData();
     this.loadSalesCategoryData();
     this.loadDailySalesData();
+    this.loadMonthlySalesData();
+  }
+
+  ngAfterViewInit(): void {
+    this.initTrendChart();
   }
 
   loadSalesKpiData(): void {
@@ -110,23 +116,7 @@ export class Dashboard implements OnInit, AfterViewInit {
     this.businessKpiService.getDailySalesData().subscribe({
       next: (response) => {
         this.dailySalesData.set(response);
-
-        if (this.trendChart) {
-          this.trendChart.data.labels = response.map(item =>
-            new Date(item.salesDate).toLocaleDateString('en-US', {
-              month: 'short',
-              day: '2-digit'
-            })
-          );
-
-          this.trendChart.data.datasets[0].data = response.map(
-            item => item.totalSales
-          );
-
-          this.trendChart.update();
-        } else if (this.trendChartCanvas) {
-          this.initTrendChart();
-        }
+        this.updateTrendChart();
       },
       error: (error) => {
         console.error(error);
@@ -134,11 +124,24 @@ export class Dashboard implements OnInit, AfterViewInit {
     });
   }
 
-  ngAfterViewInit(): void {
-    this.initTrendChart();
+  loadMonthlySalesData(): void {
+    this.businessKpiService.getMonthlySalesData().subscribe({
+      next: (response) => {
+        this.monthlySalesData.set(response);
+        this.updateTrendChart();
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
   }
 
   // --- Line Chart Initialization ---
+  setViewMode(mode: 'Daily' | 'Monthly' | 'Yearly'): void {
+    this.selectedViewMode = mode;
+    this.updateTrendChart();
+  }
+
   private initTrendChart(): void {
     const ctx = this.trendChartCanvas.nativeElement.getContext('2d');
     if (!ctx) return;
@@ -207,7 +210,51 @@ export class Dashboard implements OnInit, AfterViewInit {
     });
   }
 
+  private updateTrendChart(): void {
+    if (!this.trendChart) return;
 
+    let labels: string[] = [];
+    let sales: number[] = [];
+
+    if (this.selectedViewMode === 'Daily') {
+      const dailyData = this.dailySalesData();
+
+      labels = dailyData.map(item =>
+        new Date(item.salesDate).toLocaleDateString('en-US', {
+          month: 'short',
+          day: '2-digit'
+        })
+      );
+
+      sales = dailyData.map(item => item.totalSales);
+    } else if (this.selectedViewMode === 'Monthly') {
+      const monthlyData = this.monthlySalesData();
+
+      labels = monthlyData.map(item =>
+        new Date(item.month).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'short'
+        })
+      );
+
+      sales = monthlyData.map(item => item.total_Sales);
+    } else {
+      // Yearly data is not yet implemented.
+      labels = [];
+      sales = [];
+    }
+
+    this.trendChart.data.labels = labels;
+    this.trendChart.data.datasets[0].data = sales;
+    this.trendChart.data.datasets[0].label =
+      this.selectedViewMode === 'Daily'
+        ? 'Daily Sales'
+        : this.selectedViewMode === 'Monthly'
+          ? 'Monthly Sales'
+          : 'Yearly Sales';
+
+    this.trendChart.update();
+  }
 
   setTimeRange(range: string): void {
     this.selectedTimeRange = range;
