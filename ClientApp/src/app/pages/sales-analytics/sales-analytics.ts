@@ -1,13 +1,14 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SalesService } from '../../services/sales-service';
-import { SalesData } from '../../models/sales';
+import { DailyStoreSalesData, SalesData } from '../../models/sales';
 import { MetricCardProps } from '../../models/matric-card';
 import { MetricCard } from '../../shared/metric-card/metric-card';
 import { PageHeader } from '../../shared/page-header/page-header';
+import { TrendChart } from '../../shared/trend-chart/trend-chart';
 
 @Component({
-  imports: [FormsModule, PageHeader, MetricCard],
+  imports: [FormsModule, PageHeader, MetricCard, TrendChart],
   selector: 'app-sales-analytics',
   styleUrl: './sales-analytics.css',
   templateUrl: './sales-analytics.html',
@@ -30,6 +31,8 @@ export class SalesAnalytics implements OnInit {
     numberOfTransactions: 0,
     averageBasketValue: 0.0
   });
+
+  dailyStoreSalesData = signal<DailyStoreSalesData[]>([]);
 
   totalSalesCard = computed((): MetricCardProps => {
     const sales = this.salesKpiData();
@@ -66,11 +69,19 @@ export class SalesAnalytics implements OnInit {
 
   ngOnInit(): void {
     this.loadSalesKpiData();
+    this.loadDailyStoreSalesData();
   }
 
   loadSalesKpiData(): void {
     this.businessKpiService.getSalesData().subscribe({
       next: (response) => { this.salesKpiData.set(response); },
+      error: (error) => { console.error(error) }
+    });
+  }
+
+  loadDailyStoreSalesData(): void {
+    this.businessKpiService.getDailyStoresSalesData().subscribe({
+      next: (response) => { this.dailyStoreSalesData.set(response); console.log(response) },
       error: (error) => { console.error(error) }
     });
   }
