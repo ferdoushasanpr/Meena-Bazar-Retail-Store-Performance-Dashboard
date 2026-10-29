@@ -1,0 +1,21 @@
+<div class="container">
+    <!-- Top Navigation Header -->
+    <app-page-header [title]="pageHeaderTitle" [subtitle]="pageHeaderSubtitle" />
+
+    <!-- Filter Control Bar -->
+    <section class="filter-bar">
+        <div class="time-pills">
+            @for (range of timeRanges; track range) {
+            <button class="pill-btn" [class.active]="selectedTimeRange === range" (click)="setTimeRange(range)">
+                {{ range }}
+            </button>
+            }
+        </div>
+
+        <div class="filter-controls">
+            <button class="btn-text">
+                <i class="fa-solid fa-arrow-rotate-left"></i> Reset Filters
+            </button>
+        </div>
+    </section>
+</div>
