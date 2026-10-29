@@ -1,26 +1,6 @@
 <div class="container">
     <!-- Top Navigation Header -->
-    <header class="dashboard-header">
-        <div class="header-title">
-            <div class="title-row">
-                <h1>Sales Analytics</h1>
-                <span class="badge-tag">EXECUTIVE REGIONAL</span>
-            </div>
-            <p class="subtitle">In-depth multi-dimensional trend analysis, period-over-period comparisons, and volume
-                metrics.</p>
-        </div>
-
-        <div class="header-actions">
-            <div class="last-updated">
-                <span class="status-dot"></span>
-                <span>Last updated: <strong>10:42 AM</strong></span>
-                <button class="icon-btn" title="Refresh Data"><i class="fa-solid fa-rotate-right"></i></button>
-            </div>
-            <button class="btn btn-outline">
-                <i class="fa-solid fa-cloud-arrow-down"></i> Export Summary
-            </button>
-        </div>
-    </header>
+    <app-page-header [title]="pageHeaderTitle" [subtitle]="pageHeaderSubtitle" />
 
     <!-- Filter Control Bar -->
     <section class="filter-bar">

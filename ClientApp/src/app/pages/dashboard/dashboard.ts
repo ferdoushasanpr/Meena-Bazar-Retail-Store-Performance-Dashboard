@@ -7,15 +7,20 @@ import { MetricCard } from '../../shared/metric-card/metric-card';
 import { DonutChart } from '../../shared/donut-chart/donut-chart';
 import { TrendChart } from '../../shared/trend-chart/trend-chart';
 import { HorizontalBarChart } from '../../shared/horizontal-bar-chart/horizontal-bar-chart';
+import { PageHeader } from '../../shared/page-header/page-header';
 
 @Component({
-  imports: [FormsModule, MetricCard, TrendChart, DonutChart, HorizontalBarChart],
+  imports: [FormsModule, PageHeader, MetricCard, TrendChart, DonutChart, HorizontalBarChart],
   selector: 'app-dashboard',
   styleUrl: './dashboard.css',
   templateUrl: './dashboard.html',
 })
 export class Dashboard implements OnInit {
   private businessKpiService = inject(SalesService);
+
+  //Page Header Component Info
+  pageHeaderTitle = "Sales Overview";
+  pageHeaderSubtitle = "Monitor revenue, transactions, and retail performance across your stores.";
 
   // Sales Data
   salesKpiData = signal<SalesData>({

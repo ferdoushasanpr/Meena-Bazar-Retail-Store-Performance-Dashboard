@@ -5,15 +5,20 @@ import { SalesData } from '../../models/sales';
 import { MetricCardProps } from '../../models/matric-card';
 import { MetricCard } from '../../shared/metric-card/metric-card';
 import { CategoryMatrixChart } from '../../shared/category-matrix-chart/category-matrix-chart';
+import { PageHeader } from '../../shared/page-header/page-header';
 
 @Component({
-  imports: [FormsModule, MetricCard, CategoryMatrixChart],
+  imports: [FormsModule, PageHeader, MetricCard, CategoryMatrixChart],
   selector: 'app-product-categories',
   styleUrl: './product-categories.css',
   templateUrl: './product-categories.html',
 })
 export class ProductCategories {
   private businessKpiService = inject(SalesService);
+
+  //Page Header Component Info
+  pageHeaderTitle = "Product Categories";
+  pageHeaderSubtitle = "Benchmark, rank, and analyze revenue, customer volume, and efficiency across all product categories.";
 
   // Filters & State
   selectedTimeRange = 'Last 30 Days';
