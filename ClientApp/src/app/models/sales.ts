@@ -38,3 +38,9 @@ export interface DailyStoreSalesData {
     numberOfTransactions: number,
     averageBasketValue: number
 }
+
+export interface BrandSalesData {
+    "brand": string,
+    "total_Transactions": number,
+    "total_Sales": number
+}
