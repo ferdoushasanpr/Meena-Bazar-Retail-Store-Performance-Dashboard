@@ -26,7 +26,7 @@ export class SalesAnalytics implements OnInit {
 
 
   // Sales Data
-  salesKpiData = signal<SalesData>({
+  filteredSalesData = signal<SalesData>({
     totalSales: 0.0,
     numberOfTransactions: 0,
     averageBasketValue: 0.0
@@ -35,7 +35,7 @@ export class SalesAnalytics implements OnInit {
   dailyStoreSalesData = signal<DailyStoreSalesData[]>([]);
 
   totalSalesCard = computed((): MetricCardProps => {
-    const sales = this.salesKpiData();
+    const sales = this.filteredSalesData();
 
     return {
       title: 'TOTAL SALES',
@@ -46,7 +46,7 @@ export class SalesAnalytics implements OnInit {
   });
 
   transactionsCard = computed((): MetricCardProps => {
-    const sales = this.salesKpiData();
+    const sales = this.filteredSalesData();
 
     return {
       title: 'TRANSACTIONS',
@@ -57,7 +57,7 @@ export class SalesAnalytics implements OnInit {
   });
 
   averageBasketCard = computed((): MetricCardProps => {
-    const sales = this.salesKpiData();
+    const sales = this.filteredSalesData();
 
     return {
       title: 'AVG. BASKET VALUE',
@@ -68,13 +68,13 @@ export class SalesAnalytics implements OnInit {
   });
 
   ngOnInit(): void {
-    this.loadSalesKpiData();
+    this.loadFilteredSalesData();
     this.loadDailyStoreSalesData();
   }
 
-  loadSalesKpiData(): void {
-    this.businessKpiService.getSalesData().subscribe({
-      next: (response) => { this.salesKpiData.set(response); },
+  loadFilteredSalesData(): void {
+    this.businessKpiService.getFilteredSalesData('2025-01-01', '2025-02-01', null).subscribe({
+      next: (response) => { this.filteredSalesData.set(response); },
       error: (error) => { console.error(error) }
     });
   }
