@@ -1,16 +1,15 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SalesService } from '../../services/sales-service';
-import { DailySalesData, MonthlySalesData, SalesCategoryData, SalesData, StoreSalesData } from '../../models/sales';
+import { DailySalesData, MonthlySalesData, SalesCategoryData, SalesData } from '../../models/sales';
 import { MetricCardProps } from '../../models/matric-card';
 import { MetricCard } from '../../shared/metric-card/metric-card';
 import { DonutChart } from '../../shared/donut-chart/donut-chart';
 import { TrendChart } from '../../shared/trend-chart/trend-chart';
-import { HorizontalBarChart } from '../../shared/horizontal-bar-chart/horizontal-bar-chart';
 import { PageHeader } from '../../shared/page-header/page-header';
 
 @Component({
-  imports: [FormsModule, PageHeader, MetricCard, TrendChart, DonutChart, HorizontalBarChart],
+  imports: [FormsModule, PageHeader, MetricCard, TrendChart, DonutChart],
   selector: 'app-dashboard',
   styleUrl: './dashboard.css',
   templateUrl: './dashboard.html',
@@ -32,7 +31,7 @@ export class Dashboard implements OnInit {
   salesCategoryData = signal<SalesCategoryData[]>([]);
   dailySalesData = signal<DailySalesData[]>([]);
   monthlySalesData = signal<MonthlySalesData[]>([]);
-  storesSalesData = signal<StoreSalesData[]>([]);
+
 
 
   totalSalesCard = computed((): MetricCardProps => {
@@ -80,7 +79,6 @@ export class Dashboard implements OnInit {
     this.loadSalesCategoryData();
     this.loadDailySalesData();
     this.loadMonthlySalesData();
-    this.loadStoresSalesData();
   }
 
   loadSalesKpiData(): void {
@@ -116,17 +114,6 @@ export class Dashboard implements OnInit {
     this.businessKpiService.getMonthlySalesData().subscribe({
       next: (response) => {
         this.monthlySalesData.set(response);
-      },
-      error: (error) => {
-        console.error(error);
-      }
-    });
-  }
-
-  loadStoresSalesData(): void {
-    this.businessKpiService.getStoresSalesData().subscribe({
-      next: (response) => {
-        this.storesSalesData.set(response);
       },
       error: (error) => {
         console.error(error);
