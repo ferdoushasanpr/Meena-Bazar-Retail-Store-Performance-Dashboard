@@ -1,0 +1,184 @@
+/* Card Container Base */
+.matrix-card {
+    background: #131e32;
+    border: 1px solid #1e2d4a;
+    border-radius: 12px;
+    padding: 22px;
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header Section */
+.matrix-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    gap: 16px;
+}
+
+.header-right-actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.sku-meta-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #64748b;
+}
+
+.sku-meta-badge strong {
+    color: #f1f5f9;
+}
+
+.icon-sku {
+    color: #475569;
+    font-size: 12px;
+}
+
+/* Action Button */
+.btn-sort {
+    background: #0f172a;
+    color: #e2e8f0;
+    border: 1px solid #1e293b;
+    padding: 7px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+.btn-sort:hover {
+    background: #1e293b;
+    border-color: #334155;
+    color: #ffffff;
+}
+
+/* Matrix 5-Column Grid */
+.matrix-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+}
+
+.matrix-item-card {
+    background: #0b1320;
+    border: 1px solid #1a273e;
+    border-radius: 10px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.matrix-item-card:hover {
+    border-color: #2e436a;
+    transform: translateY(-2px);
+}
+
+/* Item Header (Title & Badge) */
+.item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.category-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.badge-growth {
+    background: rgba(56, 189, 248, 0.12);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Main Turnover Amount */
+.item-amount {
+    font-size: 24px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 4px;
+    letter-spacing: -0.3px;
+}
+
+/* Share Label */
+.item-share-label {
+    font-size: 12px;
+    color: #64748b;
+    margin-bottom: 16px;
+}
+
+/* Dynamic Progress Bar */
+.matrix-progress-track {
+    background: #16243b;
+    height: 5px;
+    border-radius: 3px;
+    overflow: hidden;
+    width: 100%;
+}
+
+.matrix-progress-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.chart-canvas-container {
+    display: none;
+}
+
+.item-share-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sales-percentage {
+    font-weight: 600;
+    color: #64748b;
+}
+
+/* Responsive Grid Rules */
+@media (max-width: 1200px) {
+    .matrix-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .matrix-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .matrix-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+@media (max-width: 480px) {
+    .matrix-grid {
+        grid-template-columns: 1fr;
+    }
+}

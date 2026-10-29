@@ -1,21 +1,26 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SalesService } from '../../services/sales-service';
-import { DailySalesData, MonthlySalesData, SalesCategoryData, SalesData, StoreSalesData } from '../../models/sales';
+import { BrandSalesData, DailySalesData, MonthlySalesData, SalesCategoryData, SalesData } from '../../models/sales';
 import { MetricCardProps } from '../../models/matric-card';
 import { MetricCard } from '../../shared/metric-card/metric-card';
 import { DonutChart } from '../../shared/donut-chart/donut-chart';
 import { TrendChart } from '../../shared/trend-chart/trend-chart';
+import { PageHeader } from '../../shared/page-header/page-header';
 import { HorizontalBarChart } from '../../shared/horizontal-bar-chart/horizontal-bar-chart';
 
 @Component({
-  imports: [FormsModule, MetricCard, TrendChart, DonutChart, HorizontalBarChart],
+  imports: [FormsModule, PageHeader, MetricCard, TrendChart, HorizontalBarChart, DonutChart],
   selector: 'app-dashboard',
   styleUrl: './dashboard.css',
   templateUrl: './dashboard.html',
 })
 export class Dashboard implements OnInit {
   private businessKpiService = inject(SalesService);
+
+  //Page Header Component Info
+  pageHeaderTitle = "Sales Overview";
+  pageHeaderSubtitle = "Monitor revenue, transactions, and retail performance across your stores.";
 
   // Sales Data
   salesKpiData = signal<SalesData>({
@@ -27,7 +32,8 @@ export class Dashboard implements OnInit {
   salesCategoryData = signal<SalesCategoryData[]>([]);
   dailySalesData = signal<DailySalesData[]>([]);
   monthlySalesData = signal<MonthlySalesData[]>([]);
-  storesSalesData = signal<StoreSalesData[]>([]);
+  brandSalesData = signal<BrandSalesData[]>([]);
+
 
 
   totalSalesCard = computed((): MetricCardProps => {
@@ -75,7 +81,7 @@ export class Dashboard implements OnInit {
     this.loadSalesCategoryData();
     this.loadDailySalesData();
     this.loadMonthlySalesData();
-    this.loadStoresSalesData();
+    this.loadBrandSalesData();
   }
 
   loadSalesKpiData(): void {
@@ -118,10 +124,10 @@ export class Dashboard implements OnInit {
     });
   }
 
-  loadStoresSalesData(): void {
-    this.businessKpiService.getStoresSalesData().subscribe({
+  loadBrandSalesData(): void {
+    this.businessKpiService.getBrandSalesData().subscribe({
       next: (response) => {
-        this.storesSalesData.set(response);
+        this.brandSalesData.set(response);
       },
       error: (error) => {
         console.error(error);

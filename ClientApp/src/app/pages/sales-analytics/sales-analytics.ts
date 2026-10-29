@@ -1,12 +1,14 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SalesService } from '../../services/sales-service';
-import { SalesData } from '../../models/sales';
+import { DailyStoreSalesData, SalesData } from '../../models/sales';
 import { MetricCardProps } from '../../models/matric-card';
 import { MetricCard } from '../../shared/metric-card/metric-card';
+import { PageHeader } from '../../shared/page-header/page-header';
+import { TrendChart } from '../../shared/trend-chart/trend-chart';
 
 @Component({
-  imports: [FormsModule, MetricCard],
+  imports: [FormsModule, PageHeader, MetricCard, TrendChart],
   selector: 'app-sales-analytics',
   styleUrl: './sales-analytics.css',
   templateUrl: './sales-analytics.html',
@@ -14,20 +16,26 @@ import { MetricCard } from '../../shared/metric-card/metric-card';
 export class SalesAnalytics implements OnInit {
   private businessKpiService = inject(SalesService);
 
+  //Page Header Component Info
+  pageHeaderTitle = "Sales Analytics";
+  pageHeaderSubtitle = "In-depth multi-dimensional trend analysis, period-over-period comparisons, and volume metrics.";
+
   // Filters & State
   selectedTimeRange = 'Last 30 Days';
   timeRanges = ['All Time', 'Today', 'Last 7 Days', 'Last 30 Days', 'This Month', 'Previous Month'];
 
 
   // Sales Data
-  salesKpiData = signal<SalesData>({
+  filteredSalesData = signal<SalesData>({
     totalSales: 0.0,
     numberOfTransactions: 0,
     averageBasketValue: 0.0
   });
 
+  dailyStoreSalesData = signal<DailyStoreSalesData[]>([]);
+
   totalSalesCard = computed((): MetricCardProps => {
-    const sales = this.salesKpiData();
+    const sales = this.filteredSalesData();
 
     return {
       title: 'TOTAL SALES',
@@ -38,7 +46,7 @@ export class SalesAnalytics implements OnInit {
   });
 
   transactionsCard = computed((): MetricCardProps => {
-    const sales = this.salesKpiData();
+    const sales = this.filteredSalesData();
 
     return {
       title: 'TRANSACTIONS',
@@ -49,7 +57,7 @@ export class SalesAnalytics implements OnInit {
   });
 
   averageBasketCard = computed((): MetricCardProps => {
-    const sales = this.salesKpiData();
+    const sales = this.filteredSalesData();
 
     return {
       title: 'AVG. BASKET VALUE',
@@ -60,12 +68,20 @@ export class SalesAnalytics implements OnInit {
   });
 
   ngOnInit(): void {
-    this.loadSalesKpiData();
+    this.loadFilteredSalesData();
+    this.loadDailyStoreSalesData();
   }
 
-  loadSalesKpiData(): void {
-    this.businessKpiService.getSalesData().subscribe({
-      next: (response) => { this.salesKpiData.set(response) },
+  loadFilteredSalesData(): void {
+    this.businessKpiService.getFilteredSalesData('2025-01-01', '2025-02-01', null).subscribe({
+      next: (response) => { this.filteredSalesData.set(response); },
+      error: (error) => { console.error(error) }
+    });
+  }
+
+  loadDailyStoreSalesData(): void {
+    this.businessKpiService.getDailyStoresSalesData().subscribe({
+      next: (response) => { this.dailyStoreSalesData.set(response); console.log(response) },
       error: (error) => { console.error(error) }
     });
   }

@@ -1,0 +1,129 @@
+:host {
+    display: block;
+    background-color: #0b1320;
+    color: #f1f5f9;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+.container {
+    padding: 24px 32px;
+}
+
+
+/* Buttons */
+.btn {
+    background: #1e293b;
+    color: #f8fafc;
+    border: 1px solid #334155;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+.btn:hover {
+    background: #334155;
+}
+
+.btn-outline {
+    background: rgba(30, 41, 59, 0.6);
+    border-color: #334155;
+}
+
+.icon-btn {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 4px;
+}
+
+.icon-btn:hover {
+    color: #ffffff;
+}
+
+.icon-btn-ghost {
+    background: none;
+    border: none;
+    color: #64748b;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.icon-btn-ghost:hover {
+    color: #e2e8f0;
+}
+
+/* Filter Bar */
+.filter-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    background: rgba(19, 30, 50, 0.7);
+    padding: 8px;
+    border-radius: 10px;
+    border: 1px solid #1e293b;
+}
+
+.time-pills {
+    display: flex;
+    gap: 4px;
+    background: #0f172a;
+    padding: 4px;
+    border-radius: 8px;
+}
+
+.pill-btn {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    padding: 6px 14px;
+    font-size: 13px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.pill-btn.active {
+    background: #6366f1;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.filter-controls {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.btn-text {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-text:hover {
+    color: #ffffff;
+}
+
+/* Metric Cards Grid */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}

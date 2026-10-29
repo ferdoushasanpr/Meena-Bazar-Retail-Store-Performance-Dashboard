@@ -12,67 +12,6 @@
     padding: 24px 32px;
 }
 
-/* Header Styles */
-.dashboard-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 20px;
-}
-
-.header-title .title-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.header-title h1 {
-    font-size: 26px;
-    font-weight: 700;
-    margin: 0;
-    color: #ffffff;
-}
-
-.badge-tag {
-    background: rgba(99, 102, 241, 0.2);
-    color: #818cf8;
-    border: 1px solid rgba(99, 102, 241, 0.4);
-    font-size: 11px;
-    font-weight: 700;
-    padding: 3px 10px;
-    border-radius: 12px;
-    letter-spacing: 0.5px;
-}
-
-.subtitle {
-    color: #94a3b8;
-    font-size: 14px;
-    margin: 6px 0 0 0;
-}
-
-.header-actions {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
-
-.last-updated {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 13px;
-    color: #94a3b8;
-}
-
-.status-dot {
-    width: 8px;
-    height: 8px;
-    background-color: #38bdf8;
-    border-radius: 50%;
-    display: inline-block;
-    box-shadow: 0 0 8px #38bdf8;
-}
-
 /* Buttons */
 .btn {
     background: #1e293b;

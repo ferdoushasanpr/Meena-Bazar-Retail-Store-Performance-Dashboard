@@ -10,7 +10,6 @@ import {
   SimpleChanges
 } from '@angular/core';
 import { Chart, registerables } from 'chart.js';
-import { StoreSalesData } from '../../models/sales';
 
 Chart.register(...registerables);
 
@@ -26,32 +25,33 @@ export class HorizontalBarChart
   @ViewChild('storesChartCanvas')
   storesChartCanvas!: ElementRef<HTMLCanvasElement>;
 
-  storesData = input.required<StoreSalesData[]>();
+  // Generic data input (accepts any array)
+  data = input.required<any[]>();
+
+  // Property names to extract labels and sales values
+  labelKey = input.required<string>();
+  salesKey = input.required<string>();
 
   chartInstance?: Chart;
   private viewInitialized = false;
 
-  totalStoresCount = computed(() => this.storesData().length);
+  totalCount = computed(() => this.data().length);
 
   get maxSales(): number {
-    const sales = this.storesData().map(
-      store => store.total_Sales
-    );
-
+    const sales = this.data().map(item => Number(item[this.salesKey()]) || 0);
     return sales.length ? Math.max(...sales) : 0;
   }
 
   get averageSales(): number {
-    const stores = this.storesData();
+    const items = this.data();
+    if (!items.length) return 0;
 
-    if (!stores.length) return 0;
-
-    const total = stores.reduce(
-      (sum, store) => sum + store.total_Sales,
+    const total = items.reduce(
+      (sum, item) => sum + (Number(item[this.salesKey()]) || 0),
       0
     );
 
-    return total / stores.length;
+    return total / items.length;
   }
 
   get formattedAvgSales(): string {
@@ -67,7 +67,7 @@ export class HorizontalBarChart
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['storesData'] && this.viewInitialized) {
+    if ((changes['data'] || changes['labelKey'] || changes['salesKey']) && this.viewInitialized) {
       this.updateChart();
     }
   }
@@ -78,7 +78,6 @@ export class HorizontalBarChart
 
   getBarWidthPercentage(sales: number): number {
     if (this.maxSales <= 0) return 0;
-
     return (sales / this.maxSales) * 100;
   }
 
@@ -95,22 +94,21 @@ export class HorizontalBarChart
   private initChart(): void {
     const canvas = this.storesChartCanvas?.nativeElement;
     const ctx = canvas?.getContext('2d');
-
     if (!ctx) return;
 
-    const stores = this.storesData();
+    const items = this.data();
+    const lKey = this.labelKey();
+    const sKey = this.salesKey();
 
     this.chartInstance = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: stores.map(store => store.store_name),
+        labels: items.map(item => item[lKey]),
         datasets: [
           {
             label: 'Sales Volume ($)',
-            data: stores.map(store => store.total_Sales),
-            backgroundColor: stores.map((_, index) =>
-              this.getBarColorClass(index)
-            ),
+            data: items.map(item => item[sKey]),
+            backgroundColor: items.map((_, index) => this.getBarColorClass(index)),
             borderRadius: 4,
             barThickness: 12
           }
@@ -121,9 +119,7 @@ export class HorizontalBarChart
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: {
-            display: false
-          },
+          legend: { display: false },
           tooltip: {
             callbacks: {
               label: context =>
@@ -135,19 +131,8 @@ export class HorizontalBarChart
           }
         },
         scales: {
-          x: {
-            display: false,
-            beginAtZero: true,
-            grid: {
-              display: false
-            }
-          },
-          y: {
-            display: false,
-            grid: {
-              display: false
-            }
-          }
+          x: { display: false, beginAtZero: true, grid: { display: false } },
+          y: { display: false, grid: { display: false } }
         }
       }
     });
@@ -159,18 +144,14 @@ export class HorizontalBarChart
       return;
     }
 
-    const stores = this.storesData();
+    const items = this.data();
+    const lKey = this.labelKey();
+    const sKey = this.salesKey();
     const chart = this.chartInstance;
 
-    chart.data.labels = stores.map(store => store.store_name);
-
-    chart.data.datasets[0].data = stores.map(
-      store => store.total_Sales
-    );
-
-    chart.data.datasets[0].backgroundColor = stores.map(
-      (_, index) => this.getBarColorClass(index)
-    );
+    chart.data.labels = items.map(item => item[lKey]);
+    chart.data.datasets[0].data = items.map(item => item[sKey]);
+    chart.data.datasets[0].backgroundColor = items.map((_, index) => this.getBarColorClass(index));
 
     chart.update();
   }

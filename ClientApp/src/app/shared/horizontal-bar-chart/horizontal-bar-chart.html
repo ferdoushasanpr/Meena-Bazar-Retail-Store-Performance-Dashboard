@@ -1,56 +1,47 @@
-<!-- Top Performing Stores Card (Positioned below Trend Chart) -->
+<!-- Top Performing List Card -->
 <div class="chart-card stores-card">
-    <!-- Card Header -->
     <div class="stores-header">
         <div class="header-left">
-            <h2 class="chart-title">Top Performing Stores</h2>
-            <p class="chart-subtitle">Ranked by gross sales volume and period variance</p>
+            <h2 class="chart-title">{{labelKey() === 'store_name' ? 'Store' : 'Brand'}} Performance Breakdown</h2>
+            <p class="chart-subtitle">Ranked by gross sales volume</p>
         </div>
         <div class="avg-badge">
-            <span>Avg: <strong>${{ formattedAvgSales }}/store</strong></span>
+            <span>Avg: <strong>${{ formattedAvgSales }}</strong></span>
         </div>
     </div>
 
-    <!-- Store Performance List -->
     <div class="stores-list">
-        @for (store of storesData(); track store.store_id; let i = $index) {
+        @for (item of data(); track $index; let i = $index) {
         <div class="store-item">
-            <!-- Item Info Row -->
             <div class="store-info-row">
                 <div class="store-meta">
                     <span class="store-rank">{{ formatRank(i + 1) }}</span>
-                    <span class="store-name">{{ store.store_name }}</span>
+                    <!-- Uses dynamic lookup for name/brand -->
+                    <span class="store-name">{{ item[labelKey()] }}</span>
                 </div>
                 <div class="store-metrics">
-                    <span class="metric-txns">{{ store.total_Transactions }} txns</span>
+                    <span class="metric-txns">{{ item.total_Transactions }} txns</span>
                     <span class="metric-variance">—</span>
-                    <span class="metric-sales">${{ store.total_Sales }}</span>
+                    <span class="metric-sales">${{ item[salesKey()] }}</span>
                 </div>
             </div>
 
-            <!-- Dynamic Progress Bar -->
             <div class="store-progress-track">
                 <div class="store-progress-fill" [class]="getBarColorClass(i)"
-                    [style.width.%]="getBarWidthPercentage(store.total_Sales)">
+                    [style.width.%]="getBarWidthPercentage(item[salesKey()])">
                 </div>
             </div>
         </div>
         }
     </div>
 
-    <!-- Optional Hidden Canvas for Chart.js Integration -->
     <div class="chart-canvas-hidden">
         <canvas #storesChartCanvas></canvas>
     </div>
 
-    <!-- Card Footer -->
     <div class="stores-footer">
         <span class="footer-count">
-            Displaying {{ totalStoresCount() }} licensed physical locations
+            Displaying {{ totalCount() }} items
         </span>
-        <button class="footer-link-btn">
-            <span>View All {{ totalStoresCount() }} Stores</span>
-            <i class="fa-solid fa-arrow-right"></i>
-        </button>
     </div>
 </div>
