@@ -23,6 +23,9 @@
         <!-- Left column: Trend chart -->
         <app-trend-chart class="trend-chart" [dailyData]="dailySalesData()" [monthlyData]="monthlySalesData()" />
 
+        <!-- Left column: Bar chart below trend chart -->
+        <app-horizontal-bar-chart [data]="brandSalesData()" labelKey="brand" salesKey="total_Sales" />
+
         <!-- Right column: Donut chart spanning both rows -->
         <app-donut-chart class="donut-chart" [data]="salesCategoryData()" [salesData]="salesKpiData()" />
     </section>

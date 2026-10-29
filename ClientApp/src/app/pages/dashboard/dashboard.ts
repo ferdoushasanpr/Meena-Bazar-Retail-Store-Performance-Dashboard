@@ -1,15 +1,16 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SalesService } from '../../services/sales-service';
-import { DailySalesData, MonthlySalesData, SalesCategoryData, SalesData } from '../../models/sales';
+import { BrandSalesData, DailySalesData, MonthlySalesData, SalesCategoryData, SalesData } from '../../models/sales';
 import { MetricCardProps } from '../../models/matric-card';
 import { MetricCard } from '../../shared/metric-card/metric-card';
 import { DonutChart } from '../../shared/donut-chart/donut-chart';
 import { TrendChart } from '../../shared/trend-chart/trend-chart';
 import { PageHeader } from '../../shared/page-header/page-header';
+import { HorizontalBarChart } from '../../shared/horizontal-bar-chart/horizontal-bar-chart';
 
 @Component({
-  imports: [FormsModule, PageHeader, MetricCard, TrendChart, DonutChart],
+  imports: [FormsModule, PageHeader, MetricCard, TrendChart, HorizontalBarChart, DonutChart],
   selector: 'app-dashboard',
   styleUrl: './dashboard.css',
   templateUrl: './dashboard.html',
@@ -31,6 +32,7 @@ export class Dashboard implements OnInit {
   salesCategoryData = signal<SalesCategoryData[]>([]);
   dailySalesData = signal<DailySalesData[]>([]);
   monthlySalesData = signal<MonthlySalesData[]>([]);
+  brandSalesData = signal<BrandSalesData[]>([]);
 
 
 
@@ -79,6 +81,7 @@ export class Dashboard implements OnInit {
     this.loadSalesCategoryData();
     this.loadDailySalesData();
     this.loadMonthlySalesData();
+    this.loadBrandSalesData();
   }
 
   loadSalesKpiData(): void {
@@ -114,6 +117,18 @@ export class Dashboard implements OnInit {
     this.businessKpiService.getMonthlySalesData().subscribe({
       next: (response) => {
         this.monthlySalesData.set(response);
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+  }
+
+  loadBrandSalesData(): void {
+    this.businessKpiService.getBrandSalesData().subscribe({
+      next: (response) => {
+        this.brandSalesData.set(response);
+        console.log(response)
       },
       error: (error) => {
         console.error(error);
