@@ -4,11 +4,10 @@ import { SalesService } from '../../services/sales-service';
 import { SalesData } from '../../models/sales';
 import { MetricCardProps } from '../../models/matric-card';
 import { MetricCard } from '../../shared/metric-card/metric-card';
-import { CategoryMatrixChart } from '../../shared/category-matrix-chart/category-matrix-chart';
 import { PageHeader } from '../../shared/page-header/page-header';
 
 @Component({
-  imports: [FormsModule, PageHeader, MetricCard, CategoryMatrixChart],
+  imports: [FormsModule, PageHeader, MetricCard],
   selector: 'app-sales-analytics',
   styleUrl: './sales-analytics.css',
   templateUrl: './sales-analytics.html',
@@ -71,7 +70,7 @@ export class SalesAnalytics implements OnInit {
 
   loadSalesKpiData(): void {
     this.businessKpiService.getSalesData().subscribe({
-      next: (response) => { this.salesKpiData.set(response) },
+      next: (response) => { this.salesKpiData.set(response); },
       error: (error) => { console.error(error) }
     });
   }
