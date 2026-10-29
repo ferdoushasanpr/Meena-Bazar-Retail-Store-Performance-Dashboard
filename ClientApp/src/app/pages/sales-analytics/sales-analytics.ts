@@ -4,9 +4,10 @@ import { SalesService } from '../../services/sales-service';
 import { SalesData } from '../../models/sales';
 import { MetricCardProps } from '../../models/matric-card';
 import { MetricCard } from '../../shared/metric-card/metric-card';
+import { CategoryMatrixChart } from '../../shared/category-matrix-chart/category-matrix-chart';
 
 @Component({
-  imports: [FormsModule, MetricCard],
+  imports: [FormsModule, MetricCard, CategoryMatrixChart],
   selector: 'app-sales-analytics',
   styleUrl: './sales-analytics.css',
   templateUrl: './sales-analytics.html',

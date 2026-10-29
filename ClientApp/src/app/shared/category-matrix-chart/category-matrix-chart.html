@@ -1,0 +1,55 @@
+<!-- Category Contribution Chart Component -->
+<div class="chart-card matrix-card">
+
+    <div class="matrix-header">
+        <div class="header-left">
+            <h2 class="chart-title">
+                Category Contribution &amp; Growth Matrix
+            </h2>
+
+            <p class="chart-subtitle">
+                Total sales by product category
+            </p>
+        </div>
+    </div>
+
+    <div class="matrix-grid">
+        @for (cat of salesCategoryData(); track cat.category; let i = $index) {
+        <div class="matrix-item-card">
+
+            <div class="item-header">
+                <span class="category-name">
+                    {{ cat.category }}
+                </span>
+            </div>
+
+            <div class="item-amount">
+                {{ (cat.total_Sales).toFixed(2) }}
+            </div>
+
+            <div class="item-share-label">
+                Total Sales
+                <span class="sales-percentage">
+                    {{ getSalesPercentage(cat.total_Sales) }}%
+                </span>
+            </div>
+
+            <div class="matrix-progress-track">
+                <div class="matrix-progress-fill" [style.width.%]="getSalesPercentage(cat.total_Sales)"
+                    [style.background-color]="barColors[i % barColors.length]">
+                </div>
+            </div>
+
+        </div>
+        } @empty {
+        <div class="matrix-empty-state">
+            No sales category data available.
+        </div>
+        }
+    </div>
+
+    <div class="chart-canvas-container">
+        <canvas #matrixChartCanvas></canvas>
+    </div>
+
+</div>
