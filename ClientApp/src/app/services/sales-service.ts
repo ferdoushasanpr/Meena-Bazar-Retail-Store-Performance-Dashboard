@@ -38,4 +38,8 @@ export class SalesService {
     getBrandSalesData(): Observable<BrandSalesData[]> {
         return this.http.get<BrandSalesData[]>(`${this.apiUrlBase}/brands`);
     }
+
+    getFilteredSalesData(startDate: string | null, endDate: string | null, storeId: string | null): Observable<SalesData> {
+        return this.http.get<SalesData>(`${this.apiUrlBase}/kpis/filtered?startDate=2025-01-01&endDate=2025-02-01&storeId=ST005`);
+    }
 }

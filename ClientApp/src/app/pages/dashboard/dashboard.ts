@@ -128,7 +128,6 @@ export class Dashboard implements OnInit {
     this.businessKpiService.getBrandSalesData().subscribe({
       next: (response) => {
         this.brandSalesData.set(response);
-        console.log(response)
       },
       error: (error) => {
         console.error(error);
