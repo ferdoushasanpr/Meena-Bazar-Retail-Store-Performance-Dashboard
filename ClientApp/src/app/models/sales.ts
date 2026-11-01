@@ -40,7 +40,14 @@ export interface DailyStoreSalesData {
 }
 
 export interface BrandSalesData {
-    "brand": string,
-    "total_Transactions": number,
-    "total_Sales": number
+    brand: string,
+    total_Transactions: number,
+    total_Sales: number
+}
+
+export interface ProductSalesData {
+    product_id: string;
+    product_name: string;
+    total_Transactions: number;
+    total_Sales: number;
 }
