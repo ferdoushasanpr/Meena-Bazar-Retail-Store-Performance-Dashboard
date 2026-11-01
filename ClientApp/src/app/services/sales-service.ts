@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { BrandSalesData, DailySalesData, DailyStoreSalesData, MonthlySalesData, SalesCategoryData, SalesData, StoreSalesData } from '../models/sales';
+import { BrandSalesData, DailySalesData, DailyStoreSalesData, MonthlySalesData, ProductSalesData, ProductSalesResponse, SalesCategoryData, SalesData, StoreCategorySalesResponse, StoreSalesData } from '../models/sales';
 
 @Injectable({
     providedIn: 'root'
@@ -39,7 +39,24 @@ export class SalesService {
         return this.http.get<BrandSalesData[]>(`${this.apiUrlBase}/brands`);
     }
 
+<<<<<<< HEAD
     getFilteredSalesData(startDate: string | null, endDate: string | null, storeId: string | null): Observable<SalesData> {
         return this.http.get<SalesData>(`${this.apiUrlBase}/kpis/filtered?startDate=2025-01-01&endDate=2025-02-01&storeId=ST005`);
+=======
+    getFilteredSalesData(startDate: string | null, endDate: string | null, storeId?: string): Observable<SalesData> {
+        if (storeId) {
+            return this.http.get<SalesData>(`${this.apiUrlBase}/kpis/filtered?startDate=${startDate}&endDate=${endDate}&storeId=${storeId}`);
+        } else {
+            return this.http.get<SalesData>(`${this.apiUrlBase}/kpis/filtered?startDate=${startDate}&endDate=${endDate}`);
+        }
+    }
+
+    getProductSalesData(pageNumber: number = 1, pageSize: number = 10): Observable<ProductSalesResponse> {
+        return this.http.get<ProductSalesResponse>(`${this.apiUrlBase}/products?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    }
+
+    getStoreCategorySalesData(pageNumber: number = 1, pageSize: number = 10): Observable<StoreCategorySalesResponse> {
+        return this.http.get<StoreCategorySalesResponse>(`${this.apiUrlBase}/store-category?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+>>>>>>> frontend
     }
 }

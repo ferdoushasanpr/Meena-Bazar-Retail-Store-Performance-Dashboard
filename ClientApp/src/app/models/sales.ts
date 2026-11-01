@@ -40,7 +40,53 @@ export interface DailyStoreSalesData {
 }
 
 export interface BrandSalesData {
-    "brand": string,
-    "total_Transactions": number,
-    "total_Sales": number
+    brand: string,
+    total_Transactions: number,
+    total_Sales: number
+}
+
+export interface ProductSalesData {
+    product_id: string;
+    product_name: string;
+    total_Transactions: number;
+    total_Sales: number;
+}
+
+export interface ProductSalesResponse {
+    data: ProductSalesData[],
+    pageNumber: number,
+    pageSize: number,
+    totalRecords: number,
+    totalPages: number,
+    hasPreviousPage: boolean,
+    hasNextPage: boolean
+}
+
+export interface StoreCategorySalesData {
+    store_id: string,
+    store_name: string,
+    category: string,
+    totalSales: number,
+    unitsSold: number,
+    numberOfTransactions: number
+}
+
+export interface StoreCategorySalesResponse {
+    data: StoreCategorySalesData[],
+    pageNumber: number,
+    pageSize: number,
+    totalRecords: number,
+    totalPages: number,
+    hasPreviousPage: boolean,
+    hasNextPage: boolean
+}
+
+export interface PaginatedResponse<T = any> {
+    data: T[],
+    pageNumber: number,
+    pageSize: number,
+    totalRecords: number,
+    totalPages: number,
+    hasPreviousPage: boolean,
+    hasNextPage: boolean
 }

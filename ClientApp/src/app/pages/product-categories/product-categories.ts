@@ -1,14 +1,15 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SalesService } from '../../services/sales-service';
-import { SalesData } from '../../models/sales';
+import { ProductSalesData, ProductSalesResponse, SalesData } from '../../models/sales';
 import { MetricCardProps } from '../../models/matric-card';
 import { MetricCard } from '../../shared/metric-card/metric-card';
 import { CategoryMatrixChart } from '../../shared/category-matrix-chart/category-matrix-chart';
 import { PageHeader } from '../../shared/page-header/page-header';
+import { HorizontalBarChart } from '../../shared/horizontal-bar-chart/horizontal-bar-chart';
 
 @Component({
-  imports: [FormsModule, PageHeader, MetricCard, CategoryMatrixChart],
+  imports: [FormsModule, PageHeader, MetricCard, CategoryMatrixChart, HorizontalBarChart],
   selector: 'app-product-categories',
   styleUrl: './product-categories.css',
   templateUrl: './product-categories.html',
@@ -30,6 +31,16 @@ export class ProductCategories {
     totalSales: 0.0,
     numberOfTransactions: 0,
     averageBasketValue: 0.0
+  });
+
+  productSalesData = signal<ProductSalesResponse>({
+    data: [],
+    pageNumber: 1,
+    pageSize: 10,
+    totalRecords: 0,
+    totalPages: 0,
+    hasPreviousPage: false,
+    hasNextPage: false,
   });
 
   totalSalesCard = computed((): MetricCardProps => {
@@ -67,6 +78,7 @@ export class ProductCategories {
 
   ngOnInit(): void {
     this.loadSalesKpiData();
+    this.loadProductSalesData(1);
   }
 
   loadSalesKpiData(): void {
@@ -74,6 +86,17 @@ export class ProductCategories {
       next: (response) => { this.salesKpiData.set(response) },
       error: (error) => { console.error(error) }
     });
+  }
+
+  loadProductSalesData(pageNumber: number = 1): void {
+    this.businessKpiService.getProductSalesData(pageNumber).subscribe({
+      next: (response) => { this.productSalesData.set(response); },
+      error: (error) => { console.error(error); }
+    });
+  }
+
+  onPageChange(pageNumber: number): void {
+    this.loadProductSalesData(pageNumber);
   }
 
   setTimeRange(range: string): void {

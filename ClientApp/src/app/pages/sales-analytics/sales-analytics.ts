@@ -73,7 +73,11 @@ export class SalesAnalytics implements OnInit {
   }
 
   loadFilteredSalesData(): void {
+<<<<<<< HEAD
     this.businessKpiService.getFilteredSalesData('2025-01-01', '2025-02-01', null).subscribe({
+=======
+    this.businessKpiService.getFilteredSalesData('2025-01-01', '2025-02-01').subscribe({
+>>>>>>> frontend
       next: (response) => { this.filteredSalesData.set(response); },
       error: (error) => { console.error(error) }
     });

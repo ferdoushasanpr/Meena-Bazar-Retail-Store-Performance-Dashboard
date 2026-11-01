@@ -1,0 +1,69 @@
+<div class="table-card">
+    @if (title()) {
+    <div class="table-header">
+        <h3 class="table-title">{{ title() }}</h3>
+        @if (subtitle()) {
+        <p class="table-subtitle">{{ subtitle() }}</p>
+        }
+    </div>
+    }
+
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    @for (col of columns(); track col.key) {
+                    <th class="sortable" [style.text-align]="col.align" (click)="toggleSort(col.key)">
+                        <div class="header-content"
+                            [style.justify-content]="col.align === 'right' ? 'flex-end' : 'flex-start'">
+                            <span>{{ col.header }}</span>
+                            <span class="sort-icon">
+                                @if (sortColumn() === col.key) {
+                                <i class="fa-solid" [class.fa-sort-up]="sortDirection() === 'asc'"
+                                    [class.fa-sort-down]="sortDirection() === 'desc'"></i>
+                                } @else {
+                                <i class="fa-solid fa-sort muted"></i>
+                                }
+                            </span>
+                        </div>
+                    </th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @for (row of sortedData(); track $index) {
+                <tr>
+                    @for (col of columns(); track col.key) {
+                    <td [style.text-align]="col.align">
+                        <span [class.number-val]="col.type !== 'text'">
+                            {{ formatCell(row[col.key], col.type) }}
+                        </span>
+                    </td>
+                    }
+                </tr>
+                } @empty {
+                <tr>
+                    <td [attr.colspan]="columns().length" class="empty-state">
+                        No data available.
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="table-footer">
+        <span class="pagination-info">
+            Page <strong>{{ pageNumber() }}</strong> of <strong>{{ totalPages() }}</strong> ({{ totalRecords() }} total
+            records)
+        </span>
+        <div class="pagination-actions">
+            <button class="pagination-btn" [disabled]="!hasPreviousPage()" (click)="onPrev()">
+                <i class="fa-solid fa-chevron-left"></i> Previous
+            </button>
+            <button class="pagination-btn" [disabled]="!hasNextPage()" (click)="onNext()">
+                Next <i class="fa-solid fa-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+</div>
