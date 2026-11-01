@@ -81,7 +81,7 @@ export class SalesAnalytics implements OnInit {
 
   loadDailyStoreSalesData(): void {
     this.businessKpiService.getDailyStoresSalesData().subscribe({
-      next: (response) => { this.dailyStoreSalesData.set(response); console.log(response) },
+      next: (response) => { this.dailyStoreSalesData.set(response); },
       error: (error) => { console.error(error) }
     });
   }
