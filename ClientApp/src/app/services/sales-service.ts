@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { BrandSalesData, DailySalesData, DailyStoreSalesData, MonthlySalesData, ProductSalesData, ProductSalesResponse, SalesCategoryData, SalesData, StoreSalesData } from '../models/sales';
+import { BrandSalesData, DailySalesData, DailyStoreSalesData, MonthlySalesData, ProductSalesData, ProductSalesResponse, SalesCategoryData, SalesData, StoreCategorySalesResponse, StoreSalesData } from '../models/sales';
 
 @Injectable({
     providedIn: 'root'
@@ -49,5 +49,9 @@ export class SalesService {
 
     getProductSalesData(pageNumber: number = 1, pageSize: number = 10): Observable<ProductSalesResponse> {
         return this.http.get<ProductSalesResponse>(`${this.apiUrlBase}/products?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    }
+
+    getStoreCategorySalesData(pageNumber: number = 1, pageSize: number = 10): Observable<StoreCategorySalesResponse> {
+        return this.http.get<StoreCategorySalesResponse>(`${this.apiUrlBase}/store-category?pageNumber=${pageNumber}&pageSize=${pageSize}`);
     }
 }
