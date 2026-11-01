@@ -53,21 +53,21 @@ export interface ProductSalesData {
 }
 
 export interface ProductSalesResponse {
-    data: ProductSalesData[];
-    pageNumber: number;
-    pageSize: number;
-    totalRecords: number;
-    totalPages: number;
-    hasPreviousPage: boolean;
-    hasNextPage: boolean;
+    data: ProductSalesData[],
+    pageNumber: number,
+    pageSize: number,
+    totalRecords: number,
+    totalPages: number,
+    hasPreviousPage: boolean,
+    hasNextPage: boolean
 }
 
 export interface PaginatedResponse<T = any> {
-    data: T[];
-    pageNumber: number;
-    pageSize: number;
-    totalRecords: number;
-    totalPages: number;
-    hasPreviousPage: boolean;
-    hasNextPage: boolean;
+    data: T[],
+    pageNumber: number,
+    pageSize: number,
+    totalRecords: number,
+    totalPages: number,
+    hasPreviousPage: boolean,
+    hasNextPage: boolean
 }
