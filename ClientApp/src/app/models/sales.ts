@@ -51,3 +51,13 @@ export interface ProductSalesData {
     total_Transactions: number;
     total_Sales: number;
 }
+
+export interface ProductSalesResponse {
+    data: ProductSalesData[];
+    pageNumber: number;
+    pageSize: number;
+    totalRecords: number;
+    totalPages: number;
+    hasPreviousPage: boolean;
+    hasNextPage: boolean;
+}
