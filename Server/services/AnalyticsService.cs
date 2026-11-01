@@ -36,57 +36,74 @@ public class AnalyticsService : IAnalyticsService
     }
 
     // Query 4: Sales by store and product category.
-    public async Task<IEnumerable<StoreCategorySales>>
-        GetSalesByStoreAndCategoryAsync()
+    public async Task<PaginatedResponse<StoreCategorySales>>
+    GetSalesByStoreAndCategoryAsync(
+        int pageNumber,
+        int pageSize)
     {
         var query =
-        from s in _context.DemoSales
-            .AsNoTracking()
-            .Where(s => s.order_status == "Completed")
-        join st in _context.DemoStores.AsNoTracking()
-            on s.store_id equals st.store_id
-        join t in _context.DemoTransactions.AsNoTracking()
-            on s.order_id equals t.order_id
-        join p in _context.DemoProducts.AsNoTracking()
-            on t.product_id equals p.product_id
-        group new
-        {
-            s.order_id,
-            st.store_id,
-            st.store_name,
-            p.category,
-            t.quantity,
-            t.line_net_amount,
-            t.line_vat_amount
-        }
-        by new
-        {
-            st.store_id,
-            st.store_name,
-            p.category
-        }
-        into g
-        select new StoreCategorySales
-        {
-            store_id = g.Key.store_id,
-            store_name = g.Key.store_name,
-            category = g.Key.category,
+            from s in _context.DemoSales
+                .AsNoTracking()
+                .Where(s => s.order_status == "Completed")
+            join st in _context.DemoStores.AsNoTracking()
+                on s.store_id equals st.store_id
+            join t in _context.DemoTransactions.AsNoTracking()
+                on s.order_id equals t.order_id
+            join p in _context.DemoProducts.AsNoTracking()
+                on t.product_id equals p.product_id
+            group new
+            {
+                s.order_id,
+                st.store_id,
+                st.store_name,
+                p.category,
+                t.quantity,
+                t.line_net_amount,
+                t.line_vat_amount
+            }
+            by new
+            {
+                st.store_id,
+                st.store_name,
+                p.category
+            }
+            into g
+            select new StoreCategorySales
+            {
+                store_id = g.Key.store_id,
+                store_name = g.Key.store_name,
+                category = g.Key.category,
 
-            TotalSales = g.Sum(x =>
-                x.line_net_amount + x.line_vat_amount),
+                TotalSales = g.Sum(x =>
+                    x.line_net_amount + x.line_vat_amount),
 
-            UnitsSold = g.Sum(x => (int)x.quantity),
+                UnitsSold = g.Sum(x => (int)x.quantity),
 
-            NumberOfTransactions = g
-                .Select(x => x.order_id)
-                .Distinct()
-                .Count()
-        };
+                NumberOfTransactions = g
+                    .Select(x => x.order_id)
+                    .Distinct()
+                    .Count()
+            };
 
-        return await query
+        var totalRecords = await query.CountAsync();
+
+        var data = await query
             .OrderBy(x => x.store_name)
             .ThenByDescending(x => x.TotalSales)
+            .ThenBy(x => x.category)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync();
+
+        return new PaginatedResponse<StoreCategorySales>
+        {
+            Data = data,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalRecords = totalRecords,
+            TotalPages = (int)Math.Ceiling(
+                (double)totalRecords / pageSize)
+        };
     }
 
     // Query 5: Sales performance by store.
@@ -111,22 +128,47 @@ public class AnalyticsService : IAnalyticsService
     }
 
     // Query 6: Sales performance by product.
-    public async Task<IEnumerable<ProductSalesPerformance>>
-        GetProductPerformanceAsync()
+    public async Task<PaginatedResponse<ProductSalesPerformance>>
+    GetProductPerformanceAsync(
+        int pageNumber,
+        int pageSize)
     {
-        return await (
+        var query =
             from t in _context.DemoTransactions.AsNoTracking()
             join p in _context.DemoProducts.AsNoTracking()
                 on t.product_id equals p.product_id
-            group t by new { t.product_id, p.product_name } into g
+            group t by new
+            {
+                t.product_id,
+                p.product_name
+            }
+            into g
             select new ProductSalesPerformance
             {
                 product_id = g.Key.product_id,
                 product_name = g.Key.product_name,
                 Total_Transactions = g.Count(),
                 Total_Sales = g.Sum(t => t.line_net_amount)
-            })
+            };
+
+        var totalRecords = await query.CountAsync();
+
+        var data = await query
+            .OrderByDescending(x => x.Total_Sales)
+            .ThenBy(x => x.product_id)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync();
+
+        return new PaginatedResponse<ProductSalesPerformance>
+        {
+            Data = data,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalRecords = totalRecords,
+            TotalPages = (int)Math.Ceiling(
+                (double)totalRecords / pageSize)
+        };
     }
 
     // Query 7: Sales performance by product category.
