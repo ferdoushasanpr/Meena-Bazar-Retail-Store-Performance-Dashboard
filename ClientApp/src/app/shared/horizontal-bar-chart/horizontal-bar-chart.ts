@@ -11,18 +11,9 @@ import {
   SimpleChanges
 } from '@angular/core';
 import { Chart, registerables } from 'chart.js';
+import { PaginatedResponse } from '../../models/sales';
 
 Chart.register(...registerables);
-
-export interface PaginatedResponse<T = any> {
-  data: T[];
-  pageNumber: number;
-  pageSize: number;
-  totalRecords: number;
-  totalPages: number;
-  hasPreviousPage: boolean;
-  hasNextPage: boolean;
-}
 
 @Component({
   selector: 'app-horizontal-bar-chart',

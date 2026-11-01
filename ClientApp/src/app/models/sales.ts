@@ -61,3 +61,13 @@ export interface ProductSalesResponse {
     hasPreviousPage: boolean;
     hasNextPage: boolean;
 }
+
+export interface PaginatedResponse<T = any> {
+    data: T[];
+    pageNumber: number;
+    pageSize: number;
+    totalRecords: number;
+    totalPages: number;
+    hasPreviousPage: boolean;
+    hasNextPage: boolean;
+}
