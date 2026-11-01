@@ -16,16 +16,39 @@ public static class AnalyticsRoute
 
         // Query 4
         group.MapGet("/store-category", async (
-            IAnalyticsService service) =>
-            Results.Ok(await service.GetSalesByStoreAndCategoryAsync()));
+        int pageNumber,
+        int pageSize,
+        IAnalyticsService service) =>
+    {
+        pageNumber = Math.Max(1, pageNumber);
+        pageSize = Math.Clamp(pageSize, 1, 100);
+
+        var result = await service.GetSalesByStoreAndCategoryAsync(
+            pageNumber,
+            pageSize);
+
+        return Results.Ok(result);
+    });
 
         // Query 5
         group.MapGet("/stores", async (IAnalyticsService service) =>
             Results.Ok(await service.GetStorePerformanceAsync()));
 
         // Query 6
-        group.MapGet("/products", async (IAnalyticsService service) =>
-            Results.Ok(await service.GetProductPerformanceAsync()));
+        group.MapGet("/products", async (
+        int pageNumber,
+        int pageSize,
+        IAnalyticsService service) =>
+    {
+        pageNumber = Math.Max(1, pageNumber);
+        pageSize = Math.Clamp(pageSize, 1, 100);
+
+        var result = await service.GetProductPerformanceAsync(
+            pageNumber,
+            pageSize);
+
+        return Results.Ok(result);
+    });
 
         // Query 7
         group.MapGet("/categories", async (IAnalyticsService service) =>
