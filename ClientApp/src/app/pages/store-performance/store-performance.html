@@ -20,4 +20,11 @@
     </section>
 
     <app-horizontal-bar-chart [data]="storesSalesData()" labelKey="store_name" salesKey="total_Sales" />
+
+    <app-table-chart title="Store Category Performance"
+        subtitle="Breakdown by store, category, sales volume, and transaction count"
+        [data]="storeCategorySalesData().data" [pageNumber]="storeCategorySalesData().pageNumber"
+        [pageSize]="storeCategorySalesData().pageSize" [totalRecords]="storeCategorySalesData().totalRecords"
+        [totalPages]="storeCategorySalesData().totalPages" [hasPreviousPage]="storeCategorySalesData().hasPreviousPage"
+        [hasNextPage]="storeCategorySalesData().hasNextPage" (pageChange)="onPageChange($event)" />
 </div>

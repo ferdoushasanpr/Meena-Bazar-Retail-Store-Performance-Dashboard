@@ -1,11 +1,6 @@
 import { Component, input, output, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-export interface PageChangeEvent {
-  pageNumber: number;
-  pageSize: number;
-}
-
 interface AutoColumn {
   key: string;
   header: string;
@@ -32,7 +27,7 @@ export class TableChart {
   hasPreviousPage = input<boolean>(false);
   hasNextPage = input<boolean>(false);
 
-  pageChange = output<PageChangeEvent>();
+  pageChange = output<number>();
 
   // Sorting
   sortColumn = signal<string | null>(null);
@@ -113,13 +108,13 @@ export class TableChart {
 
   onPrev(): void {
     if (this.hasPreviousPage()) {
-      this.pageChange.emit({ pageNumber: this.pageNumber() - 1, pageSize: this.pageSize() });
+      this.pageChange.emit(this.pageNumber() - 1);
     }
   }
 
   onNext(): void {
     if (this.hasNextPage()) {
-      this.pageChange.emit({ pageNumber: this.pageNumber() + 1, pageSize: this.pageSize() });
+      this.pageChange.emit(this.pageNumber() + 1);
     }
   }
 }
