@@ -2,7 +2,11 @@
 <div class="chart-card stores-card">
     <div class="stores-header">
         <div class="header-left">
-            <h2 class="chart-title">{{labelKey() === 'store_name' ? 'Store' : 'Brand'}} Performance Breakdown</h2>
+            <h2 class="chart-title">
+                @if (labelKey() === 'store_name' || labelKey() === 'store') { Store }
+                @else if (labelKey() === 'brand') { Brand }
+                @else { Item } Performance Breakdown
+            </h2>
             <p class="chart-subtitle">Ranked by gross sales volume</p>
         </div>
         <div class="avg-badge">
@@ -11,23 +15,24 @@
     </div>
 
     <div class="stores-list">
-        @for (item of data(); track $index; let i = $index) {
+        @for (item of items(); track item[labelKey()] || $index; let i = $index) {
         <div class="store-item">
             <div class="store-info-row">
                 <div class="store-meta">
-                    <span class="store-rank">{{ formatRank(i + 1) }}</span>
-                    <!-- Uses dynamic lookup for name/brand -->
+                    <span class="store-rank">{{ formatRank(getGlobalRank(i)) }}</span>
+                    <!-- Dynamic lookup for name/brand/product -->
                     <span class="store-name">{{ item[labelKey()] }}</span>
                 </div>
                 <div class="store-metrics">
+                    @if (item.total_Transactions !== undefined) {
                     <span class="metric-txns">{{ item.total_Transactions }} txns</span>
-                    <span class="metric-variance">—</span>
-                    <span class="metric-sales">${{ item[salesKey()] }}</span>
+                    }
+                    <span class="metric-sales">${{ formatSales(item[salesKey()]) }}</span>
                 </div>
             </div>
 
             <div class="store-progress-track">
-                <div class="store-progress-fill" [class]="getBarColorClass(i)"
+                <div class="store-progress-fill" [class]="getBarColorClass(getGlobalRank(i) - 1)"
                     [style.width.%]="getBarWidthPercentage(item[salesKey()])">
                 </div>
             </div>
@@ -40,8 +45,24 @@
     </div>
 
     <div class="stores-footer">
-        <span class="footer-count">
-            Displaying {{ totalCount() }} items
-        </span>
+        <div class="footer-count">
+            Showing {{ showingStart() }}–{{ showingEnd() }} of {{ totalRecords() }} items
+        </div>
+
+        @if (totalPages() > 1) {
+        <div class="pagination-controls">
+            <button type="button" class="pagination-btn" [disabled]="!hasPreviousPage()" (click)="onPrevPage()"
+                aria-label="Previous page">
+                ‹ Prev
+            </button>
+            <span class="page-indicator">
+                Page <strong>{{ pageNumber() }}</strong> of <strong>{{ totalPages() }}</strong>
+            </span>
+            <button type="button" class="pagination-btn" [disabled]="!hasNextPage()" (click)="onNextPage()"
+                aria-label="Next page">
+                Next ›
+            </button>
+        </div>
+        }
     </div>
 </div>

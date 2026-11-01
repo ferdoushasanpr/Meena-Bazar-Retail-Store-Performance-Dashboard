@@ -6,9 +6,10 @@ import { MetricCardProps } from '../../models/matric-card';
 import { MetricCard } from '../../shared/metric-card/metric-card';
 import { CategoryMatrixChart } from '../../shared/category-matrix-chart/category-matrix-chart';
 import { PageHeader } from '../../shared/page-header/page-header';
+import { HorizontalBarChart } from '../../shared/horizontal-bar-chart/horizontal-bar-chart';
 
 @Component({
-  imports: [FormsModule, PageHeader, MetricCard, CategoryMatrixChart],
+  imports: [FormsModule, PageHeader, MetricCard, CategoryMatrixChart, HorizontalBarChart],
   selector: 'app-product-categories',
   styleUrl: './product-categories.css',
   templateUrl: './product-categories.html',
