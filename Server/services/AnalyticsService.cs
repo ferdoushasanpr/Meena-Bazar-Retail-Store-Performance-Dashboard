@@ -305,6 +305,10 @@ public class AnalyticsService : IAnalyticsService
 
         var count = await query.CountAsync();
         var total = await query.SumAsync(s => (double?)s.total_amount);
+        var distinctDays = await query
+        .Select(s => s.order_datetime.Date)
+        .Distinct()
+        .CountAsync();
 
         return new KpiSummary
         {
@@ -312,7 +316,10 @@ public class AnalyticsService : IAnalyticsService
             NumberOfTransactions = count,
             AverageBasketValue = count == 0
                 ? 0
-                : (total ?? 0) / count
+                : Math.Round((total ?? 0) / count, 2),
+            AverageDailySales = distinctDays == 0
+            ? 0
+            : Math.Round((total ?? 0) / distinctDays, 2)
         };
     }
 
