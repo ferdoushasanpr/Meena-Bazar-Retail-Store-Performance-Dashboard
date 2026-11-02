@@ -109,8 +109,8 @@ export class StorePerformance {
     });
   }
 
-  loadStoresSalesData(): void {
-    this.businessKpiService.getStoresSalesData().subscribe({
+  loadStoresSalesData(startDate: string, endDate: string): void {
+    this.businessKpiService.getStoresSalesData(startDate, endDate).subscribe({
       next: (response) => {
         this.storesSalesData.set(response);
       },
@@ -137,7 +137,7 @@ export class StorePerformance {
 
   private loadSalesData(startDate: string, endDate: string): void {
     this.loadFilteredSalesData(startDate, endDate);
-    this.loadStoresSalesData();
+    this.loadStoresSalesData(startDate, endDate);
     this.loadStoreCategorySalesData(1);
   }
 
