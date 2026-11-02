@@ -7,6 +7,7 @@ import { MetricCard } from '../../shared/metric-card/metric-card';
 import { PageHeader } from '../../shared/page-header/page-header';
 import { TrendChart } from '../../shared/trend-chart/trend-chart';
 import { VerticalBarChart } from '../../shared/vertical-bar-chart/vertical-bar-chart';
+import { formatDate } from '../../utilities/date';
 
 @Component({
   imports: [FormsModule, PageHeader, MetricCard, TrendChart, VerticalBarChart],
@@ -22,8 +23,9 @@ export class SalesAnalytics implements OnInit {
   pageHeaderSubtitle = "In-depth multi-dimensional trend analysis, period-over-period comparisons, and volume metrics.";
 
   // Filters & State
-  selectedTimeRange = 'Last 30 Days';
-  timeRanges = ['All Time', 'Today', 'Last 7 Days', 'Last 30 Days', 'This Month', 'Previous Month'];
+  selectedTimeRange = 'All';
+  timeRanges = ['All', 'Today', 'Last 7 Days', 'Last 30 Days', 'Select Range'];
+  private readonly currentDate = new Date(2025, 3, 1);
 
 
   // Sales Data
@@ -34,7 +36,6 @@ export class SalesAnalytics implements OnInit {
   });
 
   dailyStoreSalesData = signal<DailyStoreSalesData[]>([]);
-
   filteredStoreCategorySalesData = signal<StoreCategorySalesData[]>([]);
 
   totalSalesCard = computed((): MetricCardProps => {
@@ -71,24 +72,18 @@ export class SalesAnalytics implements OnInit {
   });
 
   ngOnInit(): void {
-    this.loadFilteredSalesData();
-    this.loadDailyStoreSalesData();
-    this.loadFilteredStoreCategorySalesData('2025-01-01', '2025-02-01', 'ST004');
+    this.setTimeRange('All');
   }
 
   loadFilteredSalesData(): void {
-<<<<<<< HEAD
-    this.businessKpiService.getFilteredSalesData('2025-01-01', '2025-02-01', null).subscribe({
-=======
     this.businessKpiService.getFilteredSalesData('2025-01-01', '2025-02-01').subscribe({
->>>>>>> frontend
       next: (response) => { this.filteredSalesData.set(response); },
       error: (error) => { console.error(error) }
     });
   }
 
-  loadDailyStoreSalesData(): void {
-    this.businessKpiService.getDailyStoresSalesData().subscribe({
+  loadDailyStoreSalesData(startDate: string, endDate: string, storeId: string): void {
+    this.businessKpiService.getDailyStoresSalesData(startDate, endDate, storeId).subscribe({
       next: (response) => { this.dailyStoreSalesData.set(response); },
       error: (error) => { console.error(error) }
     });
@@ -102,11 +97,56 @@ export class SalesAnalytics implements OnInit {
   }
 
   onStoreChange(storeId: string): void {
-    // Triggers backend fetch when store selection changes
     this.loadFilteredStoreCategorySalesData('2025-01-01', '2025-02-01', storeId);
+  }
+
+  private loadSalesData(startDate: string, endDate: string): void {
+    this.loadFilteredSalesData(startDate, endDate);
+
+    this.loadDailyStoreSalesData(
+      startDate,
+      endDate,
+      'ST008'
+    );
+
+    this.loadFilteredStoreCategorySalesData(
+      startDate,
+      endDate,
+      'ST004'
+    );
   }
 
   setTimeRange(range: string): void {
     this.selectedTimeRange = range;
+
+    const endDate = new Date(this.currentDate);
+    const startDate = new Date(this.currentDate);
+
+    switch (range) {
+      case 'All':
+        startDate.setFullYear(startDate.getFullYear() - 2);
+        break;
+
+      case 'Today':
+        startDate.setDate(startDate.getDate() - 1);
+        break;
+
+      case 'Last 7 Days':
+        startDate.setDate(startDate.getDate() - 6);
+        break;
+
+      case 'Last 30 Days':
+        startDate.setDate(startDate.getDate() - 29);
+        break;
+
+      case 'Select Range':
+        // Custom date range will be handled separately.
+        return;
+    }
+
+    this.loadSalesData(
+      formatDate(startDate),
+      formatDate(endDate)
+    );
   }
 }

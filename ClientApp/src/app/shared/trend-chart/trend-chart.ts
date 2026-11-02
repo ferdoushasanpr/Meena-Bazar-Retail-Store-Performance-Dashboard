@@ -8,7 +8,7 @@ import {
   effect
 } from '@angular/core';
 
-import { DailySalesData, DailyStoreSalesData, MonthlySalesData } from '../../models/sales';
+import { DailySalesData, DailyStoreSalesData, MonthlySalesData, YearlySalesData } from '../../models/sales';
 import { Chart, registerables } from 'chart.js';
 
 Chart.register(...registerables);
@@ -26,9 +26,11 @@ export class TrendChart implements AfterViewInit, OnDestroy {
 
   dailyData = input<DailySalesData[]>([]);
   monthlyData = input<MonthlySalesData[]>([]);
+  yearlyData = input<YearlySalesData[]>([]); // Added yearly input
   dailyStoreData = input<DailyStoreSalesData[]>([]);
-  showControls = input<boolean>(true); // Controls visibility of buttons
+  showControls = input<boolean>(true);
 
+  // Updated type to include 'Yearly'
   selectedViewMode: 'Daily' | 'Monthly' | 'Yearly' | 'StoreDaily' = 'Daily';
 
   private trendChart?: Chart;
@@ -43,14 +45,14 @@ export class TrendChart implements AfterViewInit, OnDestroy {
       const hasStoreData = this.dailyStoreData().length > 0;
       const controlsEnabled = this.showControls();
 
-      // If controls are hidden and store data exists, lock view to StoreDaily
       if (!controlsEnabled && hasStoreData) {
         this.selectedViewMode = 'StoreDaily';
       }
 
-      // Track dependencies
+      // Track dependencies including yearlyData
       this.dailyData();
       this.monthlyData();
+      this.yearlyData();
       this.dailyStoreData();
       this.showControls();
 
@@ -69,6 +71,7 @@ export class TrendChart implements AfterViewInit, OnDestroy {
     this.trendChart?.destroy();
   }
 
+  // Updated parameter type to allow 'Yearly'
   setViewMode(mode: 'Daily' | 'Monthly' | 'Yearly'): void {
     this.selectedViewMode = mode;
     this.updateTrendChart();
@@ -92,9 +95,7 @@ export class TrendChart implements AfterViewInit, OnDestroy {
             display: false,
             position: 'bottom',
             labels: {
-              font: {
-                size: 14 // Increased store name font size in the legend
-              },
+              font: { size: 14 },
               padding: 15
             }
           },
@@ -108,14 +109,14 @@ export class TrendChart implements AfterViewInit, OnDestroy {
           x: {
             title: {
               display: true,
-              text: 'Sales Date'
+              text: 'Sales Year / Period'
             }
           },
           y: {
             beginAtZero: true,
             title: {
               display: true,
-              text: 'Total Sales ($)'
+              text: 'Total Revenue ($)'
             },
             ticks: {
               callback: (value) => `$${value}`
@@ -166,6 +167,20 @@ export class TrendChart implements AfterViewInit, OnDestroy {
         fill: true,
         tension: 0.3,
         pointRadius: 3
+      }];
+    } else if (this.selectedViewMode === 'Yearly') {
+      // Added Yearly mapping configuration
+      const data = this.yearlyData();
+      labels = data.map(item => item.year.toString());
+      datasets = [{
+        label: 'Yearly Revenue',
+        data: data.map(item => item.total_Revenue), // Change to item.total_Sales if preferred
+        borderColor: '#8b5cf6',
+        backgroundColor: 'rgba(139, 92, 246, 0.15)',
+        borderWidth: 2,
+        fill: true,
+        tension: 0.3,
+        pointRadius: 4
       }];
     } else if (this.selectedViewMode === 'StoreDaily') {
       const data = this.dailyStoreData();

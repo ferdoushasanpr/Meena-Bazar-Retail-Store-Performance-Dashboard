@@ -21,7 +21,8 @@
 
     <section class="charts-section">
         <!-- Left column: Trend chart -->
-        <app-trend-chart class="trend-chart" [dailyData]="dailySalesData()" [monthlyData]="monthlySalesData()" />
+        <app-trend-chart [dailyData]="dailySalesData()" [monthlyData]="monthlySalesData()"
+            [yearlyData]="yearlySalesData()" />
 
         <!-- Left column: Bar chart below trend chart -->
         <app-horizontal-bar-chart [data]="brandSalesData()" labelKey="brand" salesKey="total_Sales" />

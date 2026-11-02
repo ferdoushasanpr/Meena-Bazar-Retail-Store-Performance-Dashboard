@@ -5,8 +5,12 @@
         <div class="left-group">
             <nav class="breadcrumb">
                 <span class="breadcrumb-parent">Overview</span>
+                @for (path of pathSegments(); track i; let i = $index) {
                 <span class="breadcrumb-divider">/</span>
-                <span class="breadcrumb-current">Dashboard</span>
+                <a [routerLink]="'/' + path" class="breadcrumb-current">
+                    {{ path.replaceAll('-', ' ') | titlecase }}
+                </a>
+                }
             </nav>
 
             <div class="vertical-divider"></div>
@@ -19,20 +23,6 @@
 
         <!-- Right: Filters & Action Controls -->
         <div class="right-group">
-            <!-- Date Selector Dropdown -->
-            <button class="dropdown-btn" type="button">
-                <i class="fa-regular fa-calendar icon-left"></i>
-                <span>{{ selectedDateRange }}</span>
-                <i class="fa-solid fa-chevron-down icon-right"></i>
-            </button>
-
-            <!-- Store Selector Dropdown -->
-            <button class="dropdown-btn" type="button">
-                <i class="fa-solid fa-store icon-left"></i>
-                <span>{{ selectedStore }}</span>
-                <i class="fa-solid fa-chevron-down icon-right"></i>
-            </button>
-
             <!-- Notification Bell -->
             <button class="icon-btn" type="button" aria-label="Notifications">
                 <i class="fa-regular fa-bell"></i>
