@@ -5,8 +5,8 @@
             <p class="chart-subtitle">
                 {{ selectedViewMode === 'Daily' ? 'Daily sales revenue over time'
                 : selectedViewMode === 'Monthly' ? 'Monthly sales revenue over time'
-                : selectedViewMode === 'StoreDaily' ? 'Daily sales breakdown by store'
-                : 'Yearly sales revenue over time' }}
+                : selectedViewMode === 'Yearly' ? 'Yearly sales revenue over time'
+                : 'Daily sales breakdown by store' }}
             </p>
         </div>
 
@@ -39,8 +39,8 @@
         <div class="legend-info">
             {{ selectedViewMode === 'Daily' ? dailyData().length + ' days of sales data'
             : selectedViewMode === 'Monthly' ? monthlyData().length + ' months of sales data'
-            : selectedViewMode === 'StoreDaily' ? dailyStoreData().length + ' store records'
-            : 'Yearly sales data' }}
+            : selectedViewMode === 'Yearly' ? yearlyData().length + ' years of sales data'
+            : dailyStoreData().length + ' store records' }}
         </div>
     </div>
 </div>

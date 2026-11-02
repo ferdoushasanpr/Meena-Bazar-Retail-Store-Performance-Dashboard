@@ -1,7 +1,7 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SalesService } from '../../services/sales-service';
-import { BrandSalesData, DailySalesData, MonthlySalesData, SalesCategoryData, SalesData } from '../../models/sales';
+import { BrandSalesData, DailySalesData, MonthlySalesData, SalesCategoryData, SalesData, YearlySalesData } from '../../models/sales';
 import { MetricCardProps } from '../../models/matric-card';
 import { MetricCard } from '../../shared/metric-card/metric-card';
 import { DonutChart } from '../../shared/donut-chart/donut-chart';
@@ -32,6 +32,7 @@ export class Dashboard implements OnInit {
   salesCategoryData = signal<SalesCategoryData[]>([]);
   dailySalesData = signal<DailySalesData[]>([]);
   monthlySalesData = signal<MonthlySalesData[]>([]);
+  yearlySalesData = signal<YearlySalesData[]>([]);
   brandSalesData = signal<BrandSalesData[]>([]);
 
 
@@ -81,6 +82,7 @@ export class Dashboard implements OnInit {
     this.loadSalesCategoryData();
     this.loadDailySalesData();
     this.loadMonthlySalesData();
+    this.loadYearlySalesData();
     this.loadBrandSalesData();
   }
 
@@ -117,6 +119,17 @@ export class Dashboard implements OnInit {
     this.businessKpiService.getMonthlySalesData().subscribe({
       next: (response) => {
         this.monthlySalesData.set(response);
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+  }
+
+  loadYearlySalesData(): void {
+    this.businessKpiService.getYearlySalesData().subscribe({
+      next: (response) => {
+        this.yearlySalesData.set(response);
       },
       error: (error) => {
         console.error(error);
