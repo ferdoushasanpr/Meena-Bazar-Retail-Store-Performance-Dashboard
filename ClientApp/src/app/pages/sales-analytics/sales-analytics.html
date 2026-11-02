@@ -12,6 +12,21 @@
             }
         </div>
 
+        @if (selectedTimeRange === 'Select Range') {
+        <div class="custom-date-range">
+            <label>
+                Start:
+                <input type="date" [ngModel]="customStartDate()"
+                    (ngModelChange)="customStartDate.set($event); onCustomDateChange()" />
+            </label>
+            <label>
+                End:
+                <input type="date" [ngModel]="customEndDate()"
+                    (ngModelChange)="customEndDate.set($event); onCustomDateChange()" />
+            </label>
+        </div>
+        }
+
         <div class="filter-controls">
             <button class="btn-text">
                 <i class="fa-solid fa-arrow-rotate-left"></i> Reset Filters

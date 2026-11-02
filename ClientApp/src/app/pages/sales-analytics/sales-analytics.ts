@@ -27,6 +27,8 @@ export class SalesAnalytics implements OnInit {
   timeRanges = ['All', 'Today', 'Last 7 Days', 'Last 30 Days', 'Select Range'];
   private readonly currentDate = new Date(2025, 3, 1);
 
+  customStartDate = signal<string>(formatDate(this.currentDate));
+  customEndDate = signal<string>(formatDate(this.currentDate));
 
   // Sales Data
   filteredSalesData = signal<SalesData>({
@@ -138,15 +140,17 @@ export class SalesAnalytics implements OnInit {
       case 'Last 30 Days':
         startDate.setDate(startDate.getDate() - 29);
         break;
-
-      case 'Select Range':
-        // Custom date range will be handled separately.
-        return;
     }
 
     this.loadSalesData(
       formatDate(startDate),
       formatDate(endDate)
     );
+  }
+
+  onCustomDateChange(): void {
+    if (this.selectedTimeRange === 'Select Range') {
+      this.loadSalesData(this.customStartDate(), this.customEndDate());
+    }
   }
 }
