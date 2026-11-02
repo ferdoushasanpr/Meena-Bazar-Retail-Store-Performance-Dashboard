@@ -34,7 +34,8 @@ export class SalesAnalytics implements OnInit {
   filteredSalesData = signal<SalesData>({
     totalSales: 0.0,
     numberOfTransactions: 0,
-    averageBasketValue: 0.0
+    averageBasketValue: 0.0,
+    averageDailySales: 0.0
   });
 
   dailyStoreSalesData = signal<DailyStoreSalesData[]>([]);
@@ -71,6 +72,17 @@ export class SalesAnalytics implements OnInit {
       value: `$${sales.averageBasketValue.toFixed(2)}`,
       visualIcon: 'fa-solid fa-chart-line comparison-icon sparkline-icon'
     };
+  });
+
+  avgDailySalesCard = computed((): MetricCardProps => {
+    const sales = this.filteredSalesData();
+
+    return {
+      title: 'AVG DAILY SALES',
+      icon: 'fa-solid fa-chart-line',
+      value: `$${sales.averageDailySales.toFixed(2)}`,
+      visualIcon: 'fa-solid fa-gauge-high comparison-icon gauge-icon'
+    }
   });
 
   ngOnInit(): void {

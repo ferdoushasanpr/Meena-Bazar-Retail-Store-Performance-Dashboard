@@ -30,7 +30,8 @@ export class ProductCategories {
   salesKpiData = signal<SalesData>({
     totalSales: 0.0,
     numberOfTransactions: 0,
-    averageBasketValue: 0.0
+    averageBasketValue: 0.0,
+    averageDailySales: 0.0
   });
 
   productSalesData = signal<ProductSalesResponse>({
