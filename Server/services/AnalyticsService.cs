@@ -117,12 +117,14 @@ public class AnalyticsService : IAnalyticsService
     // Query 5: Sales performance by store.
     // Preserves the original query's lack of a status filter.
     public async Task<IEnumerable<StoreSalesPerformance>>
-        GetStorePerformanceAsync()
+    GetStorePerformanceAsync(DateTime? startDate, DateTime? endDate)
     {
         return await (
             from s in _context.DemoSales.AsNoTracking()
             join st in _context.DemoStores.AsNoTracking()
                 on s.store_id equals st.store_id
+            where (!startDate.HasValue || s.order_datetime >= startDate.Value)
+               && (!endDate.HasValue || s.order_datetime < endDate.Value.Date.AddDays(1))
             group s by new { s.store_id, st.store_name } into g
             select new StoreSalesPerformance
             {
