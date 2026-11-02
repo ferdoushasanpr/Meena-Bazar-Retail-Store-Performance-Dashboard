@@ -110,9 +110,9 @@
     z-index: 1;
     display: flex;
     justify-content: space-around;
-    align-items: flex-end;
+    align-items: stretch;
     height: 100%;
-    padding-bottom: 28px;
+    padding-bottom: 0;
     box-sizing: border-box;
 }
 
@@ -129,6 +129,7 @@
 .bar-wrapper {
     flex: 1;
     width: 100%;
+    min-height: 0;
     display: flex;
     align-items: flex-end;
     justify-content: center;
@@ -215,12 +216,18 @@
 
 /* X-Axis Label */
 .x-label {
-    position: absolute;
-    bottom: 0;
+    position: relative;
+    flex-shrink: 0;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
     font-size: 11px;
     color: #94a3b8;
     text-align: center;
     width: 100%;
+
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

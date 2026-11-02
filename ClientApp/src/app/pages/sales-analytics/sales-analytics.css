@@ -126,3 +126,10 @@
     gap: 16px;
     margin-bottom: 24px;
 }
+
+.charts-section {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    align-items: start;
+}
