@@ -120,6 +120,48 @@
     color: #ffffff;
 }
 
+/* Custom Date Range Picker (Dark Theme) */
+.custom-date-range {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #0f172a;
+    padding: 4px 12px;
+    border-radius: 8px;
+    border: 1px solid #1e293b;
+}
+
+.custom-date-range label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #94a3b8;
+}
+
+.custom-date-range input[type="date"] {
+    padding: 6px 10px;
+    font-size: 13px;
+    font-family: inherit;
+    color: #f1f5f9;
+    background-color: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 6px;
+    outline: none;
+    color-scheme: dark;
+    transition: all 0.2s ease;
+}
+
+.custom-date-range input[type="date"]:hover {
+    border-color: #475569;
+}
+
+.custom-date-range input[type="date"]:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25);
+}
+
 /* Metric Cards Grid */
 .metrics-grid {
     display: grid;

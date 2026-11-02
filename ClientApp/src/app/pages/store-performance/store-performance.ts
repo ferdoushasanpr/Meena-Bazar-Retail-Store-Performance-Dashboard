@@ -11,9 +11,11 @@ export interface PageChangeEvent {
 import { TableChart } from '../../shared/table-chart/table-chart';
 import { MetricCardProps } from '../../models/matric-card';
 import { MetricCard } from '../../shared/metric-card/metric-card';
+import { formatDate } from '../../utilities/date';
+import { FormsModule } from '@angular/forms';
 
 @Component({
-  imports: [PageHeader, MetricCard, HorizontalBarChart, TableChart],
+  imports: [FormsModule, PageHeader, MetricCard, HorizontalBarChart, TableChart],
   selector: 'app-store-performance',
   styleUrl: './store-performance.css',
   templateUrl: './store-performance.html',
@@ -25,11 +27,15 @@ export class StorePerformance {
   pageHeaderSubtitle = "Benchmark, rank, and analyze revenue, customer volume, and efficiency across all retail locations.";
 
   // Filters & State
-  selectedTimeRange = 'Last 30 Days';
-  timeRanges = ['All Time', 'Today', 'Last 7 Days', 'Last 30 Days', 'This Month', 'Previous Month'];
+  selectedTimeRange = 'All';
+  timeRanges = ['All', 'Today', 'Last 7 Days', 'Last 30 Days', 'Select Range'];
+  private readonly currentDate = new Date(2025, 3, 1);
+
+  customStartDate = signal<string>(formatDate(this.currentDate));
+  customEndDate = signal<string>(formatDate(this.currentDate));
 
   // Sales Data
-  salesKpiData = signal<SalesData>({
+  filteredSalesKpiData = signal<SalesData>({
     totalSales: 0.0,
     numberOfTransactions: 0,
     averageBasketValue: 0.0,
@@ -49,13 +55,11 @@ export class StorePerformance {
   });
 
   ngOnInit(): void {
-    this.loadSalesKpiData();
-    this.loadStoresSalesData();
-    this.loadStoreCategorySalesData(1);
+    this.setTimeRange('All');
   }
 
   totalSalesCard = computed((): MetricCardProps => {
-    const sales = this.salesKpiData();
+    const sales = this.filteredSalesKpiData();
 
     return {
       title: 'TOTAL SALES',
@@ -66,7 +70,7 @@ export class StorePerformance {
   });
 
   transactionsCard = computed((): MetricCardProps => {
-    const sales = this.salesKpiData();
+    const sales = this.filteredSalesKpiData();
 
     return {
       title: 'TRANSACTIONS',
@@ -77,7 +81,7 @@ export class StorePerformance {
   });
 
   averageBasketCard = computed((): MetricCardProps => {
-    const sales = this.salesKpiData();
+    const sales = this.filteredSalesKpiData();
 
     return {
       title: 'AVG. BASKET VALUE',
@@ -88,7 +92,7 @@ export class StorePerformance {
   });
 
   avgDailySalesCard = computed((): MetricCardProps => {
-    const sales = this.salesKpiData();
+    const sales = this.filteredSalesKpiData();
 
     return {
       title: 'AVG DAILY SALES',
@@ -98,15 +102,15 @@ export class StorePerformance {
     }
   });
 
-  loadSalesKpiData(): void {
-    this.businessKpiService.getSalesData().subscribe({
-      next: (response) => { this.salesKpiData.set(response) },
+  loadFilteredSalesData(startDate: string, endDate: string): void {
+    this.businessKpiService.getFilteredSalesData(startDate, endDate).subscribe({
+      next: (response) => { this.filteredSalesKpiData.set(response); },
       error: (error) => { console.error(error) }
     });
   }
 
-  loadStoresSalesData(): void {
-    this.businessKpiService.getStoresSalesData().subscribe({
+  loadStoresSalesData(startDate: string, endDate: string): void {
+    this.businessKpiService.getStoresSalesData(startDate, endDate).subscribe({
       next: (response) => {
         this.storesSalesData.set(response);
       },
@@ -131,7 +135,45 @@ export class StorePerformance {
     this.loadStoreCategorySalesData(pageNumber);
   }
 
+  private loadSalesData(startDate: string, endDate: string): void {
+    this.loadFilteredSalesData(startDate, endDate);
+    this.loadStoresSalesData(startDate, endDate);
+    this.loadStoreCategorySalesData(1);
+  }
+
   setTimeRange(range: string): void {
     this.selectedTimeRange = range;
+
+    const endDate = new Date(this.currentDate);
+    const startDate = new Date(this.currentDate);
+
+    switch (range) {
+      case 'All':
+        startDate.setFullYear(startDate.getFullYear() - 2);
+        break;
+
+      case 'Today':
+        startDate.setDate(startDate.getDate() - 1);
+        break;
+
+      case 'Last 7 Days':
+        startDate.setDate(startDate.getDate() - 6);
+        break;
+
+      case 'Last 30 Days':
+        startDate.setDate(startDate.getDate() - 29);
+        break;
+    }
+
+    this.loadSalesData(
+      formatDate(startDate),
+      formatDate(endDate)
+    );
+  }
+
+  onCustomDateChange(): void {
+    if (this.selectedTimeRange === 'Select Range') {
+      this.loadSalesData(this.customStartDate(), this.customEndDate());
+    }
   }
 }
