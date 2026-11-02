@@ -1,14 +1,15 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SalesService } from '../../services/sales-service';
-import { DailyStoreSalesData, SalesData } from '../../models/sales';
+import { DailyStoreSalesData, SalesData, StoreCategorySalesData } from '../../models/sales';
 import { MetricCardProps } from '../../models/matric-card';
 import { MetricCard } from '../../shared/metric-card/metric-card';
 import { PageHeader } from '../../shared/page-header/page-header';
 import { TrendChart } from '../../shared/trend-chart/trend-chart';
+import { VerticalBarChart } from '../../shared/vertical-bar-chart/vertical-bar-chart';
 
 @Component({
-  imports: [FormsModule, PageHeader, MetricCard, TrendChart],
+  imports: [FormsModule, PageHeader, MetricCard, TrendChart, VerticalBarChart],
   selector: 'app-sales-analytics',
   styleUrl: './sales-analytics.css',
   templateUrl: './sales-analytics.html',
@@ -33,6 +34,8 @@ export class SalesAnalytics implements OnInit {
   });
 
   dailyStoreSalesData = signal<DailyStoreSalesData[]>([]);
+
+  filteredStoreCategorySalesData = signal<StoreCategorySalesData[]>([]);
 
   totalSalesCard = computed((): MetricCardProps => {
     const sales = this.filteredSalesData();
@@ -70,6 +73,7 @@ export class SalesAnalytics implements OnInit {
   ngOnInit(): void {
     this.loadFilteredSalesData();
     this.loadDailyStoreSalesData();
+    this.loadFilteredStoreCategorySalesData('2025-01-01', '2025-02-01', 'ST004');
   }
 
   loadFilteredSalesData(): void {
@@ -85,9 +89,21 @@ export class SalesAnalytics implements OnInit {
 
   loadDailyStoreSalesData(): void {
     this.businessKpiService.getDailyStoresSalesData().subscribe({
-      next: (response) => { this.dailyStoreSalesData.set(response); console.log(response) },
+      next: (response) => { this.dailyStoreSalesData.set(response); },
       error: (error) => { console.error(error) }
     });
+  }
+
+  loadFilteredStoreCategorySalesData(startDate: string, endDate: string, storeId: string): void {
+    this.businessKpiService.getFilteredStoreCategorySalesData(startDate, endDate, storeId).subscribe({
+      next: (response) => { this.filteredStoreCategorySalesData.set(response); },
+      error: (error) => { console.error(error) }
+    });
+  }
+
+  onStoreChange(storeId: string): void {
+    // Triggers backend fetch when store selection changes
+    this.loadFilteredStoreCategorySalesData('2025-01-01', '2025-02-01', storeId);
   }
 
   setTimeRange(range: string): void {

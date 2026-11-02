@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { BrandSalesData, DailySalesData, DailyStoreSalesData, MonthlySalesData, ProductSalesData, ProductSalesResponse, SalesCategoryData, SalesData, StoreCategorySalesResponse, StoreSalesData } from '../models/sales';
+import { BrandSalesData, DailySalesData, DailyStoreSalesData, MonthlySalesData, ProductSalesData, ProductSalesResponse, SalesCategoryData, SalesData, StoreCategorySalesData, StoreCategorySalesResponse, StoreSalesData } from '../models/sales';
 
 @Injectable({
     providedIn: 'root'
@@ -58,5 +58,13 @@ export class SalesService {
     getStoreCategorySalesData(pageNumber: number = 1, pageSize: number = 10): Observable<StoreCategorySalesResponse> {
         return this.http.get<StoreCategorySalesResponse>(`${this.apiUrlBase}/store-category?pageNumber=${pageNumber}&pageSize=${pageSize}`);
 >>>>>>> frontend
+    }
+
+    getFilteredStoreCategorySalesData(startDate: string, endDate: string, storeId?: string): Observable<StoreCategorySalesData[]> {
+        if (storeId) {
+            return this.http.get<StoreCategorySalesData[]>(`${this.apiUrlBase}/store-category/filtered?startDate=${startDate}&endDate=${endDate}&storeId=${storeId}`);
+        } else {
+            return this.http.get<StoreCategorySalesData[]>(`${this.apiUrlBase}/store-category/filtered?startDate=${startDate}&endDate=${endDate}`);
+        }
     }
 }

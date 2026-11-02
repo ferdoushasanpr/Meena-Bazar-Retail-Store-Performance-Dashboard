@@ -1,0 +1,72 @@
+<div class="chart-card">
+    <!-- Chart Header Bar with Store Selector -->
+    <div class="chart-header">
+        <div class="title-group">
+            <h3 class="chart-title">{{ title() }}</h3>
+            @if (subtitle()) {
+            <p class="chart-subtitle">{{ subtitle() }}</p>
+            }
+        </div>
+
+        <!-- Store Selector Dropdown -->
+        @if (storeOptions().length) {
+        <div class="store-selector">
+            <label for="storeSelect" class="select-label">Store:</label>
+            <select id="storeSelect" class="store-dropdown" [ngModel]="selectedStore()"
+                (ngModelChange)="onStoreSelect($event)">
+                <option value="">All Stores</option>
+                @for (store of storeOptions(); track store) {
+                <option [value]="store">{{ store }}</option>
+                }
+            </select>
+        </div>
+        }
+    </div>
+
+    <!-- Main Chart Canvas -->
+    <div class="chart-container">
+        <!-- Y-Axis Scale -->
+        <div class="y-axis">
+            @for (tick of yAxisTicks(); track $index) {
+            <span class="y-tick">${{ tick }}</span>
+            }
+        </div>
+
+        <!-- Grid Lines & Bars Area -->
+        <div class="chart-body">
+            <!-- Background Horizontal Gridlines -->
+            <div class="grid-lines">
+                @for (tick of yAxisTicks(); track $index) {
+                <div class="grid-line"></div>
+                }
+            </div>
+
+            <!-- Vertical Bars -->
+            <div class="bars-container">
+                @for (item of chartData(); track item.category + item.store_id) {
+                <div class="bar-group">
+                    <div class="bar-wrapper">
+                        <!-- Value Tooltip -->
+                        <div class="tooltip">
+                            <span class="tooltip-title">{{ item.category }}</span>
+                            <span class="tooltip-sales">${{ item.totalSales }}</span>
+                            <span class="tooltip-detail">{{ item.unitsSold }} units ({{
+                                item.numberOfTransactions }} txns)</span>
+                        </div>
+
+                        <!-- Animated Vertical Bar -->
+                        <div class="bar" [style.height.%]="getBarHeightPercentage(item.totalSales)">
+                            <span class="bar-value">${{ item.totalSales }}</span>
+                        </div>
+                    </div>
+
+                    <!-- X-Axis Label -->
+                    <span class="x-label" [title]="item.category">{{ item.category }}</span>
+                </div>
+                } @empty {
+                <div class="empty-chart">No category data available.</div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
