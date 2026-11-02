@@ -11,9 +11,11 @@ export interface PageChangeEvent {
 import { TableChart } from '../../shared/table-chart/table-chart';
 import { MetricCardProps } from '../../models/matric-card';
 import { MetricCard } from '../../shared/metric-card/metric-card';
+import { formatDate } from '../../utilities/date';
+import { FormsModule } from '@angular/forms';
 
 @Component({
-  imports: [PageHeader, MetricCard, HorizontalBarChart, TableChart],
+  imports: [FormsModule, PageHeader, MetricCard, HorizontalBarChart, TableChart],
   selector: 'app-store-performance',
   styleUrl: './store-performance.css',
   templateUrl: './store-performance.html',
@@ -25,8 +27,12 @@ export class StorePerformance {
   pageHeaderSubtitle = "Benchmark, rank, and analyze revenue, customer volume, and efficiency across all retail locations.";
 
   // Filters & State
-  selectedTimeRange = 'Last 30 Days';
-  timeRanges = ['All Time', 'Today', 'Last 7 Days', 'Last 30 Days', 'This Month', 'Previous Month'];
+  selectedTimeRange = 'All';
+  timeRanges = ['All', 'Today', 'Last 7 Days', 'Last 30 Days', 'Select Range'];
+  private readonly currentDate = new Date(2025, 3, 1);
+
+  customStartDate = signal<string>(formatDate(this.currentDate));
+  customEndDate = signal<string>(formatDate(this.currentDate));
 
   // Sales Data
   filteredSalesKpiData = signal<SalesData>({
@@ -49,9 +55,7 @@ export class StorePerformance {
   });
 
   ngOnInit(): void {
-    this.loadFilteredSalesKpiData();
-    this.loadStoresSalesData();
-    this.loadStoreCategorySalesData(1);
+    this.setTimeRange('All');
   }
 
   totalSalesCard = computed((): MetricCardProps => {
@@ -98,9 +102,9 @@ export class StorePerformance {
     }
   });
 
-  loadFilteredSalesKpiData(): void {
-    this.businessKpiService.getFilteredSalesData('2025-01-01', '2025-02-01').subscribe({
-      next: (response) => { this.filteredSalesKpiData.set(response) },
+  loadFilteredSalesData(startDate: string, endDate: string): void {
+    this.businessKpiService.getFilteredSalesData(startDate, endDate).subscribe({
+      next: (response) => { this.filteredSalesKpiData.set(response); },
       error: (error) => { console.error(error) }
     });
   }
@@ -131,7 +135,45 @@ export class StorePerformance {
     this.loadStoreCategorySalesData(pageNumber);
   }
 
+  private loadSalesData(startDate: string, endDate: string): void {
+    this.loadFilteredSalesData(startDate, endDate);
+    this.loadStoresSalesData();
+    this.loadStoreCategorySalesData(1);
+  }
+
   setTimeRange(range: string): void {
     this.selectedTimeRange = range;
+
+    const endDate = new Date(this.currentDate);
+    const startDate = new Date(this.currentDate);
+
+    switch (range) {
+      case 'All':
+        startDate.setFullYear(startDate.getFullYear() - 2);
+        break;
+
+      case 'Today':
+        startDate.setDate(startDate.getDate() - 1);
+        break;
+
+      case 'Last 7 Days':
+        startDate.setDate(startDate.getDate() - 6);
+        break;
+
+      case 'Last 30 Days':
+        startDate.setDate(startDate.getDate() - 29);
+        break;
+    }
+
+    this.loadSalesData(
+      formatDate(startDate),
+      formatDate(endDate)
+    );
+  }
+
+  onCustomDateChange(): void {
+    if (this.selectedTimeRange === 'Select Range') {
+      this.loadSalesData(this.customStartDate(), this.customEndDate());
+    }
   }
 }
