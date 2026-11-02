@@ -2,6 +2,7 @@ export interface SalesData {
     totalSales: number;
     numberOfTransactions: number;
     averageBasketValue: number;
+    averageDailySales: number
 }
 
 export interface SalesCategoryData {

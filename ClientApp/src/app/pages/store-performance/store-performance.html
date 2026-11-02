@@ -19,6 +19,21 @@
         </div>
     </section>
 
+    <!-- Metric Cards Grid (4 Columns) -->
+    <section class="metrics-grid">
+        <!-- Card 1: Total Sales -->
+        <app-metric-card [card]="totalSalesCard()" />
+
+        <!-- Card 2: Transactions -->
+        <app-metric-card [card]="transactionsCard()" />
+
+        <!-- Card 3: Avg. Basket Value -->
+        <app-metric-card [card]="averageBasketCard()" />
+
+        <!-- Card 4: Avg Daily Sales -->
+        <app-metric-card [card]="avgDailySalesCard()" />
+    </section>
+
     <app-horizontal-bar-chart [data]="storesSalesData()" labelKey="store_name" salesKey="total_Sales" />
 
     <app-table-chart title="Store Category Performance"

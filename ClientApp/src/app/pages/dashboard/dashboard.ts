@@ -26,7 +26,8 @@ export class Dashboard implements OnInit {
   salesKpiData = signal<SalesData>({
     totalSales: 0.0,
     numberOfTransactions: 0,
-    averageBasketValue: 0.0
+    averageBasketValue: 0.0,
+    averageDailySales: 0.0
   });
 
   salesCategoryData = signal<SalesCategoryData[]>([]);
@@ -70,12 +71,16 @@ export class Dashboard implements OnInit {
     };
   });
 
-  avgDailySalesCard = {
-    title: 'AVG DAILY SALES',
-    icon: 'fa-solid fa-chart-line',
-    value: '$8,286.00',
-    visualIcon: 'fa-solid fa-gauge-high comparison-icon gauge-icon'
-  };
+  avgDailySalesCard = computed((): MetricCardProps => {
+    const sales = this.salesKpiData();
+
+    return {
+      title: 'AVG DAILY SALES',
+      icon: 'fa-solid fa-chart-line',
+      value: `$${sales.averageDailySales.toFixed(2)}`,
+      visualIcon: 'fa-solid fa-gauge-high comparison-icon gauge-icon'
+    }
+  });
 
   ngOnInit(): void {
     this.loadSalesKpiData();

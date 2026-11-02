@@ -1,6 +1,6 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { PageHeader } from '../../shared/page-header/page-header';
-import { StoreCategorySalesResponse, StoreSalesData } from '../../models/sales';
+import { SalesData, StoreCategorySalesResponse, StoreSalesData } from '../../models/sales';
 import { SalesService } from '../../services/sales-service';
 import { HorizontalBarChart } from '../../shared/horizontal-bar-chart/horizontal-bar-chart';
 
@@ -9,9 +9,11 @@ export interface PageChangeEvent {
   pageSize: number;
 }
 import { TableChart } from '../../shared/table-chart/table-chart';
+import { MetricCardProps } from '../../models/matric-card';
+import { MetricCard } from '../../shared/metric-card/metric-card';
 
 @Component({
-  imports: [PageHeader, HorizontalBarChart, TableChart],
+  imports: [PageHeader, MetricCard, HorizontalBarChart, TableChart],
   selector: 'app-store-performance',
   styleUrl: './store-performance.css',
   templateUrl: './store-performance.html',
@@ -26,6 +28,14 @@ export class StorePerformance {
   selectedTimeRange = 'Last 30 Days';
   timeRanges = ['All Time', 'Today', 'Last 7 Days', 'Last 30 Days', 'This Month', 'Previous Month'];
 
+  // Sales Data
+  salesKpiData = signal<SalesData>({
+    totalSales: 0.0,
+    numberOfTransactions: 0,
+    averageBasketValue: 0.0,
+    averageDailySales: 0.0
+  });
+
   storesSalesData = signal<StoreSalesData[]>([]);
 
   storeCategorySalesData = signal<StoreCategorySalesResponse>({
@@ -39,8 +49,60 @@ export class StorePerformance {
   });
 
   ngOnInit(): void {
+    this.loadSalesKpiData();
     this.loadStoresSalesData();
     this.loadStoreCategorySalesData(1);
+  }
+
+  totalSalesCard = computed((): MetricCardProps => {
+    const sales = this.salesKpiData();
+
+    return {
+      title: 'TOTAL SALES',
+      icon: 'fa-solid fa-wallet',
+      value: `$${sales.totalSales.toFixed(2)}`,
+      visualIcon: 'fa-solid fa-chart-line comparison-icon sparkline-icon'
+    };
+  });
+
+  transactionsCard = computed((): MetricCardProps => {
+    const sales = this.salesKpiData();
+
+    return {
+      title: 'TRANSACTIONS',
+      icon: 'fa-solid fa-receipt',
+      value: sales.numberOfTransactions.toLocaleString(),
+      visualIcon: 'fa-solid fa-chart-column comparison-icon bars-icon'
+    };
+  });
+
+  averageBasketCard = computed((): MetricCardProps => {
+    const sales = this.salesKpiData();
+
+    return {
+      title: 'AVG. BASKET VALUE',
+      icon: 'fa-solid fa-bag-shopping',
+      value: `$${sales.averageBasketValue.toFixed(2)}`,
+      visualIcon: 'fa-solid fa-chart-line comparison-icon sparkline-icon'
+    };
+  });
+
+  avgDailySalesCard = computed((): MetricCardProps => {
+    const sales = this.salesKpiData();
+
+    return {
+      title: 'AVG DAILY SALES',
+      icon: 'fa-solid fa-chart-line',
+      value: `$${sales.averageDailySales.toFixed(2)}`,
+      visualIcon: 'fa-solid fa-gauge-high comparison-icon gauge-icon'
+    }
+  });
+
+  loadSalesKpiData(): void {
+    this.businessKpiService.getSalesData().subscribe({
+      next: (response) => { this.salesKpiData.set(response) },
+      error: (error) => { console.error(error) }
+    });
   }
 
   loadStoresSalesData(): void {
