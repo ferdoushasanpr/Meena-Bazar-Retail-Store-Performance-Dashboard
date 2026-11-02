@@ -31,8 +31,8 @@ public static class AnalyticsRoute
     });
 
         // Query 5
-        group.MapGet("/stores", async (IAnalyticsService service) =>
-            Results.Ok(await service.GetStorePerformanceAsync()));
+        group.MapGet("/stores", async (DateTime? startDate, DateTime? endDate, IAnalyticsService service) =>
+            Results.Ok(await service.GetStorePerformanceAsync(startDate, endDate)));
 
         // Query 6
         group.MapGet("/products", async (

@@ -9,7 +9,7 @@ public interface IAnalyticsService
     GetSalesByStoreAndCategoryAsync(
         int pageNumber,
         int pageSize);
-    Task<IEnumerable<StoreSalesPerformance>> GetStorePerformanceAsync();
+    Task<IEnumerable<StoreSalesPerformance>> GetStorePerformanceAsync(DateTime? startDate, DateTime? endDate);
     Task<PaginatedResponse<ProductSalesPerformance>>
     GetProductPerformanceAsync(
         int pageNumber,
