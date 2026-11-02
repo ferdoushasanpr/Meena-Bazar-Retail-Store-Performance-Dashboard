@@ -2,9 +2,10 @@ namespace Server.Models;
 
 public class KpiSummary
 {
-    public double? TotalSales { get; set; }
+    public double TotalSales { get; set; }
     public int NumberOfTransactions { get; set; }
-    public double? AverageBasketValue { get; set; }
+    public double AverageBasketValue { get; set; }
+    public double AverageDailySales { get; set; }
 }
 
 public class StoreCategorySales
