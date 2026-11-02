@@ -31,8 +31,8 @@ export class SalesService {
         return this.http.get<StoreSalesData[]>(`${this.apiUrlBase}/stores`);
     }
 
-    getDailyStoresSalesData(): Observable<DailyStoreSalesData[]> {
-        return this.http.get<DailyStoreSalesData[]>(`${this.apiUrlBase}/daily-sales/filtered?startDate=2025-01-01&endDate=2025-02-01&storeId=ST008`);
+    getDailyStoresSalesData(startDate: string, endDate: string, storeId: string): Observable<DailyStoreSalesData[]> {
+        return this.http.get<DailyStoreSalesData[]>(`${this.apiUrlBase}/daily-sales/filtered?startDate=${startDate}&endDate=${endDate}&storeId=${storeId}`);
     }
 
     getBrandSalesData(): Observable<BrandSalesData[]> {

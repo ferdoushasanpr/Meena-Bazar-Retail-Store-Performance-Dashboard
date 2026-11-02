@@ -71,20 +71,20 @@ export class SalesAnalytics implements OnInit {
   });
 
   ngOnInit(): void {
-    this.loadFilteredSalesData();
-    this.loadDailyStoreSalesData();
+    this.loadFilteredSalesData('2025-01-01', '2025-02-01');
+    this.loadDailyStoreSalesData('2025-01-01', '2025-02-01', 'ST008');
     this.loadFilteredStoreCategorySalesData('2025-01-01', '2025-02-01', 'ST004');
   }
 
-  loadFilteredSalesData(): void {
-    this.businessKpiService.getFilteredSalesData('2025-01-01', '2025-02-01').subscribe({
+  loadFilteredSalesData(startDate: string, endDate: string): void {
+    this.businessKpiService.getFilteredSalesData(startDate, endDate).subscribe({
       next: (response) => { this.filteredSalesData.set(response); },
       error: (error) => { console.error(error) }
     });
   }
 
-  loadDailyStoreSalesData(): void {
-    this.businessKpiService.getDailyStoresSalesData().subscribe({
+  loadDailyStoreSalesData(startDate: string, endDate: string, storeId: string): void {
+    this.businessKpiService.getDailyStoresSalesData(startDate, endDate, storeId).subscribe({
       next: (response) => { this.dailyStoreSalesData.set(response); },
       error: (error) => { console.error(error) }
     });
