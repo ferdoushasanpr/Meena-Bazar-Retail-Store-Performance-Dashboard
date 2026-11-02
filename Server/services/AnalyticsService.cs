@@ -139,12 +139,22 @@ public class AnalyticsService : IAnalyticsService
     public async Task<PaginatedResponse<ProductSalesPerformance>>
     GetProductPerformanceAsync(
         int pageNumber,
-        int pageSize)
+        int pageSize,
+        DateTime? startDate = null,
+        DateTime? endDate = null)
     {
         var query =
             from t in _context.DemoTransactions.AsNoTracking()
+            join s in _context.DemoSales.AsNoTracking()
+                on t.order_id equals s.order_id
             join p in _context.DemoProducts.AsNoTracking()
                 on t.product_id equals p.product_id
+            where
+                (!startDate.HasValue ||
+                    s.order_datetime >= startDate.Value)
+                &&
+                (!endDate.HasValue ||
+                    s.order_datetime < endDate.Value.Date.AddDays(1))
             group t by new
             {
                 t.product_id,

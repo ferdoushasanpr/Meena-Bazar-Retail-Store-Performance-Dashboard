@@ -13,7 +13,9 @@ public interface IAnalyticsService
     Task<PaginatedResponse<ProductSalesPerformance>>
     GetProductPerformanceAsync(
         int pageNumber,
-        int pageSize);
+        int pageSize,
+        DateTime? startDate,
+        DateTime? endDate);
     Task<IEnumerable<CategorySalesPerformance>> GetCategoryPerformanceAsync();
     Task<IEnumerable<BrandSalesPerformance>> GetBrandPerformanceAsync();
     Task<IEnumerable<DailySalesTrend>> GetDailySalesTrendAsync();

@@ -38,6 +38,8 @@ public static class AnalyticsRoute
         group.MapGet("/products", async (
         int pageNumber,
         int pageSize,
+        DateTime? startDate,
+        DateTime? endDate,
         IAnalyticsService service) =>
     {
         pageNumber = Math.Max(1, pageNumber);
@@ -45,7 +47,9 @@ public static class AnalyticsRoute
 
         var result = await service.GetProductPerformanceAsync(
             pageNumber,
-            pageSize);
+            pageSize,
+            startDate,
+            endDate);
 
         return Results.Ok(result);
     });
