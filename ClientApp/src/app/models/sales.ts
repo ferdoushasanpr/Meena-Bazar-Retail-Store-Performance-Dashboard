@@ -24,6 +24,12 @@ export interface MonthlySalesData {
     total_Revenue: number
 }
 
+export interface YearlySalesData {
+    year: number,
+    total_Sales: number,
+    total_Revenue: number
+}
+
 export interface StoreSalesData {
     store_id: string,
     store_name: string,
