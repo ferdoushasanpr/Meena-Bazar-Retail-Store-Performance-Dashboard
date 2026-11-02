@@ -29,7 +29,7 @@ export class StorePerformance {
   timeRanges = ['All Time', 'Today', 'Last 7 Days', 'Last 30 Days', 'This Month', 'Previous Month'];
 
   // Sales Data
-  salesKpiData = signal<SalesData>({
+  filteredSalesKpiData = signal<SalesData>({
     totalSales: 0.0,
     numberOfTransactions: 0,
     averageBasketValue: 0.0,
@@ -49,13 +49,13 @@ export class StorePerformance {
   });
 
   ngOnInit(): void {
-    this.loadSalesKpiData();
+    this.loadFilteredSalesKpiData();
     this.loadStoresSalesData();
     this.loadStoreCategorySalesData(1);
   }
 
   totalSalesCard = computed((): MetricCardProps => {
-    const sales = this.salesKpiData();
+    const sales = this.filteredSalesKpiData();
 
     return {
       title: 'TOTAL SALES',
@@ -66,7 +66,7 @@ export class StorePerformance {
   });
 
   transactionsCard = computed((): MetricCardProps => {
-    const sales = this.salesKpiData();
+    const sales = this.filteredSalesKpiData();
 
     return {
       title: 'TRANSACTIONS',
@@ -77,7 +77,7 @@ export class StorePerformance {
   });
 
   averageBasketCard = computed((): MetricCardProps => {
-    const sales = this.salesKpiData();
+    const sales = this.filteredSalesKpiData();
 
     return {
       title: 'AVG. BASKET VALUE',
@@ -88,7 +88,7 @@ export class StorePerformance {
   });
 
   avgDailySalesCard = computed((): MetricCardProps => {
-    const sales = this.salesKpiData();
+    const sales = this.filteredSalesKpiData();
 
     return {
       title: 'AVG DAILY SALES',
@@ -98,9 +98,9 @@ export class StorePerformance {
     }
   });
 
-  loadSalesKpiData(): void {
-    this.businessKpiService.getSalesData().subscribe({
-      next: (response) => { this.salesKpiData.set(response) },
+  loadFilteredSalesKpiData(): void {
+    this.businessKpiService.getFilteredSalesData('2025-01-01', '2025-02-01').subscribe({
+      next: (response) => { this.filteredSalesKpiData.set(response) },
       error: (error) => { console.error(error) }
     });
   }
