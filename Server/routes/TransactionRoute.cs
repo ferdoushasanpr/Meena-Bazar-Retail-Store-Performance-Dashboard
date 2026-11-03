@@ -9,11 +9,11 @@ public static class TransactionRoute
     {
         var group = app.MapGroup("/transactions").WithTags("Transactions");
 
-        group.MapGet("/", async (ITransactionService service) =>
-{
-    var transactions = await service.GetAllTransactionsAsync();
-    return Results.Ok(transactions);
-});
+        group.MapGet("/", async (int pageNumber, int pageSize, ITransactionService service) =>
+        {
+            var transactions = await service.GetAllTransactionsAsync(pageNumber, pageSize);
+            return Results.Ok(transactions);
+        });
 
         group.MapGet("/{order_item_id}", async (
             string order_item_id,
