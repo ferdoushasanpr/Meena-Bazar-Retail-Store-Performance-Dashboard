@@ -1,0 +1,89 @@
+<div class="table-card">
+    @if (title()) {
+    <div class="table-header">
+        <div>
+            <h3 class="table-title">{{ title() }}</h3>
+            @if (subtitle()) {
+            <p class="table-subtitle">{{ subtitle() }}</p>
+            }
+        </div>
+    </div>
+    }
+
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <!-- Dynamic Data Columns -->
+                    @for (col of columns(); track col.key) {
+                    <th class="sortable" [style.text-align]="col.align" (click)="toggleSort(col.key)">
+                        <div class="header-content"
+                            [style.justify-content]="col.align === 'right' ? 'flex-end' : 'flex-start'">
+                            <span>{{ col.header }}</span>
+                            <span class="sort-icon">
+                                @if (sortColumn() === col.key) {
+                                <i class="fa-solid" [class.fa-sort-up]="sortDirection() === 'asc'"
+                                    [class.fa-sort-down]="sortDirection() === 'desc'"></i>
+                                } @else {
+                                <i class="fa-solid fa-sort muted"></i>
+                                }
+                            </span>
+                        </div>
+                    </th>
+                    }
+                    <!-- Additional Update & Delete Columns -->
+                    <th class="action-header center-align">Update</th>
+                    <th class="action-header center-align">Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (row of sortedData(); track $index) {
+                <tr>
+                    <!-- Dynamic Data Cells -->
+                    @for (col of columns(); track col.key) {
+                    <td [style.text-align]="col.align">
+                        <span [class.number-val]="col.type !== 'text'">
+                            {{ formatCell(row[col.key], col.type) }}
+                        </span>
+                    </td>
+                    }
+                    <!-- Action Cell: Update -->
+                    <td class="action-cell center-align">
+                        <button class="action-btn edit-btn" title="Edit Item" (click)="onUpdate(row)">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
+                    </td>
+                    <!-- Action Cell: Delete -->
+                    <td class="action-cell center-align">
+                        <button class="action-btn delete-btn" title="Delete Item" (click)="onDelete(row)">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </td>
+                </tr>
+                } @empty {
+                <tr>
+                    <td [attr.colspan]="columns().length + 2" class="empty-state">
+                        No data records available.
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination Footer -->
+    <div class="table-footer">
+        <span class="pagination-info">
+            Showing page <strong>{{ pageNumber() }}</strong> of <strong>{{ totalPages() }}</strong> ({{ totalRecords()
+            }} records)
+        </span>
+        <div class="pagination-actions">
+            <button class="pagination-btn" [disabled]="!hasPreviousPage()" (click)="onPrevPage()">
+                <i class="fa-solid fa-chevron-left"></i> Previous
+            </button>
+            <button class="pagination-btn" [disabled]="!hasNextPage()" (click)="onNextPage()">
+                Next <i class="fa-solid fa-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+</div>
