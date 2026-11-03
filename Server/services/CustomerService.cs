@@ -14,11 +14,30 @@ public class CustomerService : ICustomerService
         _context = context;
     }
 
-    public async Task<IEnumerable<Customer>> GetAllCustomersAsync()
+    public async Task<PaginatedResponse<Customer>> GetAllCustomersAsync(
+    int pageNumber = 1,
+    int pageSize = 10)
     {
-        return await _context.DemoCustomers
-            .AsNoTracking()
+        var query = _context.DemoCustomers.AsNoTracking();
+
+        var totalRecords = await query.CountAsync();
+
+        var totalPages = (int)Math.Ceiling(totalRecords / (double)pageSize);
+
+        var customers = await query
+            .OrderBy(c => c.customer_id)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync();
+
+        return new PaginatedResponse<Customer>
+        {
+            Data = customers,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalRecords = totalRecords,
+            TotalPages = totalPages
+        };
     }
 
     public async Task<Customer?> GetCustomerByIdAsync(string customer_id)

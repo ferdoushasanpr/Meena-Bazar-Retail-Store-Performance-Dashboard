@@ -4,7 +4,7 @@ namespace Server.Interfaces;
 
 public interface ICustomerService
 {
-    Task<IEnumerable<Customer>> GetAllCustomersAsync();
+    Task<PaginatedResponse<Customer>> GetAllCustomersAsync(int pageNumber, int pageSize);
     Task<Customer?> GetCustomerByIdAsync(string customer_id);
     Task<bool> AddCustomerAsync(Customer customer);
     Task<bool> UpdateCustomerAsync(Customer customer);

@@ -255,7 +255,7 @@ public class AnalyticsService : IAnalyticsService
         return await query.ToListAsync();
     }
 
-    // Query 8: Sales performance by brand.
+    // Sales performance by brand.
     public async Task<IEnumerable<BrandSalesPerformance>>
         GetBrandPerformanceAsync()
     {
@@ -273,7 +273,7 @@ public class AnalyticsService : IAnalyticsService
             .ToListAsync();
     }
 
-    // Query 9: Daily sales trend for completed sales.
+    // Daily sales trend for completed sales.
     public async Task<IEnumerable<DailySalesTrend>>
         GetDailySalesTrendAsync()
     {
@@ -292,8 +292,7 @@ public class AnalyticsService : IAnalyticsService
             .ToListAsync();
     }
 
-    // Query 10: Yearly sales trend.
-    // Preserves the original query's lack of a status filter.
+    // Yearly sales trend.
     public async Task<IEnumerable<YearlySalesTrend>>
         GetYearlySalesTrendAsync()
     {
@@ -310,8 +309,7 @@ public class AnalyticsService : IAnalyticsService
             .ToListAsync();
     }
 
-    // Query 11: Monthly sales trend.
-    // Preserves the original query's lack of a status filter.
+    // Monthly sales trend.
     public async Task<IEnumerable<MonthlySalesTrend>>
         GetMonthlySalesTrendAsync()
     {
@@ -343,7 +341,7 @@ public class AnalyticsService : IAnalyticsService
         });
     }
 
-    // Query 12: KPI summary with date and optional store filters.
+    // KPI summary with date and optional store filters.
     public async Task<KpiSummary> GetFilteredKpiSummaryAsync(
         DateTime startDate,
         DateTime endDate,
@@ -381,7 +379,7 @@ public class AnalyticsService : IAnalyticsService
         };
     }
 
-    // Query 13: Daily sales with date and optional store filters.
+    // Daily sales with date and optional store filters.
     public async Task<IEnumerable<DailyStoreSales>>
         GetFilteredDailySalesAsync(
             DateTime startDate,
@@ -421,7 +419,7 @@ public class AnalyticsService : IAnalyticsService
             .ToListAsync();
     }
 
-    // Query 14: Sales by store and category with date filters.
+    // Sales by store and category with date filters.
     public async Task<IEnumerable<StoreCategorySales>>
         GetFilteredStoreCategorySalesAsync(
             DateTime startDate,
