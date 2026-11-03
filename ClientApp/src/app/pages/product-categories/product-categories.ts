@@ -5,6 +5,7 @@ import { ProductSalesResponse } from '../../models/sales';
 import { CategoryMatrixChart } from '../../shared/category-matrix-chart/category-matrix-chart';
 import { PageHeader } from '../../shared/page-header/page-header';
 import { HorizontalBarChart } from '../../shared/horizontal-bar-chart/horizontal-bar-chart';
+import { formatDate } from '../../utilities/date';
 
 @Component({
   imports: [FormsModule, PageHeader, CategoryMatrixChart, HorizontalBarChart],
@@ -20,8 +21,12 @@ export class ProductCategories {
   pageHeaderSubtitle = "Benchmark, rank, and analyze revenue, customer volume, and efficiency across all product categories.";
 
   // Filters & State
-  selectedTimeRange = 'Last 30 Days';
-  timeRanges = ['All Time', 'Today', 'Last 7 Days', 'Last 30 Days', 'This Month', 'Previous Month'];
+  selectedTimeRange = 'All';
+  timeRanges = ['All', 'Today', 'Last 7 Days', 'Last 30 Days', 'Select Range'];
+  private readonly currentDate = new Date(2025, 3, 1);
+
+  customStartDate = signal<string>(formatDate(this.currentDate));
+  customEndDate = signal<string>(formatDate(this.currentDate));
 
   productSalesData = signal<ProductSalesResponse>({
     data: [],
@@ -34,7 +39,7 @@ export class ProductCategories {
   });
 
   ngOnInit(): void {
-    this.loadProductSalesData(1, '2020-01-01', '2026-01-01');
+    this.setTimeRange('All');
   }
 
   loadProductSalesData(pageNumber: number = 1, startDate: string, endDate: string): void {
@@ -45,10 +50,67 @@ export class ProductCategories {
   }
 
   onPageChange(pageNumber: number): void {
-    this.loadProductSalesData(pageNumber, '2020-01-01', '2026-01-01');
+    const endDate = new Date(this.currentDate);
+    const startDate = new Date(this.currentDate);
+
+    switch (this.selectedTimeRange) {
+      case 'All':
+        startDate.setFullYear(startDate.getFullYear() - 2);
+        break;
+
+      case 'Today':
+        startDate.setDate(startDate.getDate() - 1);
+        break;
+
+      case 'Last 7 Days':
+        startDate.setDate(startDate.getDate() - 6);
+        break;
+
+      case 'Last 30 Days':
+        startDate.setDate(startDate.getDate() - 29);
+        break;
+    }
+
+    this.loadProductSalesData(pageNumber, formatDate(startDate), formatDate(endDate));
+  }
+
+  private loadSalesData(startDate: string, endDate: string): void {
+    this.loadProductSalesData(1, startDate, endDate);
   }
 
   setTimeRange(range: string): void {
     this.selectedTimeRange = range;
+
+    const endDate = new Date(this.currentDate);
+    const startDate = new Date(this.currentDate);
+
+    switch (range) {
+      case 'All':
+        startDate.setFullYear(startDate.getFullYear() - 2);
+        break;
+
+      case 'Today':
+        startDate.setDate(startDate.getDate() - 1);
+        break;
+
+      case 'Last 7 Days':
+        startDate.setDate(startDate.getDate() - 6);
+        break;
+
+      case 'Last 30 Days':
+        startDate.setDate(startDate.getDate() - 29);
+        break;
+    }
+
+    this.loadSalesData(
+      formatDate(startDate),
+      formatDate(endDate)
+    );
+  }
+
+  onCustomDateChange(): void {
+    if (this.selectedTimeRange === 'Select Range') {
+      this.loadSalesData(this.customStartDate(), this.customEndDate());
+    }
   }
 }
