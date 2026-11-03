@@ -15,8 +15,12 @@ export class SalesService {
         return this.http.get<SalesData>(`${this.apiUrlBase}/kpis`);
     }
 
-    getSalesCategoryData(): Observable<SalesCategoryData[]> {
-        return this.http.get<SalesCategoryData[]>(`${this.apiUrlBase}/categories`);
+    getSalesCategoryData(startDate?: string, endDate?: string): Observable<SalesCategoryData[]> {
+        if (!startDate && !endDate) {
+            return this.http.get<SalesCategoryData[]>(`${this.apiUrlBase}/categories`);
+        } else {
+            return this.http.get<SalesCategoryData[]>(`${this.apiUrlBase}/categories?startDate=${startDate}&endDate=${endDate}`);
+        }
     }
 
     getDailySalesData(): Observable<DailySalesData[]> {
@@ -43,10 +47,6 @@ export class SalesService {
         return this.http.get<BrandSalesData[]>(`${this.apiUrlBase}/brands`);
     }
 
-<<<<<<< HEAD
-    getFilteredSalesData(startDate: string | null, endDate: string | null, storeId: string | null): Observable<SalesData> {
-        return this.http.get<SalesData>(`${this.apiUrlBase}/kpis/filtered?startDate=2025-01-01&endDate=2025-02-01&storeId=ST005`);
-=======
     getFilteredSalesData(startDate: string | null, endDate: string | null, storeId?: string): Observable<SalesData> {
         if (storeId) {
             return this.http.get<SalesData>(`${this.apiUrlBase}/kpis/filtered?startDate=${startDate}&endDate=${endDate}&storeId=${storeId}`);
@@ -61,7 +61,6 @@ export class SalesService {
 
     getStoreCategorySalesData(pageNumber: number = 1, pageSize: number = 10): Observable<StoreCategorySalesResponse> {
         return this.http.get<StoreCategorySalesResponse>(`${this.apiUrlBase}/store-category?pageNumber=${pageNumber}&pageSize=${pageSize}`);
->>>>>>> frontend
     }
 
     getFilteredStoreCategorySalesData(startDate: string, endDate: string, storeId?: string): Observable<StoreCategorySalesData[]> {

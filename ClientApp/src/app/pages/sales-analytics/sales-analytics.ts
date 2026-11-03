@@ -8,6 +8,8 @@ import { PageHeader } from '../../shared/page-header/page-header';
 import { TrendChart } from '../../shared/trend-chart/trend-chart';
 import { VerticalBarChart } from '../../shared/vertical-bar-chart/vertical-bar-chart';
 import { formatDate } from '../../utilities/date';
+import { StoreData } from '../../models/store';
+import { OperationsService } from '../../services/operations-service';
 
 @Component({
   imports: [FormsModule, PageHeader, MetricCard, TrendChart, VerticalBarChart],
@@ -17,6 +19,7 @@ import { formatDate } from '../../utilities/date';
 })
 export class SalesAnalytics implements OnInit {
   private businessKpiService = inject(SalesService);
+  private operationsService = inject(OperationsService);
 
   //Page Header Component Info
   pageHeaderTitle = "Sales Analytics";
@@ -24,6 +27,7 @@ export class SalesAnalytics implements OnInit {
 
   // Filters & State
   selectedTimeRange = 'All';
+  selectedStore = signal<string>('All Stores');
   timeRanges = ['All', 'Today', 'Last 7 Days', 'Last 30 Days', 'Select Range'];
   private readonly currentDate = new Date(2025, 3, 1);
 
@@ -40,6 +44,7 @@ export class SalesAnalytics implements OnInit {
 
   dailyStoreSalesData = signal<DailyStoreSalesData[]>([]);
   filteredStoreCategorySalesData = signal<StoreCategorySalesData[]>([]);
+  storesArr = signal<StoreData[]>([]);
 
   totalSalesCard = computed((): MetricCardProps => {
     const sales = this.filteredSalesData();
@@ -87,12 +92,13 @@ export class SalesAnalytics implements OnInit {
 
   ngOnInit(): void {
     this.setTimeRange('All');
+    this.loadStoresData();
   }
 
-  loadFilteredSalesData(): void {
-    this.businessKpiService.getFilteredSalesData('2025-01-01', '2025-02-01').subscribe({
+  loadFilteredSalesData(startDate: string, endDate: string, storeId?: string): void {
+    this.businessKpiService.getFilteredSalesData(startDate, endDate, storeId).subscribe({
       next: (response) => { this.filteredSalesData.set(response); },
-      error: (error) => { console.error(error) }
+      error: (error) => { console.error(error); }
     });
   }
 
@@ -103,31 +109,68 @@ export class SalesAnalytics implements OnInit {
     });
   }
 
-  loadFilteredStoreCategorySalesData(startDate: string, endDate: string, storeId: string): void {
+  loadFilteredStoreCategorySalesData(startDate: string, endDate: string, storeId?: string): void {
     this.businessKpiService.getFilteredStoreCategorySalesData(startDate, endDate, storeId).subscribe({
       next: (response) => { this.filteredStoreCategorySalesData.set(response); },
+      error: (error) => { console.error(error); }
+    });
+  }
+
+  loadStoresData(): void {
+    this.operationsService.getStoresData().subscribe({
+      next: (response) => { this.storesArr.set(response); },
       error: (error) => { console.error(error) }
     });
   }
 
   onStoreChange(storeId: string): void {
-    this.loadFilteredStoreCategorySalesData('2025-01-01', '2025-02-01', storeId);
+    this.selectedStore.set(storeId);
+
+    const endDate = this.selectedTimeRange === 'Select Range'
+      ? this.customEndDate()
+      : formatDate(this.currentDate);
+
+    let startDate: string;
+
+    if (this.selectedTimeRange === 'Select Range') {
+      startDate = this.customStartDate();
+    } else {
+      const start = new Date(this.currentDate);
+
+      switch (this.selectedTimeRange) {
+        case 'Today':
+          start.setDate(start.getDate() - 1);
+          break;
+        case 'Last 7 Days':
+          start.setDate(start.getDate() - 6);
+          break;
+        case 'Last 30 Days':
+          start.setDate(start.getDate() - 29);
+          break;
+        default:
+          start.setFullYear(start.getFullYear() - 2);
+      }
+
+      startDate = formatDate(start);
+    }
+
+    this.loadSalesData(startDate, endDate);
   }
 
   private loadSalesData(startDate: string, endDate: string): void {
-    this.loadFilteredSalesData(startDate, endDate);
+    const storeId = this.selectedStore() === 'All Stores'
+      ? undefined
+      : this.selectedStore();
 
-    this.loadDailyStoreSalesData(
-      startDate,
-      endDate,
-      'ST008'
-    );
+    this.loadFilteredSalesData(startDate, endDate, storeId);
 
-    this.loadFilteredStoreCategorySalesData(
-      startDate,
-      endDate,
-      'ST004'
-    );
+    if (storeId == undefined) {
+      this.loadDailyStoreSalesData(startDate, endDate, 'ST001');
+      this.loadFilteredStoreCategorySalesData(startDate, endDate, 'ST001');
+    } else {
+      this.loadDailyStoreSalesData(startDate, endDate, storeId);
+      this.loadFilteredStoreCategorySalesData(startDate, endDate, storeId);
+    }
   }
 
   setTimeRange(range: string): void {
@@ -164,5 +207,10 @@ export class SalesAnalytics implements OnInit {
     if (this.selectedTimeRange === 'Select Range') {
       this.loadSalesData(this.customStartDate(), this.customEndDate());
     }
+  }
+
+  onResetFilter(): void {
+    this.selectedStore.set('All Stores');
+    this.setTimeRange('All');
   }
 }

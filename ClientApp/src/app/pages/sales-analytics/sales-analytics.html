@@ -19,6 +19,7 @@
                 <input type="date" [ngModel]="customStartDate()"
                     (ngModelChange)="customStartDate.set($event); onCustomDateChange()" />
             </label>
+
             <label>
                 End:
                 <input type="date" [ngModel]="customEndDate()"
@@ -28,9 +29,24 @@
         }
 
         <div class="filter-controls">
-            <button class="btn-text">
-                <i class="fa-solid fa-arrow-rotate-left"></i> Reset Filters
+            <div class="store-filter">
+                <i class="fa-solid fa-store"></i>
+
+                <select [ngModel]="selectedStore()" (ngModelChange)="onStoreChange($event)">
+                    <option value="All Stores">All Stores</option>
+                    @for (store of storesArr(); track $index) {
+                    <option [value]="store.store_id">
+                        {{ store.store_name }} ({{ store.city }})
+                    </option>
+                    }
+                </select>
+            </div>
+
+            <button class="btn-text" (click)="onResetFilter()">
+                <i class="fa-solid fa-arrow-rotate-left"></i>
+                Reset Filters
             </button>
+
         </div>
     </section>
 
@@ -53,7 +69,6 @@
         <app-trend-chart [dailyStoreData]="dailyStoreSalesData()" [showControls]="false" />
         <!-- Vertical Bar Chart with Store Selector -->
         <app-vertical-bar-chart title="Category Sales Performance"
-            subtitle="Revenue and volume performance per category" [data]="filteredStoreCategorySalesData()"
-            (storeChange)="onStoreChange($event)" />
+            subtitle="Revenue and volume performance per category" [data]="filteredStoreCategorySalesData()" />
     </div>
 </div>
