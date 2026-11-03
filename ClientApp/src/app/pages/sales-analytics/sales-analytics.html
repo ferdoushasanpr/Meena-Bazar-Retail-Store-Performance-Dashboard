@@ -69,7 +69,6 @@
         <app-trend-chart [dailyStoreData]="dailyStoreSalesData()" [showControls]="false" />
         <!-- Vertical Bar Chart with Store Selector -->
         <app-vertical-bar-chart title="Category Sales Performance"
-            subtitle="Revenue and volume performance per category" [data]="filteredStoreCategorySalesData()"
-            (storeChange)="onStoreChange($event)" />
+            subtitle="Revenue and volume performance per category" [data]="filteredStoreCategorySalesData()" />
     </div>
 </div>

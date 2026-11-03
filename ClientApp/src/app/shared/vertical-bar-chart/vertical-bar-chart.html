@@ -7,20 +7,6 @@
             <p class="chart-subtitle">{{ subtitle() }}</p>
             }
         </div>
-
-        <!-- Store Selector Dropdown -->
-        @if (storeOptions().length) {
-        <div class="store-selector">
-            <label for="storeSelect" class="select-label">Store:</label>
-            <select id="storeSelect" class="store-dropdown" [ngModel]="selectedStore()"
-                (ngModelChange)="onStoreSelect($event)">
-                <option value="">All Stores</option>
-                @for (store of storeOptions(); track store) {
-                <option [value]="store">{{ store }}</option>
-                }
-            </select>
-        </div>
-        }
     </div>
 
     <!-- Main Chart Canvas -->
@@ -43,7 +29,7 @@
 
             <!-- Vertical Bars -->
             <div class="bars-container">
-                @for (item of chartData(); track item.category + item.store_id) {
+                @for (item of data(); track item.category + item.store_id) {
                 <div class="bar-group">
                     <div class="bar-wrapper">
                         <!-- Value Tooltip -->
@@ -69,4 +55,10 @@
             </div>
         </div>
     </div>
+    <!-- Store Name Below Chart -->
+    @if (data().length) {
+    <div class="chart-store-name">
+        {{ data()[0].store_name }}
+    </div>
+    }
 </div>
