@@ -51,8 +51,8 @@ export class SalesService {
         }
     }
 
-    getProductSalesData(pageNumber: number = 1, pageSize: number = 10): Observable<ProductSalesResponse> {
-        return this.http.get<ProductSalesResponse>(`${this.apiUrlBase}/products?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    getProductSalesData(pageNumber: number = 1, pageSize: number = 10, startDate: string, endDate: string): Observable<ProductSalesResponse> {
+        return this.http.get<ProductSalesResponse>(`${this.apiUrlBase}/products?pageNumber=${pageNumber}&pageSize=${pageSize}&startDate=${startDate}&endDate=${endDate}`);
     }
 
     getStoreCategorySalesData(pageNumber: number = 1, pageSize: number = 10): Observable<StoreCategorySalesResponse> {
