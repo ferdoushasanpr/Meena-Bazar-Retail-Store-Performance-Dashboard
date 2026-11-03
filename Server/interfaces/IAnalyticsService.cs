@@ -19,7 +19,8 @@ public interface IAnalyticsService
         int pageSize,
         DateTime? startDate,
         DateTime? endDate);
-    Task<IEnumerable<CategorySalesPerformance>> GetCategoryPerformanceAsync();
+    Task<IEnumerable<CategorySalesPerformance>> GetCategoryPerformanceAsync(DateTime? startDate,
+        DateTime? endDate);
     Task<IEnumerable<BrandSalesPerformance>> GetBrandPerformanceAsync();
     Task<IEnumerable<DailySalesTrend>> GetDailySalesTrendAsync();
     Task<IEnumerable<YearlySalesTrend>> GetYearlySalesTrendAsync();

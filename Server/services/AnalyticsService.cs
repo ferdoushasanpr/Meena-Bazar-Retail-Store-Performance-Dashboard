@@ -216,10 +216,32 @@ public class AnalyticsService : IAnalyticsService
 
     // Sales performance by product category.
     public async Task<IEnumerable<CategorySalesPerformance>>
-        GetCategoryPerformanceAsync()
+    GetCategoryPerformanceAsync(
+        DateTime? startDate = null,
+        DateTime? endDate = null)
     {
-        return await (
+        var salesQuery = _context.DemoSales
+            .AsNoTracking()
+            .Where(s => s.order_status == "Completed");
+
+        if (startDate.HasValue)
+        {
+            salesQuery = salesQuery
+                .Where(s => s.order_datetime >= startDate.Value);
+        }
+
+        if (endDate.HasValue)
+        {
+            var exclusiveEndDate = endDate.Value.Date.AddDays(1);
+
+            salesQuery = salesQuery
+                .Where(s => s.order_datetime < exclusiveEndDate);
+        }
+
+        var query =
             from t in _context.DemoTransactions.AsNoTracking()
+            join s in salesQuery
+                on t.order_id equals s.order_id
             join p in _context.DemoProducts.AsNoTracking()
                 on t.product_id equals p.product_id
             group t by p.category into g
@@ -228,8 +250,9 @@ public class AnalyticsService : IAnalyticsService
                 category = g.Key,
                 Total_Transactions = g.Count(),
                 Total_Sales = g.Sum(t => t.line_net_amount)
-            })
-            .ToListAsync();
+            };
+
+        return await query.ToListAsync();
     }
 
     // Query 8: Sales performance by brand.

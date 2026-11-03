@@ -61,8 +61,9 @@ public static class AnalyticsRoute
     });
 
         // Query 7
-        group.MapGet("/categories", async (IAnalyticsService service) =>
-            Results.Ok(await service.GetCategoryPerformanceAsync()));
+        group.MapGet("/categories", async (DateTime? startDate,
+        DateTime? endDate, IAnalyticsService service) =>
+            Results.Ok(await service.GetCategoryPerformanceAsync(startDate, endDate)));
 
         // Query 8
         group.MapGet("/brands", async (IAnalyticsService service) =>
