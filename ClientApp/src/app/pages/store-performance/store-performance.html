@@ -28,9 +28,24 @@
         }
 
         <div class="filter-controls">
+            <div class="store-filter">
+                <i class="fa-solid fa-store"></i>
+
+                <select [ngModel]="selectedStore()" (ngModelChange)="onStoreChange($event)">
+                    <option value="All Stores">All Stores</option>
+                    @for (store of storesArr(); track $index) {
+                    <option [value]="store.store_id">
+                        {{ store.store_name }} ({{ store.city }})
+                    </option>
+                    }
+                </select>
+            </div>
+
             <button class="btn-text">
-                <i class="fa-solid fa-arrow-rotate-left"></i> Reset Filters
+                <i class="fa-solid fa-arrow-rotate-left"></i>
+                Reset Filters
             </button>
+
         </div>
     </section>
 

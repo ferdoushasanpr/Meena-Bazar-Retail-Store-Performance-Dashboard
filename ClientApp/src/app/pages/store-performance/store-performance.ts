@@ -13,6 +13,8 @@ import { MetricCardProps } from '../../models/matric-card';
 import { MetricCard } from '../../shared/metric-card/metric-card';
 import { formatDate } from '../../utilities/date';
 import { FormsModule } from '@angular/forms';
+import { OperationsService } from '../../services/operations-service';
+import { StoreData } from '../../models/store';
 
 @Component({
   imports: [FormsModule, PageHeader, MetricCard, HorizontalBarChart, TableChart],
@@ -22,12 +24,14 @@ import { FormsModule } from '@angular/forms';
 })
 export class StorePerformance {
   private businessKpiService = inject(SalesService);
+  private operationsService = inject(OperationsService);
   //Page Header Component Info
   pageHeaderTitle = "Store Performance";
   pageHeaderSubtitle = "Benchmark, rank, and analyze revenue, customer volume, and efficiency across all retail locations.";
 
   // Filters & State
   selectedTimeRange = 'All';
+  selectedStore = signal<string>('All Stores');
   timeRanges = ['All', 'Today', 'Last 7 Days', 'Last 30 Days', 'Select Range'];
   private readonly currentDate = new Date(2025, 3, 1);
 
@@ -43,6 +47,7 @@ export class StorePerformance {
   });
 
   storesSalesData = signal<StoreSalesData[]>([]);
+  storesArr = signal<StoreData[]>([]);
 
   storeCategorySalesData = signal<StoreCategorySalesResponse>({
     data: [],
@@ -56,6 +61,7 @@ export class StorePerformance {
 
   ngOnInit(): void {
     this.setTimeRange('All');
+    this.loadStoresData();
   }
 
   totalSalesCard = computed((): MetricCardProps => {
@@ -102,8 +108,8 @@ export class StorePerformance {
     }
   });
 
-  loadFilteredSalesData(startDate: string, endDate: string): void {
-    this.businessKpiService.getFilteredSalesData(startDate, endDate).subscribe({
+  loadFilteredSalesData(startDate: string, endDate: string, storeId?: string): void {
+    this.businessKpiService.getFilteredSalesData(startDate, endDate, storeId).subscribe({
       next: (response) => { this.filteredSalesKpiData.set(response); },
       error: (error) => { console.error(error) }
     });
@@ -120,8 +126,8 @@ export class StorePerformance {
     });
   }
 
-  loadStoreCategorySalesData(pageNumber: number = 1, startDate: string, endDate: string): void {
-    this.businessKpiService.getStoreCategorySalesData(pageNumber, 10, undefined, startDate, endDate).subscribe({
+  loadStoreCategorySalesData(pageNumber: number = 1, storeId?: string, startDate?: string, endDate?: string): void {
+    this.businessKpiService.getStoreCategorySalesData(pageNumber, 10, storeId, startDate, endDate).subscribe({
       next: (response) => {
         this.storeCategorySalesData.set(response);
       },
@@ -131,9 +137,54 @@ export class StorePerformance {
     });
   }
 
+  loadStoresData(): void {
+    this.operationsService.getStoresData().subscribe({
+      next: (response) => { this.storesArr.set(response); },
+      error: (error) => { console.error(error) }
+    });
+  }
+
+  onStoreChange(storeId: string): void {
+    this.selectedStore.set(storeId);
+
+    const endDate = this.selectedTimeRange === 'Select Range'
+      ? this.customEndDate()
+      : formatDate(this.currentDate);
+
+    let startDate: string;
+
+    if (this.selectedTimeRange === 'Select Range') {
+      startDate = this.customStartDate();
+    } else {
+      const start = new Date(this.currentDate);
+
+      switch (this.selectedTimeRange) {
+        case 'Today':
+          start.setDate(start.getDate() - 1);
+          break;
+        case 'Last 7 Days':
+          start.setDate(start.getDate() - 6);
+          break;
+        case 'Last 30 Days':
+          start.setDate(start.getDate() - 29);
+          break;
+        default:
+          start.setFullYear(start.getFullYear() - 2);
+      }
+
+      startDate = formatDate(start);
+    }
+
+    this.loadSalesData(startDate, endDate);
+  }
+
   onPageChange(pageNumber: number): void {
     const endDate = new Date(this.currentDate);
     const startDate = new Date(this.currentDate);
+
+    const storeId = this.selectedStore() === 'All Stores'
+      ? undefined
+      : this.selectedStore();
 
     switch (this.selectedTimeRange) {
       case 'All':
@@ -152,13 +203,22 @@ export class StorePerformance {
         startDate.setDate(startDate.getDate() - 29);
         break;
     }
-    this.loadStoreCategorySalesData(pageNumber, formatDate(startDate), formatDate(endDate));
+
+    if (storeId === 'All Stores') {
+      this.loadStoreCategorySalesData(pageNumber, undefined, formatDate(startDate), formatDate(endDate));
+    } else {
+      this.loadStoreCategorySalesData(pageNumber, storeId, formatDate(startDate), formatDate(endDate));
+    }
   }
 
   private loadSalesData(startDate: string, endDate: string): void {
-    this.loadFilteredSalesData(startDate, endDate);
+    const storeId = this.selectedStore() === 'All Stores'
+      ? undefined
+      : this.selectedStore();
+
+    this.loadFilteredSalesData(startDate, endDate, storeId);
     this.loadStoresSalesData(startDate, endDate);
-    this.loadStoreCategorySalesData(1, startDate, endDate);
+    this.loadStoreCategorySalesData(1, storeId, startDate, endDate);
   }
 
   setTimeRange(range: string): void {

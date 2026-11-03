@@ -105,6 +105,40 @@
     gap: 18px;
 }
 
+.store-filter {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    background: #0b1320;
+}
+
+.store-filter i {
+    color: #818cf8;
+}
+
+.store-filter select {
+    border: none;
+    outline: none;
+    background: transparent;
+    color: #e2e8f0;
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+    min-width: 190px;
+}
+
+.store-filter select option {
+    background: #111c2e;
+    color: #f1f5f9;
+}
+
+.store-filter:hover {
+    border-color: #6366f1;
+}
+
 .btn-text {
     background: none;
     border: none;
