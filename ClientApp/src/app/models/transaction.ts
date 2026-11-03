@@ -8,3 +8,13 @@ export interface TransactionData {
     line_net_amount: number,
     line_vat_amount: number
 }
+
+export interface TransactionDataResponse {
+    data: TransactionData[],
+    pageNumber: number,
+    pageSize: number,
+    totalRecords: number,
+    totalPages: number,
+    hasPreviousPage: boolean,
+    hasNextPage: boolean
+}
