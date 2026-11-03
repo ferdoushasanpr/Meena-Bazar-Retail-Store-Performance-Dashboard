@@ -8,6 +8,8 @@ import { PageHeader } from '../../shared/page-header/page-header';
 import { TrendChart } from '../../shared/trend-chart/trend-chart';
 import { VerticalBarChart } from '../../shared/vertical-bar-chart/vertical-bar-chart';
 import { formatDate } from '../../utilities/date';
+import { StoreData } from '../../models/store';
+import { OperationsService } from '../../services/operations-service';
 
 @Component({
   imports: [FormsModule, PageHeader, MetricCard, TrendChart, VerticalBarChart],
@@ -17,6 +19,7 @@ import { formatDate } from '../../utilities/date';
 })
 export class SalesAnalytics implements OnInit {
   private businessKpiService = inject(SalesService);
+  private operationsService = inject(OperationsService);
 
   //Page Header Component Info
   pageHeaderTitle = "Sales Analytics";
@@ -24,6 +27,7 @@ export class SalesAnalytics implements OnInit {
 
   // Filters & State
   selectedTimeRange = 'All';
+  selectedStore = signal<string>('All Stores');
   timeRanges = ['All', 'Today', 'Last 7 Days', 'Last 30 Days', 'Select Range'];
   private readonly currentDate = new Date(2025, 3, 1);
 
@@ -40,6 +44,7 @@ export class SalesAnalytics implements OnInit {
 
   dailyStoreSalesData = signal<DailyStoreSalesData[]>([]);
   filteredStoreCategorySalesData = signal<StoreCategorySalesData[]>([]);
+  storesArr = signal<StoreData[]>([]);
 
   totalSalesCard = computed((): MetricCardProps => {
     const sales = this.filteredSalesData();
@@ -87,6 +92,7 @@ export class SalesAnalytics implements OnInit {
 
   ngOnInit(): void {
     this.setTimeRange('All');
+    this.loadStoresData();
   }
 
   loadFilteredSalesData(startDate: string, endDate: string): void {
@@ -106,6 +112,13 @@ export class SalesAnalytics implements OnInit {
   loadFilteredStoreCategorySalesData(startDate: string, endDate: string, storeId: string): void {
     this.businessKpiService.getFilteredStoreCategorySalesData(startDate, endDate, storeId).subscribe({
       next: (response) => { this.filteredStoreCategorySalesData.set(response); },
+      error: (error) => { console.error(error) }
+    });
+  }
+
+  loadStoresData(): void {
+    this.operationsService.getStoresData().subscribe({
+      next: (response) => { this.storesArr.set(response); },
       error: (error) => { console.error(error) }
     });
   }
