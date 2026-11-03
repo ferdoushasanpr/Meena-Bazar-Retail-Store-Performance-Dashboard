@@ -55,8 +55,12 @@ export class SalesService {
         return this.http.get<ProductSalesResponse>(`${this.apiUrlBase}/products?pageNumber=${pageNumber}&pageSize=${pageSize}&startDate=${startDate}&endDate=${endDate}`);
     }
 
-    getStoreCategorySalesData(pageNumber: number = 1, pageSize: number = 10): Observable<StoreCategorySalesResponse> {
-        return this.http.get<StoreCategorySalesResponse>(`${this.apiUrlBase}/store-category?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    getStoreCategorySalesData(pageNumber: number = 1, pageSize: number = 10, storeId?: number, startDate?: string, endDate?: string): Observable<StoreCategorySalesResponse> {
+        if (storeId) {
+            return this.http.get<StoreCategorySalesResponse>(`${this.apiUrlBase}/store-category?pageNumber=${pageNumber}&pageSize=${pageSize}&storeId=${storeId}&startDate=${startDate}&endDate=${endDate}`);
+        } else {
+            return this.http.get<StoreCategorySalesResponse>(`${this.apiUrlBase}/store-category?pageNumber=${pageNumber}&pageSize=${pageSize}&startDate=${startDate}&endDate=${endDate}`);
+        }
     }
 
     getFilteredStoreCategorySalesData(startDate: string, endDate: string, storeId?: string): Observable<StoreCategorySalesData[]> {
