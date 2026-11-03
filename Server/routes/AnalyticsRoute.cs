@@ -18,6 +18,9 @@ public static class AnalyticsRoute
         group.MapGet("/store-category", async (
         int pageNumber,
         int pageSize,
+        string? storeId,
+        DateTime? startDate,
+        DateTime? endDate,
         IAnalyticsService service) =>
     {
         pageNumber = Math.Max(1, pageNumber);
@@ -25,7 +28,10 @@ public static class AnalyticsRoute
 
         var result = await service.GetSalesByStoreAndCategoryAsync(
             pageNumber,
-            pageSize);
+            pageSize,
+            storeId,
+        startDate,
+        endDate);
 
         return Results.Ok(result);
     });

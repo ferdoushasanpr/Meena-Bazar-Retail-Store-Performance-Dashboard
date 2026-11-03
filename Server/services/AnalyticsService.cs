@@ -14,8 +14,7 @@ public class AnalyticsService : IAnalyticsService
         _context = context;
     }
 
-    // Queries 1, 2 and 3: Completed transactions, total sales,
-    // and average basket value.
+    // Completed transactions, total sales, and average basket value.
     public async Task<KpiSummary> GetKpiSummaryAsync()
     {
         var query = _context.DemoSales
@@ -43,16 +42,41 @@ public class AnalyticsService : IAnalyticsService
         };
     }
 
-    // Query 4: Sales by store and product category.
+    // Sales by store and product category.
     public async Task<PaginatedResponse<StoreCategorySales>>
     GetSalesByStoreAndCategoryAsync(
         int pageNumber,
-        int pageSize)
+        int pageSize,
+        string? storeId = null,
+        DateTime? startDate = null,
+        DateTime? endDate = null)
     {
+        var salesQuery = _context.DemoSales
+            .AsNoTracking()
+            .Where(s => s.order_status == "Completed");
+
+        if (!string.IsNullOrWhiteSpace(storeId))
+        {
+            salesQuery = salesQuery
+                .Where(s => s.store_id == storeId);
+        }
+
+        if (startDate.HasValue)
+        {
+            salesQuery = salesQuery
+                .Where(s => s.order_datetime >= startDate.Value);
+        }
+
+        if (endDate.HasValue)
+        {
+            var exclusiveEndDate = endDate.Value.Date.AddDays(1);
+
+            salesQuery = salesQuery
+                .Where(s => s.order_datetime < exclusiveEndDate);
+        }
+
         var query =
-            from s in _context.DemoSales
-                .AsNoTracking()
-                .Where(s => s.order_status == "Completed")
+            from s in salesQuery
             join st in _context.DemoStores.AsNoTracking()
                 on s.store_id equals st.store_id
             join t in _context.DemoTransactions.AsNoTracking()
@@ -114,8 +138,7 @@ public class AnalyticsService : IAnalyticsService
         };
     }
 
-    // Query 5: Sales performance by store.
-    // Preserves the original query's lack of a status filter.
+    // Sales performance by store.
     public async Task<IEnumerable<StoreSalesPerformance>>
     GetStorePerformanceAsync(DateTime? startDate, DateTime? endDate)
     {
@@ -137,7 +160,7 @@ public class AnalyticsService : IAnalyticsService
             .ToListAsync();
     }
 
-    // Query 6: Sales performance by product.
+    // Sales performance by product.
     public async Task<PaginatedResponse<ProductSalesPerformance>>
     GetProductPerformanceAsync(
         int pageNumber,
@@ -191,7 +214,7 @@ public class AnalyticsService : IAnalyticsService
         };
     }
 
-    // Query 7: Sales performance by product category.
+    // Sales performance by product category.
     public async Task<IEnumerable<CategorySalesPerformance>>
         GetCategoryPerformanceAsync()
     {

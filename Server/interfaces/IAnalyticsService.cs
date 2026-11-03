@@ -8,7 +8,10 @@ public interface IAnalyticsService
     Task<PaginatedResponse<StoreCategorySales>>
     GetSalesByStoreAndCategoryAsync(
         int pageNumber,
-        int pageSize);
+        int pageSize,
+        string? storeId,
+        DateTime? startDate,
+        DateTime? endDate);
     Task<IEnumerable<StoreSalesPerformance>> GetStorePerformanceAsync(DateTime? startDate, DateTime? endDate);
     Task<PaginatedResponse<ProductSalesPerformance>>
     GetProductPerformanceAsync(
