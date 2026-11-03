@@ -126,4 +126,8 @@ export class ProductCategories {
       this.loadSalesData(this.customStartDate(), this.customEndDate());
     }
   }
+
+  onResetFilter(): void {
+    this.setTimeRange('All');
+  }
 }
