@@ -34,18 +34,18 @@ export class ProductCategories {
   });
 
   ngOnInit(): void {
-    this.loadProductSalesData(1);
+    this.loadProductSalesData(1, '2020-01-01', '2026-01-01');
   }
 
-  loadProductSalesData(pageNumber: number = 1): void {
-    this.businessKpiService.getProductSalesData(pageNumber).subscribe({
+  loadProductSalesData(pageNumber: number = 1, startDate: string, endDate: string): void {
+    this.businessKpiService.getProductSalesData(pageNumber, 10, startDate, endDate).subscribe({
       next: (response) => { this.productSalesData.set(response); },
       error: (error) => { console.error(error); }
     });
   }
 
   onPageChange(pageNumber: number): void {
-    this.loadProductSalesData(pageNumber);
+    this.loadProductSalesData(pageNumber, '2020-01-01', '2026-01-01');
   }
 
   setTimeRange(range: string): void {
