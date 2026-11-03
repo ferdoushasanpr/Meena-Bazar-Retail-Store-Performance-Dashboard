@@ -14,11 +14,30 @@ public class ProductService : IProductService
         _context = context;
     }
 
-    public async Task<IEnumerable<Product>> GetAllProductsAsync()
+    public async Task<PaginatedResponse<Product>> GetAllProductsAsync(
+    int pageNumber = 1,
+    int pageSize = 10)
     {
-        return await _context.DemoProducts
-            .AsNoTracking()
+        var query = _context.DemoProducts.AsNoTracking();
+
+        var totalRecords = await query.CountAsync();
+
+        var totalPages = (int)Math.Ceiling(totalRecords / (double)pageSize);
+
+        var products = await query
+            .OrderBy(p => p.product_id)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync();
+
+        return new PaginatedResponse<Product>
+        {
+            Data = products,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalRecords = totalRecords,
+            TotalPages = totalPages
+        };
     }
 
     public async Task<Product?> GetProductByIdAsync(string product_id)
