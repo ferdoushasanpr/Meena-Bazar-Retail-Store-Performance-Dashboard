@@ -15,8 +15,12 @@ export class SalesService {
         return this.http.get<SalesData>(`${this.apiUrlBase}/kpis`);
     }
 
-    getSalesCategoryData(): Observable<SalesCategoryData[]> {
-        return this.http.get<SalesCategoryData[]>(`${this.apiUrlBase}/categories`);
+    getSalesCategoryData(startDate?: string, endDate?: string): Observable<SalesCategoryData[]> {
+        if (!startDate && !endDate) {
+            return this.http.get<SalesCategoryData[]>(`${this.apiUrlBase}/categories`);
+        } else {
+            return this.http.get<SalesCategoryData[]>(`${this.apiUrlBase}/categories?startDate=${startDate}&endDate=${endDate}`);
+        }
     }
 
     getDailySalesData(): Observable<DailySalesData[]> {

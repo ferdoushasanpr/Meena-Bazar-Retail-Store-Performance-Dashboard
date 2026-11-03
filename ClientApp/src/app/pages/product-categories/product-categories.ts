@@ -43,8 +43,8 @@ export class ProductCategories {
     this.setTimeRange('All');
   }
 
-  loadSalesCategoryData(): void {
-    this.businessKpiService.getSalesCategoryData().subscribe({
+  loadSalesCategoryData(startDate: string, endDate: string): void {
+    this.businessKpiService.getSalesCategoryData(startDate, endDate).subscribe({
       next: (response: SalesCategoryData[]) => {
         this.salesCategoryData.set(response);
       },
@@ -87,7 +87,7 @@ export class ProductCategories {
   }
 
   private loadSalesData(startDate: string, endDate: string): void {
-    this.loadSalesCategoryData();
+    this.loadSalesCategoryData(startDate, endDate);
     this.loadProductSalesData(1, startDate, endDate);
   }
 
