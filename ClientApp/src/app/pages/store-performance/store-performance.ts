@@ -120,8 +120,8 @@ export class StorePerformance {
     });
   }
 
-  loadStoreCategorySalesData(pageNumber: number = 1): void {
-    this.businessKpiService.getStoreCategorySalesData(pageNumber).subscribe({
+  loadStoreCategorySalesData(pageNumber: number = 1, startDate: string, endDate: string): void {
+    this.businessKpiService.getStoreCategorySalesData(pageNumber, 10, undefined, startDate, endDate).subscribe({
       next: (response) => {
         this.storeCategorySalesData.set(response);
       },
@@ -132,13 +132,33 @@ export class StorePerformance {
   }
 
   onPageChange(pageNumber: number): void {
-    this.loadStoreCategorySalesData(pageNumber);
+    const endDate = new Date(this.currentDate);
+    const startDate = new Date(this.currentDate);
+
+    switch (this.selectedTimeRange) {
+      case 'All':
+        startDate.setFullYear(startDate.getFullYear() - 2);
+        break;
+
+      case 'Today':
+        startDate.setDate(startDate.getDate() - 1);
+        break;
+
+      case 'Last 7 Days':
+        startDate.setDate(startDate.getDate() - 6);
+        break;
+
+      case 'Last 30 Days':
+        startDate.setDate(startDate.getDate() - 29);
+        break;
+    }
+    this.loadStoreCategorySalesData(pageNumber, formatDate(startDate), formatDate(endDate));
   }
 
   private loadSalesData(startDate: string, endDate: string): void {
     this.loadFilteredSalesData(startDate, endDate);
     this.loadStoresSalesData(startDate, endDate);
-    this.loadStoreCategorySalesData(1);
+    this.loadStoreCategorySalesData(1, startDate, endDate);
   }
 
   setTimeRange(range: string): void {
