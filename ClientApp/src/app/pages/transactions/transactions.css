@@ -1,0 +1,12 @@
+:host {
+    display: block;
+    background-color: #0b1320;
+    color: #f1f5f9;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+.container {
+    padding: 24px 32px;
+}
