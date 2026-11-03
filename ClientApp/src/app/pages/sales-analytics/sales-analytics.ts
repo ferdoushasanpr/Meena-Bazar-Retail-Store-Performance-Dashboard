@@ -208,4 +208,9 @@ export class SalesAnalytics implements OnInit {
       this.loadSalesData(this.customStartDate(), this.customEndDate());
     }
   }
+
+  onResetFilter(): void {
+    this.selectedStore.set('All Stores');
+    this.setTimeRange('All');
+  }
 }
