@@ -9,9 +9,9 @@ public static class SaleRoute
     {
         var group = app.MapGroup("/sales").WithTags("Sales");
 
-        group.MapGet("/", async (ISaleService service) =>
+        group.MapGet("/", async (int pageNumber, int pageSize, ISaleService service) =>
 {
-    var sales = await service.GetAllSalesAsync();
+    var sales = await service.GetAllSalesAsync(pageNumber, pageSize);
     return Results.Ok(sales);
 });
 

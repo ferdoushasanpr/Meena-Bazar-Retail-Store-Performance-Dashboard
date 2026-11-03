@@ -9,11 +9,11 @@ public static class ProductRoute
     {
         var group = app.MapGroup("/products").WithTags("Products");
 
-        group.MapGet("/", async (IProductService service) =>
-{
-    var products = await service.GetAllProductsAsync();
-    return Results.Ok(products);
-});
+        group.MapGet("/", async (int pageNumber, int pageSize, IProductService service) =>
+        {
+            var products = await service.GetAllProductsAsync(pageNumber, pageSize);
+            return Results.Ok(products);
+        });
 
         group.MapGet("/{product_id}", async (
             string product_id,

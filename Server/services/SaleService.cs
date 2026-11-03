@@ -14,11 +14,30 @@ public class SaleService : ISaleService
         _context = context;
     }
 
-    public async Task<IEnumerable<Sale>> GetAllSalesAsync()
+    public async Task<PaginatedResponse<Sale>> GetAllSalesAsync(
+    int pageNumber = 1,
+    int pageSize = 10)
     {
-        return await _context.DemoSales
-            .AsNoTracking()
+        var query = _context.DemoSales.AsNoTracking();
+
+        var totalRecords = await query.CountAsync();
+
+        var totalPages = (int)Math.Ceiling(totalRecords / (double)pageSize);
+
+        var sales = await query
+            .OrderBy(s => s.order_id)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync();
+
+        return new PaginatedResponse<Sale>
+        {
+            Data = sales,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalRecords = totalRecords,
+            TotalPages = totalPages
+        };
     }
 
     public async Task<Sale?> GetSaleByIdAsync(string order_id)

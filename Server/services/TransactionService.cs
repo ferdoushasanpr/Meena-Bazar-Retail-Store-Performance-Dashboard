@@ -14,11 +14,30 @@ public class TransactionService : ITransactionService
         _context = context;
     }
 
-    public async Task<IEnumerable<Transaction>> GetAllTransactionsAsync()
+    public async Task<PaginatedResponse<Transaction>> GetAllTransactionsAsync(
+    int pageNumber = 1,
+    int pageSize = 10)
     {
-        return await _context.DemoTransactions
-            .AsNoTracking()
+        var query = _context.DemoTransactions.AsNoTracking();
+
+        var totalRecords = await query.CountAsync();
+
+        var totalPages = (int)Math.Ceiling(totalRecords / (double)pageSize);
+
+        var transactions = await query
+            .OrderBy(t => t.order_item_id)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync();
+
+        return new PaginatedResponse<Transaction>
+        {
+            Data = transactions,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalRecords = totalRecords,
+            TotalPages = totalPages
+        };
     }
 
     public async Task<Transaction?> GetTransactionByIdAsync(string order_item_id)

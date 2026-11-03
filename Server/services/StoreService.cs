@@ -21,6 +21,35 @@ public class StoreService : IStoreService
             .ToListAsync();
     }
 
+    public async Task<PaginatedResponse<Store>> GetPaginatedStoresAsync(
+    int pageNumber = 1,
+    int pageSize = 10)
+    {
+        pageNumber = Math.Max(1, pageNumber);
+        pageSize = Math.Clamp(pageSize, 1, 100);
+
+        var query = _context.DemoStores.AsNoTracking();
+
+        var totalRecords = await query.CountAsync();
+
+        var totalPages = (int)Math.Ceiling(totalRecords / (double)pageSize);
+
+        var stores = await query
+            .OrderBy(s => s.store_id)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return new PaginatedResponse<Store>
+        {
+            Data = stores,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalRecords = totalRecords,
+            TotalPages = totalPages
+        };
+    }
+
     public async Task<Store?> GetStoreByIdAsync(string store_id)
     {
         return await _context.DemoStores

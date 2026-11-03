@@ -10,10 +10,16 @@ public static class StoreRoute
         var group = app.MapGroup("/stores").WithTags("Stores");
 
         group.MapGet("/", async (IStoreService service) =>
-{
-    var stores = await service.GetAllStoresAsync();
-    return Results.Ok(stores);
-});
+        {
+            var stores = await service.GetAllStoresAsync();
+            return Results.Ok(stores);
+        });
+
+        group.MapGet("/paginated", async (int pageNumber, int pageSize, IStoreService service) =>
+        {
+            var stores = await service.GetPaginatedStoresAsync(pageNumber, pageSize);
+            return Results.Ok(stores);
+        });
 
         group.MapGet("/{store_id}", async (
             string store_id,

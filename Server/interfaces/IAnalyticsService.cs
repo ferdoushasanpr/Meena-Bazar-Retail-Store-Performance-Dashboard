@@ -8,7 +8,10 @@ public interface IAnalyticsService
     Task<PaginatedResponse<StoreCategorySales>>
     GetSalesByStoreAndCategoryAsync(
         int pageNumber,
-        int pageSize);
+        int pageSize,
+        string? storeId,
+        DateTime? startDate,
+        DateTime? endDate);
     Task<IEnumerable<StoreSalesPerformance>> GetStorePerformanceAsync(DateTime? startDate, DateTime? endDate);
     Task<PaginatedResponse<ProductSalesPerformance>>
     GetProductPerformanceAsync(
@@ -16,7 +19,8 @@ public interface IAnalyticsService
         int pageSize,
         DateTime? startDate,
         DateTime? endDate);
-    Task<IEnumerable<CategorySalesPerformance>> GetCategoryPerformanceAsync();
+    Task<IEnumerable<CategorySalesPerformance>> GetCategoryPerformanceAsync(DateTime? startDate,
+        DateTime? endDate);
     Task<IEnumerable<BrandSalesPerformance>> GetBrandPerformanceAsync();
     Task<IEnumerable<DailySalesTrend>> GetDailySalesTrendAsync();
     Task<IEnumerable<YearlySalesTrend>> GetYearlySalesTrendAsync();

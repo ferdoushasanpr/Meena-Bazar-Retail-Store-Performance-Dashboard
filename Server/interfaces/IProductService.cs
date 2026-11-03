@@ -4,7 +4,7 @@ namespace Server.Interfaces;
 
 public interface IProductService
 {
-    Task<IEnumerable<Product>> GetAllProductsAsync();
+    Task<PaginatedResponse<Product>> GetAllProductsAsync(int pageNumber, int pageSize);
     Task<Product?> GetProductByIdAsync(string product_id);
     Task<bool> AddProductAsync(Product product);
     Task<bool> UpdateProductAsync(Product product);

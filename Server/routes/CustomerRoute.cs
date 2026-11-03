@@ -11,11 +11,12 @@ public static class CustomerRoute
         var group = app.MapGroup("/customers")
             .WithTags("Customers");
 
-        group.MapGet("/", async (ICustomerService service) =>
-{
-    var customers = await service.GetAllCustomersAsync();
-    return Results.Ok(customers);
-});
+        group.MapGet("/", async (int pageNumber,
+            int pageSize, ICustomerService service) =>
+        {
+            var customers = await service.GetAllCustomersAsync(pageNumber, pageSize);
+            return Results.Ok(customers);
+        });
 
         group.MapGet("/{customer_id}", async (
             string customer_id,

@@ -18,6 +18,9 @@ public static class AnalyticsRoute
         group.MapGet("/store-category", async (
         int pageNumber,
         int pageSize,
+        string? storeId,
+        DateTime? startDate,
+        DateTime? endDate,
         IAnalyticsService service) =>
     {
         pageNumber = Math.Max(1, pageNumber);
@@ -25,7 +28,10 @@ public static class AnalyticsRoute
 
         var result = await service.GetSalesByStoreAndCategoryAsync(
             pageNumber,
-            pageSize);
+            pageSize,
+            storeId,
+        startDate,
+        endDate);
 
         return Results.Ok(result);
     });
@@ -55,8 +61,9 @@ public static class AnalyticsRoute
     });
 
         // Query 7
-        group.MapGet("/categories", async (IAnalyticsService service) =>
-            Results.Ok(await service.GetCategoryPerformanceAsync()));
+        group.MapGet("/categories", async (DateTime? startDate,
+        DateTime? endDate, IAnalyticsService service) =>
+            Results.Ok(await service.GetCategoryPerformanceAsync(startDate, endDate)));
 
         // Query 8
         group.MapGet("/brands", async (IAnalyticsService service) =>
