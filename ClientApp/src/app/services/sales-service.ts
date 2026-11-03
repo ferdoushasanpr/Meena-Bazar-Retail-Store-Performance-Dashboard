@@ -47,7 +47,7 @@ export class SalesService {
         return this.http.get<BrandSalesData[]>(`${this.apiUrlBase}/brands`);
     }
 
-    getFilteredSalesData(startDate: string | null, endDate: string | null, storeId?: string): Observable<SalesData> {
+    getFilteredSalesData(startDate: string, endDate: string, storeId?: string): Observable<SalesData> {
         if (storeId) {
             return this.http.get<SalesData>(`${this.apiUrlBase}/kpis/filtered?startDate=${startDate}&endDate=${endDate}&storeId=${storeId}`);
         } else {

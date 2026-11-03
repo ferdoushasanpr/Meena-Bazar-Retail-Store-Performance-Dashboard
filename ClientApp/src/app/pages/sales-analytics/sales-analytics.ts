@@ -95,10 +95,10 @@ export class SalesAnalytics implements OnInit {
     this.loadStoresData();
   }
 
-  loadFilteredSalesData(startDate: string, endDate: string): void {
-    this.businessKpiService.getFilteredSalesData(startDate, endDate).subscribe({
+  loadFilteredSalesData(startDate: string, endDate: string, storeId?: string): void {
+    this.businessKpiService.getFilteredSalesData(startDate, endDate, storeId).subscribe({
       next: (response) => { this.filteredSalesData.set(response); },
-      error: (error) => { console.error(error) }
+      error: (error) => { console.error(error); }
     });
   }
 
@@ -109,10 +109,10 @@ export class SalesAnalytics implements OnInit {
     });
   }
 
-  loadFilteredStoreCategorySalesData(startDate: string, endDate: string, storeId: string): void {
+  loadFilteredStoreCategorySalesData(startDate: string, endDate: string, storeId?: string): void {
     this.businessKpiService.getFilteredStoreCategorySalesData(startDate, endDate, storeId).subscribe({
       next: (response) => { this.filteredStoreCategorySalesData.set(response); },
-      error: (error) => { console.error(error) }
+      error: (error) => { console.error(error); }
     });
   }
 
@@ -124,23 +124,53 @@ export class SalesAnalytics implements OnInit {
   }
 
   onStoreChange(storeId: string): void {
-    this.loadFilteredStoreCategorySalesData('2025-01-01', '2025-02-01', storeId);
+    this.selectedStore.set(storeId);
+
+    const endDate = this.selectedTimeRange === 'Select Range'
+      ? this.customEndDate()
+      : formatDate(this.currentDate);
+
+    let startDate: string;
+
+    if (this.selectedTimeRange === 'Select Range') {
+      startDate = this.customStartDate();
+    } else {
+      const start = new Date(this.currentDate);
+
+      switch (this.selectedTimeRange) {
+        case 'Today':
+          start.setDate(start.getDate() - 1);
+          break;
+        case 'Last 7 Days':
+          start.setDate(start.getDate() - 6);
+          break;
+        case 'Last 30 Days':
+          start.setDate(start.getDate() - 29);
+          break;
+        default:
+          start.setFullYear(start.getFullYear() - 2);
+      }
+
+      startDate = formatDate(start);
+    }
+
+    this.loadSalesData(startDate, endDate);
   }
 
   private loadSalesData(startDate: string, endDate: string): void {
-    this.loadFilteredSalesData(startDate, endDate);
+    const storeId = this.selectedStore() === 'All Stores'
+      ? undefined
+      : this.selectedStore();
 
-    this.loadDailyStoreSalesData(
-      startDate,
-      endDate,
-      'ST008'
-    );
+    this.loadFilteredSalesData(startDate, endDate, storeId);
 
-    this.loadFilteredStoreCategorySalesData(
-      startDate,
-      endDate,
-      'ST004'
-    );
+    if (storeId == undefined) {
+      this.loadDailyStoreSalesData(startDate, endDate, 'ST001');
+      this.loadFilteredStoreCategorySalesData(startDate, endDate, 'ST001');
+    } else {
+      this.loadDailyStoreSalesData(startDate, endDate, storeId);
+      this.loadFilteredStoreCategorySalesData(startDate, endDate, storeId);
+    }
   }
 
   setTimeRange(range: string): void {
