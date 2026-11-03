@@ -4,9 +4,9 @@ import {
   ViewChild,
   AfterViewInit,
   OnDestroy,
-  OnInit,
   inject,
-  signal
+  input,
+  effect
 } from '@angular/core';
 
 import { Chart, registerables } from 'chart.js';
@@ -22,14 +22,14 @@ Chart.register(...registerables);
   templateUrl: './category-matrix-chart.html',
 })
 export class CategoryMatrixChart
-  implements OnInit, AfterViewInit, OnDestroy {
+  implements AfterViewInit, OnDestroy {
 
   @ViewChild('matrixChartCanvas')
   matrixChartCanvas!: ElementRef<HTMLCanvasElement>;
 
   private businessKpiService = inject(SalesService);
 
-  salesCategoryData = signal<SalesCategoryData[]>([]);
+  inputData = input<SalesCategoryData[]>([]);
 
   chartInstance?: Chart;
 
@@ -41,8 +41,18 @@ export class CategoryMatrixChart
     '#22d3ee'
   ];
 
+  constructor() {
+    effect(() => {
+      const data = this.inputData();
+
+      if (this.chartInstance) {
+        this.updateChartData(data);
+      }
+    });
+  }
+
   getMaxSales(): number {
-    const data = this.salesCategoryData();
+    const data = this.inputData();
 
     return Math.max(
       ...data.map(item => Number(item.total_Sales) || 0),
@@ -51,7 +61,7 @@ export class CategoryMatrixChart
   }
 
   getSalesPercentage(sales: number): number {
-    const totalSales = this.salesCategoryData().reduce(
+    const totalSales = this.inputData().reduce(
       (sum, item) => sum + (Number(item.total_Sales) || 0),
       0
     );
@@ -61,31 +71,12 @@ export class CategoryMatrixChart
     return Number(((Number(sales) / totalSales) * 100).toFixed(1));
   }
 
-  ngOnInit(): void {
-    this.loadSalesCategoryData();
-  }
-
   ngAfterViewInit(): void {
-    // Initialize the chart after the canvas is available.
     this.initChartInstance();
   }
 
   ngOnDestroy(): void {
     this.chartInstance?.destroy();
-  }
-
-  loadSalesCategoryData(): void {
-    this.businessKpiService.getSalesCategoryData().subscribe({
-      next: (response: SalesCategoryData[]) => {
-        this.salesCategoryData.set(response);
-
-        // Refresh the chart using the backend response.
-        this.updateChartData();
-      },
-      error: (error) => {
-        console.error('Failed to load sales category data:', error);
-      }
-    });
   }
 
   getBarColor(index: number): string {
@@ -100,7 +91,7 @@ export class CategoryMatrixChart
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const data = this.salesCategoryData();
+    const data = this.inputData();
 
     this.chartInstance = new Chart(ctx, {
       type: 'bar',
@@ -144,16 +135,14 @@ export class CategoryMatrixChart
     });
   }
 
-  private updateChartData(): void {
+  private updateChartData(data: SalesCategoryData[]): void {
     const chart = this.chartInstance;
 
     if (!chart) return;
 
-    const data = this.salesCategoryData();
-
-    chart.data.labels = data.map(item => item.category);
-
-    chart.data.datasets[0].label = 'Total Sales';
+    chart.data.labels = data.map(
+      item => item.category
+    );
 
     chart.data.datasets[0].data = data.map(
       item => Number(item.total_Sales) || 0

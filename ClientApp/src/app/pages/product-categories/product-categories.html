@@ -35,7 +35,8 @@
     </section>
 
     <div class="charts-section">
-        <app-category-matrix-chart />
+        <app-category-matrix-chart [inputData]="salesCategoryData()">
+        </app-category-matrix-chart>
         <!-- Reused for Products Data -->
         <app-horizontal-bar-chart [data]="productSalesData()" labelKey="product_name" salesKey="total_Sales"
             (pageChange)="onPageChange($event)" />

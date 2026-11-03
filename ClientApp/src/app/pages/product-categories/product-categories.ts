@@ -1,7 +1,7 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SalesService } from '../../services/sales-service';
-import { ProductSalesResponse } from '../../models/sales';
+import { ProductSalesResponse, SalesCategoryData } from '../../models/sales';
 import { CategoryMatrixChart } from '../../shared/category-matrix-chart/category-matrix-chart';
 import { PageHeader } from '../../shared/page-header/page-header';
 import { HorizontalBarChart } from '../../shared/horizontal-bar-chart/horizontal-bar-chart';
@@ -28,6 +28,7 @@ export class ProductCategories {
   customStartDate = signal<string>(formatDate(this.currentDate));
   customEndDate = signal<string>(formatDate(this.currentDate));
 
+  salesCategoryData = signal<SalesCategoryData[]>([]);
   productSalesData = signal<ProductSalesResponse>({
     data: [],
     pageNumber: 1,
@@ -40,6 +41,17 @@ export class ProductCategories {
 
   ngOnInit(): void {
     this.setTimeRange('All');
+  }
+
+  loadSalesCategoryData(): void {
+    this.businessKpiService.getSalesCategoryData().subscribe({
+      next: (response: SalesCategoryData[]) => {
+        this.salesCategoryData.set(response);
+      },
+      error: (error) => {
+        console.error('Failed to load sales category data:', error);
+      }
+    });
   }
 
   loadProductSalesData(pageNumber: number = 1, startDate: string, endDate: string): void {
@@ -75,6 +87,7 @@ export class ProductCategories {
   }
 
   private loadSalesData(startDate: string, endDate: string): void {
+    this.loadSalesCategoryData();
     this.loadProductSalesData(1, startDate, endDate);
   }
 
