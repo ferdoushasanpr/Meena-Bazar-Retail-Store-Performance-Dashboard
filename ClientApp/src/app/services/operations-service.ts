@@ -30,6 +30,10 @@ export class OperationsService {
         return this.http.get<ProductDataResponse>(`${this.apiUrlBase}/products?pageNumber=${pageNumber}&pageSize=${pageSize}`);
     }
 
+    addStoreData(store: StoreData): Observable<StoreData> {
+        return this.http.post<StoreData>(`${this.apiUrlBase}/stores`, store);
+    }
+
     getStoresData(): Observable<StoreData[]> {
         return this.http.get<StoreData[]>(`${this.apiUrlBase}/stores`);
     }
