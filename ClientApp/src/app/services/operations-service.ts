@@ -4,7 +4,7 @@ import { StoreData, StoreDataResponse } from '../models/store';
 import { Observable } from 'rxjs';
 import { TransactionDataResponse } from '../models/transaction';
 import { Customer, CustomerDataResponse } from '../models/customer';
-import { ProductDataResponse } from '../models/product';
+import { Product, ProductDataResponse } from '../models/product';
 import { OrderDataResponse } from '../models/order';
 
 @Injectable({
@@ -20,6 +20,10 @@ export class OperationsService {
 
     getCustomersData(pageNumber: number, pageSize: number = 10): Observable<CustomerDataResponse> {
         return this.http.get<CustomerDataResponse>(`${this.apiUrlBase}/customers?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    }
+
+    addProductData(product: Product): Observable<Product> {
+        return this.http.post<Product>(`${this.apiUrlBase}/products`, product);
     }
 
     getProductsData(pageNumber: number, pageSize: number = 10): Observable<ProductDataResponse> {
