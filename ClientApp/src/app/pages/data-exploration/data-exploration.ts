@@ -1,10 +1,11 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { PageHeader } from '../../shared/page-header/page-header';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs';
 import { CustomerDataResponse } from '../../models/customer';
 import { OperationsService } from '../../services/operations-service';
 import { DynamicTable } from '../../shared/dynamic-table/dynamic-table';
+import { ProductDataResponse } from '../../models/product';
 
 @Component({
   imports: [PageHeader, DynamicTable],
@@ -12,7 +13,7 @@ import { DynamicTable } from '../../shared/dynamic-table/dynamic-table';
   styleUrl: './data-exploration.css',
   templateUrl: './data-exploration.html',
 })
-export class DataExploration implements OnInit {
+export class DataExploration {
   private router = inject(Router);
   private operationsService = inject(OperationsService);
 
@@ -21,7 +22,7 @@ export class DataExploration implements OnInit {
   pageHeaderSubtitle = signal<string>('');
 
   // Contents
-  componentData = signal<CustomerDataResponse>({
+  componentData = signal<CustomerDataResponse | ProductDataResponse>({
     data: [],
     pageNumber: 1,
     pageSize: 10,
@@ -29,6 +30,33 @@ export class DataExploration implements OnInit {
     totalPages: 0,
     hasPreviousPage: false,
     hasNextPage: false,
+  });
+
+  // Table Header Configuration
+  private tableConfig: Record<string, { title: string; subtitle: string }> = {
+    Customers: {
+      title: 'Customers',
+      subtitle: 'Overview of customer profiles, demographics, and purchasing behavior.'
+    },
+    Stores: {
+      title: 'Stores',
+      subtitle: 'Overview of store locations, performance, and operational metrics.'
+    },
+    Products: {
+      title: 'Products',
+      subtitle: 'Breakdown of product categories, pricing, inventory, and sales performance.'
+    },
+    Orders: {
+      title: 'Transactions',
+      subtitle: 'Breakdown by order, product, quantity, and amount.'
+    }
+  };
+
+  tableHeader = computed(() => {
+    return this.tableConfig[this.pageHeaderTitle()] ?? {
+      title: 'Data',
+      subtitle: 'Explore and analyze your data.'
+    };
   });
 
   constructor() {
@@ -39,10 +67,6 @@ export class DataExploration implements OnInit {
       .subscribe(() => this.updatePath());
   }
 
-  ngOnInit(): void {
-    this.loadCustomerData(1);
-  }
-
   updatePath() {
     const lastSegment = this.router.url
       .split('/')
@@ -50,6 +74,16 @@ export class DataExploration implements OnInit {
 
     this.pageHeaderTitle.set(lastSegment ? lastSegment.charAt(0).toUpperCase() + lastSegment.slice(1) : '');
     this.pageHeaderSubtitle.set(`In-depth multi-dimensional ${this.pageHeaderTitle().toLowerCase()} analysis, period-over-period comparisons, and volume metrics.`);
+
+    this.loadComponentData();
+  }
+
+  loadComponentData(): void {
+    if (this.pageHeaderTitle() === 'Customers') {
+      this.loadCustomerData(1);
+    } else if (this.pageHeaderTitle() === 'Products') {
+      this.loadProductData(1);
+    }
   }
 
   loadCustomerData(pageNumber: number, pageSize?: number) {
@@ -59,8 +93,20 @@ export class DataExploration implements OnInit {
     })
   }
 
+  loadProductData(pageNumber: number, pageSize?: number) {
+    this.operationsService.getProductsData(pageNumber, pageSize).subscribe({
+      next: (response) => { this.componentData.set(response); },
+      error: (error) => { console.error(error) }
+    })
+  }
+
   onPageChange(pageNumber: number): void {
-    this.loadCustomerData(pageNumber);
+    if (this.pageHeaderTitle() === 'Customers') {
+      this.loadCustomerData(pageNumber);
+    } else if (this.pageHeaderTitle() === 'Products') {
+      this.loadProductData(pageNumber);
+    }
+
   }
 
   handleUpdate(row: any): void {
