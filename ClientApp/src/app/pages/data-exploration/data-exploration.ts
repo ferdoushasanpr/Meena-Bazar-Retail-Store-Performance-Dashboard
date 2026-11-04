@@ -8,6 +8,7 @@ import { DynamicTable } from '../../shared/dynamic-table/dynamic-table';
 import { ProductDataResponse } from '../../models/product';
 import { StoreDataResponse } from '../../models/store';
 import { OrderDataResponse } from '../../models/order';
+import { TransactionDataResponse } from '../../models/transaction';
 
 @Component({
   imports: [PageHeader, DynamicTable],
@@ -24,7 +25,7 @@ export class DataExploration {
   pageHeaderSubtitle = signal<string>('');
 
   // Contents
-  componentData = signal<CustomerDataResponse | ProductDataResponse | StoreDataResponse | OrderDataResponse>({
+  componentData = signal<CustomerDataResponse | ProductDataResponse | StoreDataResponse | OrderDataResponse | TransactionDataResponse>({
     data: [],
     pageNumber: 1,
     pageSize: 10,
@@ -51,6 +52,10 @@ export class DataExploration {
     Orders: {
       title: 'Orders',
       subtitle: 'Breakdown by order, product, quantity, and amount.'
+    },
+    Transactions: {
+      title: 'Transactions',
+      subtitle: 'Breakdown by transaction, order, product, quantity, and amount.'
     }
   };
 
@@ -89,6 +94,8 @@ export class DataExploration {
       this.loadStoreData(1);
     } else if (this.pageHeaderTitle() === 'Orders') {
       this.loadOrderData(1);
+    } else if (this.pageHeaderTitle() === 'Transactions') {
+      this.loadTransactionsData(1);
     }
   }
 
@@ -120,6 +127,13 @@ export class DataExploration {
     })
   }
 
+  loadTransactionsData(pageNumber: number): void {
+    this.operationsService.getTransactionsData(pageNumber).subscribe({
+      next: (response) => { this.componentData.set(response); },
+      error: (error) => { console.error(error) }
+    });
+  }
+
   onPageChange(pageNumber: number): void {
     if (this.pageHeaderTitle() === 'Customers') {
       this.loadCustomerData(pageNumber);
@@ -129,6 +143,8 @@ export class DataExploration {
       this.loadStoreData(pageNumber);
     } else if (this.pageHeaderTitle() === 'Orders') {
       this.loadOrderData(pageNumber);
+    } else if (this.pageHeaderTitle() === 'Transactions') {
+      this.loadTransactionsData(pageNumber);
     }
 
   }

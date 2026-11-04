@@ -37,7 +37,7 @@ export class Sidebar {
     {
       sectionTitle: 'OPERATIONS',
       items: [
-        { title: 'Transactions', route: '/transactions', icon: 'fa-solid fa-receipt' },
+        { title: 'Add Data', route: '/add-data', icon: 'fa-solid fa-square-plus' },
         { title: 'Reports & Exports', route: '/report-export', icon: 'fa-solid fa-file-lines' }
       ]
     },
@@ -68,7 +68,8 @@ export class Sidebar {
               title: 'Orders',
               route: '/data-explorer/orders',
               icon: 'fa-solid fa-cart-shopping'
-            }
+            },
+            { title: 'Transactions', route: '/data-explorer/transactions', icon: 'fa-solid fa-receipt' }
           ]
         },
         {

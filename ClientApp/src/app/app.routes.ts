@@ -3,7 +3,6 @@ import { Dashboard } from './pages/dashboard/dashboard';
 import { SalesAnalytics } from './pages/sales-analytics/sales-analytics';
 import { ProductCategories } from './pages/product-categories/product-categories';
 import { StorePerformance } from './pages/store-performance/store-performance';
-import { Transactions } from './pages/transactions/transactions';
 import { DataExploration } from './pages/data-exploration/data-exploration';
 
 export const routes: Routes = [
@@ -26,10 +25,6 @@ export const routes: Routes = [
     {
         path: 'categories',
         component: ProductCategories
-    },
-    {
-        path: 'transactions',
-        component: Transactions
     },
     {
         path: 'data-explorer/:type',
