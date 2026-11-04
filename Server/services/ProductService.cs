@@ -25,7 +25,7 @@ public class ProductService : IProductService
         var totalPages = (int)Math.Ceiling(totalRecords / (double)pageSize);
 
         var products = await query
-            .OrderBy(p => p.product_id)
+            .OrderByDescending(p => p.product_id)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
@@ -49,6 +49,19 @@ public class ProductService : IProductService
 
     public async Task<bool> AddProductAsync(Product product)
     {
+        var lastProduct = await _context.DemoProducts
+        .OrderByDescending(p => p.product_id)
+        .FirstOrDefaultAsync();
+
+        int nextId = 1;
+
+        if (lastProduct != null)
+        {
+            nextId = int.Parse(lastProduct.product_id.Substring(1)) + 1;
+        }
+
+        product.product_id = $"P{nextId:D5}";
+
         await _context.DemoProducts.AddAsync(product);
         return await _context.SaveChangesAsync() > 0;
     }

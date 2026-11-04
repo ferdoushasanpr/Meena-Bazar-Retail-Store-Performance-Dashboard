@@ -8,6 +8,6 @@ public class Customer
     public string email { get; set; } = null!;
     public string city { get; set; } = null!;
     public DateTime signup_date { get; set; }
-    public string loyalty_tier { get; set; } = null!;
-    public string customer_segment { get; set; } = null!;
+    public string loyalty_tier { get; set; } = "Bronze";
+    public string customer_segment { get; set; } = "Budget-conscious";
 }

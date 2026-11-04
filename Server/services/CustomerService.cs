@@ -25,7 +25,7 @@ public class CustomerService : ICustomerService
         var totalPages = (int)Math.Ceiling(totalRecords / (double)pageSize);
 
         var customers = await query
-            .OrderBy(c => c.customer_id)
+            .OrderByDescending(c => c.customer_id)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
@@ -49,6 +49,21 @@ public class CustomerService : ICustomerService
 
     public async Task<bool> AddCustomerAsync(Customer customer)
     {
+        var lastCustomer = await _context.DemoCustomers
+        .OrderByDescending(c => c.customer_id)
+        .FirstOrDefaultAsync();
+
+        int nextId = 1;
+
+        if (lastCustomer != null)
+        {
+            nextId = int.Parse(lastCustomer.customer_id.Substring(4)) + 1;
+        }
+
+        customer.customer_id = $"CUST{nextId:D5}";
+        customer.loyalty_tier = "Bronze";
+        customer.customer_segment = "New Customer";
+
         await _context.DemoCustomers.AddAsync(customer);
         return await _context.SaveChangesAsync() > 0;
     }

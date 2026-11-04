@@ -25,7 +25,7 @@ public class SaleService : ISaleService
         var totalPages = (int)Math.Ceiling(totalRecords / (double)pageSize);
 
         var sales = await query
-            .OrderBy(s => s.order_id)
+            .OrderByDescending(s => s.order_id)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();

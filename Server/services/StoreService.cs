@@ -35,7 +35,7 @@ public class StoreService : IStoreService
         var totalPages = (int)Math.Ceiling(totalRecords / (double)pageSize);
 
         var stores = await query
-            .OrderBy(s => s.store_id)
+            .OrderByDescending(s => s.store_id)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
@@ -59,6 +59,19 @@ public class StoreService : IStoreService
 
     public async Task<bool> AddStoreAsync(Store store)
     {
+        var lastStore = await _context.DemoStores
+        .OrderByDescending(s => s.store_id)
+        .FirstOrDefaultAsync();
+
+        int nextId = 1;
+
+        if (lastStore != null)
+        {
+            nextId = int.Parse(lastStore.store_id.Substring(2)) + 1;
+        }
+
+        store.store_id = $"ST{nextId:D3}";
+
         await _context.DemoStores.AddAsync(store);
         return await _context.SaveChangesAsync() > 0;
     }
