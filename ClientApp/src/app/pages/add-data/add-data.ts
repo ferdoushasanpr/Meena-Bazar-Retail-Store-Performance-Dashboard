@@ -55,13 +55,14 @@ export class AddData {
   // Form Submissions
   onCustomerSubmit(): void {
     if (this.customerForm.valid) {
-      console.log('Customer Data:', this.customerForm.value);
+      //console.log('Customer Data:', this.customerForm.value);
       this.operationsService.addCustomerData(this.customerForm.value).subscribe({
         next: (response) => {
           this.router.navigate(['data-explorer/customers']);
         },
         error: (error) => { console.error(error) }
       });
+
       this.customerForm.reset();
     } else {
       this.customerForm.markAllAsTouched();
@@ -70,8 +71,14 @@ export class AddData {
 
   onProductSubmit(): void {
     if (this.productForm.valid) {
-      console.log('Product Data:', this.productForm.value);
-      // TODO: Call service to post Product data
+      //console.log('Product Data:', this.productForm.value);
+      this.operationsService.addProductData(this.productForm.value).subscribe({
+        next: (response) => {
+          this.router.navigate(['data-explorer/products']);
+        },
+        error: (error) => { console.error(error) }
+      });
+
       this.productForm.reset();
     } else {
       this.productForm.markAllAsTouched();
