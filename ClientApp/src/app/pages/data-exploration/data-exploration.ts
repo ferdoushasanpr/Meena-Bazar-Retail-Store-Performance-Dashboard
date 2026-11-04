@@ -7,6 +7,7 @@ import { OperationsService } from '../../services/operations-service';
 import { DynamicTable } from '../../shared/dynamic-table/dynamic-table';
 import { ProductDataResponse } from '../../models/product';
 import { StoreDataResponse } from '../../models/store';
+import { OrderDataResponse } from '../../models/order';
 
 @Component({
   imports: [PageHeader, DynamicTable],
@@ -23,7 +24,7 @@ export class DataExploration {
   pageHeaderSubtitle = signal<string>('');
 
   // Contents
-  componentData = signal<CustomerDataResponse | ProductDataResponse | StoreDataResponse>({
+  componentData = signal<CustomerDataResponse | ProductDataResponse | StoreDataResponse | OrderDataResponse>({
     data: [],
     pageNumber: 1,
     pageSize: 10,
@@ -48,7 +49,7 @@ export class DataExploration {
       subtitle: 'Breakdown of product categories, pricing, inventory, and sales performance.'
     },
     Orders: {
-      title: 'Transactions',
+      title: 'Orders',
       subtitle: 'Breakdown by order, product, quantity, and amount.'
     }
   };
@@ -86,6 +87,8 @@ export class DataExploration {
       this.loadProductData(1);
     } else if (this.pageHeaderTitle() === 'Stores') {
       this.loadStoreData(1);
+    } else if (this.pageHeaderTitle() === 'Orders') {
+      this.loadOrderData(1);
     }
   }
 
@@ -110,6 +113,13 @@ export class DataExploration {
     })
   }
 
+  loadOrderData(pageNumber: number, pageSize?: number) {
+    this.operationsService.getOrdersData(pageNumber, pageSize).subscribe({
+      next: (response) => { this.componentData.set(response); },
+      error: (error) => { console.error(error) }
+    })
+  }
+
   onPageChange(pageNumber: number): void {
     if (this.pageHeaderTitle() === 'Customers') {
       this.loadCustomerData(pageNumber);
@@ -117,6 +127,8 @@ export class DataExploration {
       this.loadProductData(pageNumber);
     } else if (this.pageHeaderTitle() === 'Stores') {
       this.loadStoreData(pageNumber);
+    } else if (this.pageHeaderTitle() === 'Orders') {
+      this.loadOrderData(pageNumber);
     }
 
   }
