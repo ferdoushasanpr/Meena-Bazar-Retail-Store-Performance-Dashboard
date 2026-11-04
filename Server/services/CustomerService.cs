@@ -25,7 +25,7 @@ public class CustomerService : ICustomerService
         var totalPages = (int)Math.Ceiling(totalRecords / (double)pageSize);
 
         var customers = await query
-            .OrderBy(c => c.customer_id)
+            .OrderByDescending(c => c.customer_id)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();

@@ -25,7 +25,7 @@ public class TransactionService : ITransactionService
         var totalPages = (int)Math.Ceiling(totalRecords / (double)pageSize);
 
         var transactions = await query
-            .OrderBy(t => t.order_item_id)
+            .OrderByDescending(t => t.order_item_id)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();

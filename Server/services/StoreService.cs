@@ -35,7 +35,7 @@ public class StoreService : IStoreService
         var totalPages = (int)Math.Ceiling(totalRecords / (double)pageSize);
 
         var stores = await query
-            .OrderBy(s => s.store_id)
+            .OrderByDescending(s => s.store_id)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();

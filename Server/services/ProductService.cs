@@ -25,7 +25,7 @@ public class ProductService : IProductService
         var totalPages = (int)Math.Ceiling(totalRecords / (double)pageSize);
 
         var products = await query
-            .OrderBy(p => p.product_id)
+            .OrderByDescending(p => p.product_id)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
