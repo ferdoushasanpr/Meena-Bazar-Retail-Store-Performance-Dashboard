@@ -9,9 +9,11 @@ import { ProductDataResponse } from '../../models/product';
 import { StoreDataResponse } from '../../models/store';
 import { OrderDataResponse } from '../../models/order';
 import { TransactionDataResponse } from '../../models/transaction';
+import { ModalForm } from '../../shared/modal-form/modal-form';
+import { EntityType, UpdatePayload } from '../../models/props';
 
 @Component({
-  imports: [PageHeader, DynamicTable],
+  imports: [PageHeader, DynamicTable, ModalForm],
   selector: 'app-data-exploration',
   styleUrl: './data-exploration.css',
   templateUrl: './data-exploration.html',
@@ -59,6 +61,11 @@ export class DataExploration {
     }
   };
 
+  // Modal State Signals
+  isModalOpen = signal<boolean>(false);
+  selectedRowData = signal<any>(null);
+  activeEntityType = signal<EntityType>('Customer');
+
   tableHeader = computed(() => {
     return this.tableConfig[this.pageHeaderTitle()] ?? {
       title: 'Data',
@@ -87,10 +94,13 @@ export class DataExploration {
 
   loadComponentData(): void {
     if (this.pageHeaderTitle() === 'Customers') {
+      this.activeEntityType.set('Customer');
       this.loadCustomerData(1);
     } else if (this.pageHeaderTitle() === 'Products') {
+      this.activeEntityType.set('Product');
       this.loadProductData(1);
     } else if (this.pageHeaderTitle() === 'Stores') {
+      this.activeEntityType.set('Store');
       this.loadStoreData(1);
     } else if (this.pageHeaderTitle() === 'Orders') {
       this.loadOrderData(1);
@@ -149,9 +159,21 @@ export class DataExploration {
 
   }
 
+  // Triggered when Update Icon is clicked in any table
+  handleSaveUpdate(payload: UpdatePayload): void {
+    console.log(`Sending backend UPDATE request for ${payload.type}:`, payload.data);
+    // TODO: Call API service update endpoint
+    this.isModalOpen.set(false);
+  }
+
+  handleCloseModal(): void {
+    this.isModalOpen.set(false);
+  }
+
   handleUpdate(row: any): void {
     console.log('Update clicked for order item:', row.order_item_id, row);
-    // Trigger modal or navigation logic here
+    this.selectedRowData.set(row);
+    this.isModalOpen.set(true);
   }
 
   handleDelete(row: any): void {

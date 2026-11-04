@@ -7,4 +7,7 @@
         [totalRecords]="componentData().totalRecords" [totalPages]="componentData().totalPages"
         [hasPreviousPage]="componentData().hasPreviousPage" [hasNextPage]="componentData().hasNextPage"
         (pageChange)="onPageChange($event)" (updateRow)="handleUpdate($event)" (deleteRow)="handleDelete($event)" />
+
+    <app-modal-form [isOpen]="isModalOpen()" [entityType]="activeEntityType()" [initialData]="selectedRowData()"
+        (closeModal)="handleCloseModal()" (saveData)="handleSaveUpdate($event)" />
 </div>

@@ -1,0 +1,151 @@
+@if (isOpen()) {
+<div class="modal-backdrop" (click)="onClose()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+        <!-- Modal Header -->
+        <div class="modal-header">
+            <div class="header-title">
+                <h3>
+                    @if (entityType() === 'Customer') { <i class="fa-solid fa-user-pen"></i> Update Customer }
+                    @if (entityType() === 'Product') { <i class="fa-solid fa-box-archive"></i> Update Product }
+                    @if (entityType() === 'Store') { <i class="fa-solid fa-store-slash"></i> Update Store }
+                </h3>
+                <p>Modify details for target {{ entityType() }} record</p>
+            </div>
+            <button class="close-btn" (click)="onClose()">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="modal-body">
+
+            <!-- CUSTOMER UPDATE FORM -->
+            @if (entityType() === 'Customer') {
+            <form [formGroup]="customerForm" class="update-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="update_first_name">First Name *</label>
+                        <input id="update_first_name" type="text" formControlName="first_name" />
+                        @if (customerForm.get('first_name')?.invalid && customerForm.get('first_name')?.touched) {
+                        <span class="error-msg">First name is required.</span>
+                        }
+                    </div>
+
+                    <div class="form-group">
+                        <label for="update_last_name">Last Name *</label>
+                        <input id="update_last_name" type="text" formControlName="last_name" />
+                        @if (customerForm.get('last_name')?.invalid && customerForm.get('last_name')?.touched) {
+                        <span class="error-msg">Last name is required.</span>
+                        }
+                    </div>
+
+                    <div class="form-group">
+                        <label for="update_email">Email *</label>
+                        <input id="update_email" type="email" formControlName="email" />
+                        @if (customerForm.get('email')?.invalid && customerForm.get('email')?.touched) {
+                        <span class="error-msg">Valid email is required.</span>
+                        }
+                    </div>
+
+                    <div class="form-group">
+                        <label for="update_city">City *</label>
+                        <input id="update_city" type="text" formControlName="city" />
+                        @if (customerForm.get('city')?.invalid && customerForm.get('city')?.touched) {
+                        <span class="error-msg">City is required.</span>
+                        }
+                    </div>
+                </div>
+            </form>
+            }
+
+            <!-- PRODUCT UPDATE FORM -->
+            @if (entityType() === 'Product') {
+            <form [formGroup]="productForm" class="update-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="update_product_name">Product Name *</label>
+                        <input id="update_product_name" type="text" formControlName="product_name" />
+                        @if (productForm.get('product_name')?.invalid && productForm.get('product_name')?.touched) {
+                        <span class="error-msg">Product name is required.</span>
+                        }
+                    </div>
+
+                    <div class="form-group">
+                        <label for="update_category">Category *</label>
+                        <input id="update_category" type="text" formControlName="category" />
+                        @if (productForm.get('category')?.invalid && productForm.get('category')?.touched) {
+                        <span class="error-msg">Category is required.</span>
+                        }
+                    </div>
+
+                    <div class="form-group">
+                        <label for="update_brand">Brand *</label>
+                        <input id="update_brand" type="text" formControlName="brand" />
+                        @if (productForm.get('brand')?.invalid && productForm.get('brand')?.touched) {
+                        <span class="error-msg">Brand is required.</span>
+                        }
+                    </div>
+
+                    <div class="form-group">
+                        <label for="update_unit_cost">Unit Cost ($) *</label>
+                        <input id="update_unit_cost" type="number" step="0.01" formControlName="unit_cost" />
+                        @if (productForm.get('unit_cost')?.invalid && productForm.get('unit_cost')?.touched) {
+                        <span class="error-msg">Valid unit cost is required.</span>
+                        }
+                    </div>
+
+                    <div class="form-group">
+                        <label for="update_unit_price">Unit Price ($) *</label>
+                        <input id="update_unit_price" type="number" step="0.01" formControlName="unit_price" />
+                        @if (productForm.get('unit_price')?.invalid && productForm.get('unit_price')?.touched) {
+                        <span class="error-msg">Valid unit price is required.</span>
+                        }
+                    </div>
+
+                    <div class="form-group">
+                        <label for="update_vat_rate">VAT Rate *</label>
+                        <input id="update_vat_rate" type="number" step="0.01" formControlName="vat_rate" />
+                        @if (productForm.get('vat_rate')?.invalid && productForm.get('vat_rate')?.touched) {
+                        <span class="error-msg">Valid VAT rate is required.</span>
+                        }
+                    </div>
+                </div>
+            </form>
+            }
+
+            <!-- STORE UPDATE FORM -->
+            @if (entityType() === 'Store') {
+            <form [formGroup]="storeForm" class="update-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="update_store_name">Store Name *</label>
+                        <input id="update_store_name" type="text" formControlName="store_name" />
+                        @if (storeForm.get('store_name')?.invalid && storeForm.get('store_name')?.touched) {
+                        <span class="error-msg">Store name is required.</span>
+                        }
+                    </div>
+
+                    <div class="form-group">
+                        <label for="update_store_city">City *</label>
+                        <input id="update_store_city" type="text" formControlName="city" />
+                        @if (storeForm.get('city')?.invalid && storeForm.get('city')?.touched) {
+                        <span class="error-msg">City is required.</span>
+                        }
+                    </div>
+                </div>
+            </form>
+            }
+
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="modal-footer">
+            <button type="button" class="btn btn-ghost" (click)="onClose()">Cancel</button>
+            <button type="button" class="btn btn-primary" (click)="onSave()">
+                <i class="fa-solid fa-floppy-disk"></i> Update Changes
+            </button>
+        </div>
+
+    </div>
+</div>
+}
