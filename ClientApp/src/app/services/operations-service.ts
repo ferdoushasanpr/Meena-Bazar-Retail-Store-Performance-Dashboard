@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { StoreData } from '../models/store';
 import { Observable } from 'rxjs';
 import { TransactionDataResponse } from '../models/transaction';
+import { CustomerDataResponse } from '../models/customer';
 
 @Injectable({
     providedIn: "root"
@@ -10,6 +11,10 @@ import { TransactionDataResponse } from '../models/transaction';
 export class OperationsService {
     private http = inject(HttpClient);
     private readonly apiUrlBase = 'http://localhost:5253';
+
+    getCustomersData(pageNumber: number, pageSize: number = 10): Observable<CustomerDataResponse> {
+        return this.http.get<CustomerDataResponse>(`${this.apiUrlBase}/customers?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    }
 
     getStoresData(): Observable<StoreData[]> {
         return this.http.get<StoreData[]>(`${this.apiUrlBase}/stores`);
