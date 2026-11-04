@@ -87,8 +87,14 @@ export class AddData {
 
   onStoreSubmit(): void {
     if (this.storeForm.valid) {
-      console.log('Store Data:', this.storeForm.value);
-      // TODO: Call service to post Store data
+      //console.log('Store Data:', this.storeForm.value);
+      this.operationsService.addStoreData(this.storeForm.value).subscribe({
+        next: (response) => {
+          this.router.navigate(['data-explorer/stores']);
+        },
+        error: (error) => { console.error(error) }
+      });
+
       this.storeForm.reset();
     } else {
       this.storeForm.markAllAsTouched();
