@@ -181,6 +181,15 @@ export class DataExploration {
         },
         error: (error) => { console.error(error) }
       });
+    } else if (payload.type === "Store") {
+      this.operationsService.updateStoreData(payload.data, payload.id).subscribe({
+        next: (response) => {
+          console.log('Store updated successfully:', response);
+          this.isModalOpen.set(false);
+          this.loadStoreData(this.componentData().pageNumber);
+        },
+        error: (error) => { console.error(error) }
+      });
     }
   }
 

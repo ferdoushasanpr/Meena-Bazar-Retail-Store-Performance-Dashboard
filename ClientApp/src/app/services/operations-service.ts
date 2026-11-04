@@ -53,6 +53,10 @@ export class OperationsService {
         return this.http.get<StoreDataResponse>(`${this.apiUrlBase}/stores/paginated?pageNumber=${pageNumber}&pageSize=${pageSize}`);
     }
 
+    updateStoreData(store: StoreData, id: string): Observable<StoreData> {
+        return this.http.put<StoreData>(`${this.apiUrlBase}/stores/${id}`, store);
+    }
+
     // Order Operations
     getOrdersData(pageNumber: number, pageSize: number = 10): Observable<OrderDataResponse> {
         return this.http.get<OrderDataResponse>(`${this.apiUrlBase}/sales?pageNumber=${pageNumber}&pageSize=${pageSize}`);
