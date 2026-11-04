@@ -1,6 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PageHeader } from '../../shared/page-header/page-header';
+import { OperationsService } from '../../services/operations-service';
+import { Router } from '@angular/router';
 
 export type DataTab = 'Customer' | 'Product' | 'Store';
 
@@ -11,7 +13,9 @@ export type DataTab = 'Customer' | 'Product' | 'Store';
   templateUrl: './add-data.html',
 })
 export class AddData {
+  private router = inject(Router);
   private fb = inject(FormBuilder);
+  private operationsService = inject(OperationsService)
 
   // Page Header Info
   pageHeaderTitle = 'Add Data';
@@ -52,7 +56,12 @@ export class AddData {
   onCustomerSubmit(): void {
     if (this.customerForm.valid) {
       console.log('Customer Data:', this.customerForm.value);
-      // TODO: Call service to post Customer data
+      this.operationsService.addCustomerData(this.customerForm.value).subscribe({
+        next: (response) => {
+          this.router.navigate(['data-explorer/customers']);
+        },
+        error: (error) => { console.error(error) }
+      });
       this.customerForm.reset();
     } else {
       this.customerForm.markAllAsTouched();
