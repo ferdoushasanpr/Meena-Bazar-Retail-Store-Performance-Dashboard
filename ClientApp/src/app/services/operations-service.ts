@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { TransactionDataResponse } from '../models/transaction';
 import { CustomerDataResponse } from '../models/customer';
 import { ProductDataResponse } from '../models/product';
+import { OrderDataResponse } from '../models/order';
 
 @Injectable({
     providedIn: "root"
@@ -27,6 +28,10 @@ export class OperationsService {
 
     getStoresPaginatedData(pageNumber: number, pageSize: number = 10): Observable<StoreDataResponse> {
         return this.http.get<StoreDataResponse>(`${this.apiUrlBase}/stores/paginated?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    }
+
+    getOrdersData(pageNumber: number, pageSize: number = 10): Observable<OrderDataResponse> {
+        return this.http.get<OrderDataResponse>(`${this.apiUrlBase}/sales?pageNumber=${pageNumber}&pageSize=${pageSize}`);
     }
 
     getTransactionsData(pageNumber: number, pageSize: number = 10): Observable<TransactionDataResponse> {
