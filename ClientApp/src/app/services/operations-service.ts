@@ -4,6 +4,7 @@ import { StoreData } from '../models/store';
 import { Observable } from 'rxjs';
 import { TransactionDataResponse } from '../models/transaction';
 import { CustomerDataResponse } from '../models/customer';
+import { ProductDataResponse } from '../models/product';
 
 @Injectable({
     providedIn: "root"
@@ -14,6 +15,10 @@ export class OperationsService {
 
     getCustomersData(pageNumber: number, pageSize: number = 10): Observable<CustomerDataResponse> {
         return this.http.get<CustomerDataResponse>(`${this.apiUrlBase}/customers?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    }
+
+    getProductsData(pageNumber: number, pageSize: number = 10): Observable<ProductDataResponse> {
+        return this.http.get<ProductDataResponse>(`${this.apiUrlBase}/products?pageNumber=${pageNumber}&pageSize=${pageSize}`);
     }
 
     getStoresData(): Observable<StoreData[]> {
