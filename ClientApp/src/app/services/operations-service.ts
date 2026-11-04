@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { StoreData } from '../models/store';
+import { StoreData, StoreDataResponse } from '../models/store';
 import { Observable } from 'rxjs';
 import { TransactionDataResponse } from '../models/transaction';
 import { CustomerDataResponse } from '../models/customer';
@@ -23,6 +23,10 @@ export class OperationsService {
 
     getStoresData(): Observable<StoreData[]> {
         return this.http.get<StoreData[]>(`${this.apiUrlBase}/stores`);
+    }
+
+    getStoresPaginatedData(pageNumber: number, pageSize: number = 10): Observable<StoreDataResponse> {
+        return this.http.get<StoreDataResponse>(`${this.apiUrlBase}/stores/paginated?pageNumber=${pageNumber}&pageSize=${pageSize}`);
     }
 
     getTransactionsData(pageNumber: number, pageSize: number = 10): Observable<TransactionDataResponse> {
