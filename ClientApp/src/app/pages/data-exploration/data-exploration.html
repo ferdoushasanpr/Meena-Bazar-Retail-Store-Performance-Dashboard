@@ -1,4 +1,11 @@
 <div class="container">
     <!-- Top Navigation Header -->
     <app-page-header [title]="pageHeaderTitle()" [subtitle]="pageHeaderSubtitle()" />
+
+    <app-dynamic-table title="Customers"
+        subtitle="Overview of customer profiles, demographics, and purchasing behavior." [data]="componentData().data"
+        [pageNumber]="componentData().pageNumber" [pageSize]="componentData().pageSize"
+        [totalRecords]="componentData().totalRecords" [totalPages]="componentData().totalPages"
+        [hasPreviousPage]="componentData().hasPreviousPage" [hasNextPage]="componentData().hasNextPage"
+        (pageChange)="onPageChange($event)" (updateRow)="handleUpdate($event)" (deleteRow)="handleDelete($event)" />
 </div>
