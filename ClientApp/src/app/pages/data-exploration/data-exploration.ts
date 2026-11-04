@@ -168,7 +168,16 @@ export class DataExploration {
         next: (response) => {
           console.log('Customer updated successfully:', response);
           this.isModalOpen.set(false);
-          this.loadComponentData();
+          this.loadCustomerData(this.componentData().pageNumber);
+        },
+        error: (error) => { console.error(error) }
+      });
+    } else if (payload.type === "Product") {
+      this.operationsService.updateProductData(payload.data, payload.id).subscribe({
+        next: (response) => {
+          console.log('Product updated successfully:', response);
+          this.isModalOpen.set(false);
+          this.loadProductData(this.componentData().pageNumber);
         },
         error: (error) => { console.error(error) }
       });

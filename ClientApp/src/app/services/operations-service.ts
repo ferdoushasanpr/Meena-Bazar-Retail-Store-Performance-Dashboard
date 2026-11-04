@@ -14,6 +14,7 @@ export class OperationsService {
     private http = inject(HttpClient);
     private readonly apiUrlBase = 'http://localhost:5253';
 
+    // Customer Operations
     addCustomerData(customer: Customer): Observable<Customer> {
         return this.http.post<Customer>(`${this.apiUrlBase}/customers`, customer);
     }
@@ -26,6 +27,7 @@ export class OperationsService {
         return this.http.put<Customer>(`${this.apiUrlBase}/customers/${id}`, customer);
     }
 
+    // Product Operations
     addProductData(product: Product): Observable<Product> {
         return this.http.post<Product>(`${this.apiUrlBase}/products`, product);
     }
@@ -34,6 +36,11 @@ export class OperationsService {
         return this.http.get<ProductDataResponse>(`${this.apiUrlBase}/products?pageNumber=${pageNumber}&pageSize=${pageSize}`);
     }
 
+    updateProductData(product: Product, id: string): Observable<Product> {
+        return this.http.put<Product>(`${this.apiUrlBase}/products/${id}`, product);
+    }
+
+    // Store Operations
     addStoreData(store: StoreData): Observable<StoreData> {
         return this.http.post<StoreData>(`${this.apiUrlBase}/stores`, store);
     }
@@ -46,10 +53,12 @@ export class OperationsService {
         return this.http.get<StoreDataResponse>(`${this.apiUrlBase}/stores/paginated?pageNumber=${pageNumber}&pageSize=${pageSize}`);
     }
 
+    // Order Operations
     getOrdersData(pageNumber: number, pageSize: number = 10): Observable<OrderDataResponse> {
         return this.http.get<OrderDataResponse>(`${this.apiUrlBase}/sales?pageNumber=${pageNumber}&pageSize=${pageSize}`);
     }
 
+    // Transactions Operations
     getTransactionsData(pageNumber: number, pageSize: number = 10): Observable<TransactionDataResponse> {
         return this.http.get<TransactionDataResponse>(`${this.apiUrlBase}/transactions?pageNumber=${pageNumber}&pageSize=${pageSize}`);
     }
