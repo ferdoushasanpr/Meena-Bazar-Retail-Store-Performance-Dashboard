@@ -6,6 +6,7 @@ import { CustomerDataResponse } from '../../models/customer';
 import { OperationsService } from '../../services/operations-service';
 import { DynamicTable } from '../../shared/dynamic-table/dynamic-table';
 import { ProductDataResponse } from '../../models/product';
+import { StoreDataResponse } from '../../models/store';
 
 @Component({
   imports: [PageHeader, DynamicTable],
@@ -22,7 +23,7 @@ export class DataExploration {
   pageHeaderSubtitle = signal<string>('');
 
   // Contents
-  componentData = signal<CustomerDataResponse | ProductDataResponse>({
+  componentData = signal<CustomerDataResponse | ProductDataResponse | StoreDataResponse>({
     data: [],
     pageNumber: 1,
     pageSize: 10,
@@ -83,6 +84,8 @@ export class DataExploration {
       this.loadCustomerData(1);
     } else if (this.pageHeaderTitle() === 'Products') {
       this.loadProductData(1);
+    } else if (this.pageHeaderTitle() === 'Stores') {
+      this.loadStoreData(1);
     }
   }
 
@@ -100,11 +103,20 @@ export class DataExploration {
     })
   }
 
+  loadStoreData(pageNumber: number, pageSize?: number) {
+    this.operationsService.getStoresPaginatedData(pageNumber, pageSize).subscribe({
+      next: (response) => { this.componentData.set(response); },
+      error: (error) => { console.error(error) }
+    })
+  }
+
   onPageChange(pageNumber: number): void {
     if (this.pageHeaderTitle() === 'Customers') {
       this.loadCustomerData(pageNumber);
     } else if (this.pageHeaderTitle() === 'Products') {
       this.loadProductData(pageNumber);
+    } else if (this.pageHeaderTitle() === 'Stores') {
+      this.loadStoreData(pageNumber);
     }
 
   }
