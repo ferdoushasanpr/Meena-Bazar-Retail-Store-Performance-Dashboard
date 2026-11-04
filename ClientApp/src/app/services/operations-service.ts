@@ -22,6 +22,10 @@ export class OperationsService {
         return this.http.get<CustomerDataResponse>(`${this.apiUrlBase}/customers?pageNumber=${pageNumber}&pageSize=${pageSize}`);
     }
 
+    updateCustomerData(customer: Customer, id: string): Observable<Customer> {
+        return this.http.put<Customer>(`${this.apiUrlBase}/customers/${id}`, customer);
+    }
+
     addProductData(product: Product): Observable<Product> {
         return this.http.post<Product>(`${this.apiUrlBase}/products`, product);
     }

@@ -9,6 +9,6 @@ export type EntityType = 'Customer' | 'Product' | 'Store';
 
 export interface UpdatePayload {
     type: EntityType;
-    id?: string | number;
+    id: string;
     data: any;
 }

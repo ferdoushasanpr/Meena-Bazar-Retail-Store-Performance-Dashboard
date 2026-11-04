@@ -161,9 +161,18 @@ export class DataExploration {
 
   // Triggered when Update Icon is clicked in any table
   handleSaveUpdate(payload: UpdatePayload): void {
-    console.log(`Sending backend UPDATE request for ${payload.type}:`, payload.data);
-    // TODO: Call API service update endpoint
-    this.isModalOpen.set(false);
+    payload.data[`${payload.type.toLowerCase()}_id`] = payload.id;
+
+    if (payload.type === "Customer") {
+      this.operationsService.updateCustomerData(payload.data, payload.id).subscribe({
+        next: (response) => {
+          console.log('Customer updated successfully:', response);
+          this.isModalOpen.set(false);
+          this.loadComponentData();
+        },
+        error: (error) => { console.error(error) }
+      });
+    }
   }
 
   handleCloseModal(): void {
@@ -171,7 +180,7 @@ export class DataExploration {
   }
 
   handleUpdate(row: any): void {
-    console.log('Update clicked for order item:', row.order_item_id, row);
+    console.log('Update clicked for order item:', row);
     this.selectedRowData.set(row);
     this.isModalOpen.set(true);
   }
