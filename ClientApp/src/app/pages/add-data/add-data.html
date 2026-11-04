@@ -1,4 +1,178 @@
 <div class="container">
     <!-- Top Navigation Header -->
     <app-page-header [title]="pageHeaderTitle" [subtitle]="pageHeaderSubtitle" />
+
+    <!-- Tab Navigation Bar -->
+    <section class="tab-bar">
+        <div class="tab-pills">
+            @for (tab of tabs; track tab) {
+            <button class="tab-btn" [class.active]="activeTab() === tab" (click)="setTab(tab)">
+                @if (tab === 'Customer') { <i class="fa-solid fa-user"></i> }
+                @if (tab === 'Product') { <i class="fa-solid fa-box"></i> }
+                @if (tab === 'Store') { <i class="fa-solid fa-store"></i> }
+                {{ tab }}
+            </button>
+            }
+        </div>
+    </section>
+
+    <!-- Form Section Card -->
+    <div class="form-card">
+
+        <!-- CUSTOMER FORM -->
+        @if (activeTab() === 'Customer') {
+        <div class="form-header">
+            <h3><i class="fa-solid fa-user"></i> Add New Customer</h3>
+            <p>Enter customer details to register in DemoCustomers</p>
+        </div>
+
+        <form [formGroup]="customerForm" (ngSubmit)="onCustomerSubmit()" class="data-form">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="first_name">First Name *</label>
+                    <input id="first_name" type="text" formControlName="first_name" placeholder="e.g. John" />
+                    @if (customerForm.get('first_name')?.invalid && customerForm.get('first_name')?.touched) {
+                    <span class="error-msg">First name is required (max 50 chars).</span>
+                    }
+                </div>
+
+                <div class="form-group">
+                    <label for="last_name">Last Name *</label>
+                    <input id="last_name" type="text" formControlName="last_name" placeholder="e.g. Doe" />
+                    @if (customerForm.get('last_name')?.invalid && customerForm.get('last_name')?.touched) {
+                    <span class="error-msg">Last name is required (max 50 chars).</span>
+                    }
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input id="email" type="email" formControlName="email" placeholder="e.g. john.doe@example.com" />
+                    @if (customerForm.get('email')?.invalid && customerForm.get('email')?.touched) {
+                    <span class="error-msg">Valid email address is required.</span>
+                    }
+                </div>
+
+                <div class="form-group">
+                    <label for="city">City *</label>
+                    <input id="city" type="text" formControlName="city" placeholder="e.g. Dhaka" />
+                    @if (customerForm.get('city')?.invalid && customerForm.get('city')?.touched) {
+                    <span class="error-msg">City is required.</span>
+                    }
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn btn-ghost" (click)="customerForm.reset()">Reset</button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa-solid fa-plus"></i> Save Customer
+                </button>
+            </div>
+        </form>
+        }
+
+        <!-- PRODUCT FORM -->
+        @if (activeTab() === 'Product') {
+        <div class="form-header">
+            <h3><i class="fa-solid fa-box"></i> Add New Product</h3>
+            <p>Enter product details to register in DemoProducts</p>
+        </div>
+
+        <form [formGroup]="productForm" (ngSubmit)="onProductSubmit()" class="data-form">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="product_name">Product Name *</label>
+                    <input id="product_name" type="text" formControlName="product_name"
+                        placeholder="e.g. Organic Milk 1L" />
+                    @if (productForm.get('product_name')?.invalid && productForm.get('product_name')?.touched) {
+                    <span class="error-msg">Product name is required.</span>
+                    }
+                </div>
+
+                <div class="form-group">
+                    <label for="category">Category *</label>
+                    <input id="category" type="text" formControlName="category" placeholder="e.g. Dairy & Eggs" />
+                    @if (productForm.get('category')?.invalid && productForm.get('category')?.touched) {
+                    <span class="error-msg">Category is required.</span>
+                    }
+                </div>
+
+                <div class="form-group">
+                    <label for="brand">Brand *</label>
+                    <input id="brand" type="text" formControlName="brand" placeholder="e.g. Aarong Dairy" />
+                    @if (productForm.get('brand')?.invalid && productForm.get('brand')?.touched) {
+                    <span class="error-msg">Brand is required.</span>
+                    }
+                </div>
+
+                <div class="form-group">
+                    <label for="unit_cost">Unit Cost ($) *</label>
+                    <input id="unit_cost" type="number" step="0.01" formControlName="unit_cost" placeholder="0.00" />
+                    @if (productForm.get('unit_cost')?.invalid && productForm.get('unit_cost')?.touched) {
+                    <span class="error-msg">Valid unit cost is required.</span>
+                    }
+                </div>
+
+                <div class="form-group">
+                    <label for="unit_price">Unit Price ($) *</label>
+                    <input id="unit_price" type="number" step="0.01" formControlName="unit_price" placeholder="0.00" />
+                    @if (productForm.get('unit_price')?.invalid && productForm.get('unit_price')?.touched) {
+                    <span class="error-msg">Valid unit price is required.</span>
+                    }
+                </div>
+
+                <div class="form-group">
+                    <label for="vat_rate">VAT Rate *</label>
+                    <input id="vat_rate" type="number" step="0.01" formControlName="vat_rate" placeholder="e.g. 0.05" />
+                    @if (productForm.get('vat_rate')?.invalid && productForm.get('vat_rate')?.touched) {
+                    <span class="error-msg">Valid VAT rate is required.</span>
+                    }
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn btn-ghost" (click)="productForm.reset()">Reset</button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa-solid fa-plus"></i> Save Product
+                </button>
+            </div>
+        </form>
+        }
+
+        <!-- STORE FORM -->
+        @if (activeTab() === 'Store') {
+        <div class="form-header">
+            <h3><i class="fa-solid fa-store"></i> Add New Store</h3>
+            <p>Enter store details to register in DemoStores</p>
+        </div>
+
+        <form [formGroup]="storeForm" (ngSubmit)="onStoreSubmit()" class="data-form">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="store_name">Store Name *</label>
+                    <input id="store_name" type="text" formControlName="store_name"
+                        placeholder="e.g. MeenaBazar-Dhanmondi" />
+                    @if (storeForm.get('store_name')?.invalid && storeForm.get('store_name')?.touched) {
+                    <span class="error-msg">Store name is required.</span>
+                    }
+                </div>
+
+                <div class="form-group">
+                    <label for="store_city">City *</label>
+                    <input id="store_city" type="text" formControlName="city" placeholder="e.g. Dhaka" />
+                    @if (storeForm.get('city')?.invalid && storeForm.get('city')?.touched) {
+                    <span class="error-msg">City is required.</span>
+                    }
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn btn-ghost" (click)="storeForm.reset()">Reset</button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa-solid fa-plus"></i> Save Store
+                </button>
+            </div>
+        </form>
+        }
+
+    </div>
 </div>
