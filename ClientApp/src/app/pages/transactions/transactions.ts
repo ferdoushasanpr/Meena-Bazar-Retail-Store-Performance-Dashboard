@@ -2,7 +2,6 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { PageHeader } from '../../shared/page-header/page-header';
 import { TransactionDataResponse } from '../../models/transaction';
 import { OperationsService } from '../../services/operations-service';
-import { TableChart } from '../../shared/table-chart/table-chart';
 import { DynamicTable } from '../../shared/dynamic-table/dynamic-table';
 
 @Component({
