@@ -6,6 +6,8 @@ interface MenuItem {
   icon: string;
   route?: string;
   active?: boolean;
+  expanded?: boolean;
+  children?: MenuItem[];
 }
 
 interface MenuSection {
@@ -35,18 +37,53 @@ export class Sidebar {
     {
       sectionTitle: 'OPERATIONS',
       items: [
-        { title: 'Transactions', route: '/transactions', icon: 'fa-solid fa-receipt' },
+        { title: 'Add Data', route: '/add-data', icon: 'fa-solid fa-square-plus' },
         { title: 'Reports & Exports', route: '/report-export', icon: 'fa-solid fa-file-lines' }
       ]
     },
     {
       sectionTitle: 'SYSTEM',
       items: [
-        { title: 'Data Explorer', route: '/data-explorer', icon: 'fa-solid fa-database' },
-        { title: 'Settings', route: '/settings', icon: 'fa-solid fa-gear' }
+        {
+          title: 'Data Explorer',
+          icon: 'fa-solid fa-database',
+          expanded: false,
+          children: [
+            {
+              title: 'Customers',
+              route: '/data-explorer/customers',
+              icon: 'fa-solid fa-users'
+            },
+            {
+              title: 'Products',
+              route: '/data-explorer/products',
+              icon: 'fa-solid fa-box'
+            },
+            {
+              title: 'Stores',
+              route: '/data-explorer/stores',
+              icon: 'fa-solid fa-shop'
+            },
+            {
+              title: 'Orders',
+              route: '/data-explorer/orders',
+              icon: 'fa-solid fa-cart-shopping'
+            },
+            { title: 'Transactions', route: '/data-explorer/transactions', icon: 'fa-solid fa-receipt' }
+          ]
+        },
+        {
+          title: 'Settings',
+          route: '/settings',
+          icon: 'fa-solid fa-gear'
+        }
       ]
     }
   ];
+
+  toggleSubmenu(item: MenuItem): void {
+    item.expanded = !item.expanded;
+  }
 
   selectItem(itemTitle: string): void {
     this.activeItem = itemTitle;

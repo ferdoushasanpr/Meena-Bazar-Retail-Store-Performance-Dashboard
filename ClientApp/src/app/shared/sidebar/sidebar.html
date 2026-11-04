@@ -8,6 +8,7 @@
     </div>
 
     <!-- Navigation Groups -->
+
     <nav class="nav-container">
         @for (section of menuSections; track section.sectionTitle) {
         <div class="menu-section">
@@ -16,17 +17,51 @@
             <ul class="menu-list">
                 @for (item of section.items; track item.title) {
                 <li>
+                    @if (item.children) {
+                    <!-- Parent Dropdown -->
+                    <button class="nav-item dropdown-toggle"
+                        [class.active]="item.children.some(child => child.title === activeItem)"
+                        (click)="toggleSubmenu(item)">
+
+                        <i [class]="item.icon + ' nav-icon'"></i>
+
+                        <span class="nav-text">{{ item.title }}</span>
+
+                        <i class="fa-solid fa-chevron-down dropdown-arrow" [class.rotated]="item.expanded">
+                        </i>
+                    </button>
+
+                    <!-- Dropdown Children -->
+                    @if (item.expanded) {
+                    <ul class="submenu">
+                        @for (child of item.children; track child.title) {
+                        <li>
+                            <a [routerLink]="child.route" class="nav-item submenu-item"
+                                [class.active]="child.title === activeItem" (click)="selectItem(child.title)">
+
+                                <i [class]="child.icon + ' nav-icon'"></i>
+                                <span class="nav-text">{{ child.title }}</span>
+                            </a>
+                        </li>
+                        }
+                    </ul>
+                    }
+                    } @else {
+                    <!-- Normal Menu Item -->
                     <a [routerLink]="item.route" class="nav-item" [class.active]="item.title === activeItem"
                         (click)="selectItem(item.title)">
+
                         <i [class]="item.icon + ' nav-icon'"></i>
                         <span class="nav-text">{{ item.title }}</span>
                     </a>
+                    }
                 </li>
                 }
             </ul>
         </div>
         }
     </nav>
+
 
     <!-- User Profile Section -->
     <div class="user-profile">

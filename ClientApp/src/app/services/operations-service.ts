@@ -1,8 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { StoreData } from '../models/store';
+import { StoreData, StoreDataResponse } from '../models/store';
 import { Observable } from 'rxjs';
 import { TransactionDataResponse } from '../models/transaction';
+import { CustomerDataResponse } from '../models/customer';
+import { ProductDataResponse } from '../models/product';
+import { OrderDataResponse } from '../models/order';
 
 @Injectable({
     providedIn: "root"
@@ -11,8 +14,24 @@ export class OperationsService {
     private http = inject(HttpClient);
     private readonly apiUrlBase = 'http://localhost:5253';
 
+    getCustomersData(pageNumber: number, pageSize: number = 10): Observable<CustomerDataResponse> {
+        return this.http.get<CustomerDataResponse>(`${this.apiUrlBase}/customers?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    }
+
+    getProductsData(pageNumber: number, pageSize: number = 10): Observable<ProductDataResponse> {
+        return this.http.get<ProductDataResponse>(`${this.apiUrlBase}/products?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    }
+
     getStoresData(): Observable<StoreData[]> {
         return this.http.get<StoreData[]>(`${this.apiUrlBase}/stores`);
+    }
+
+    getStoresPaginatedData(pageNumber: number, pageSize: number = 10): Observable<StoreDataResponse> {
+        return this.http.get<StoreDataResponse>(`${this.apiUrlBase}/stores/paginated?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    }
+
+    getOrdersData(pageNumber: number, pageSize: number = 10): Observable<OrderDataResponse> {
+        return this.http.get<OrderDataResponse>(`${this.apiUrlBase}/sales?pageNumber=${pageNumber}&pageSize=${pageSize}`);
     }
 
     getTransactionsData(pageNumber: number, pageSize: number = 10): Observable<TransactionDataResponse> {
