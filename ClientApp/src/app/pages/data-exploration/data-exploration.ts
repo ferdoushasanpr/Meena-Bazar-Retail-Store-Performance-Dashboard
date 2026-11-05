@@ -204,7 +204,15 @@ export class DataExploration {
   }
 
   handleDelete(row: any): void {
-    console.log('Delete clicked for order item:', row.order_item_id, row);
-    // Trigger delete confirmation logic here
+    console.log('Delete clicked for order item:', row);
+    if (this.pageHeaderTitle() === 'Customers') {
+      this.operationsService.deleteCustomerData(row.customer_id).subscribe({
+        next: (response) => {
+          console.log('Customer deleted successfully:', response);
+          this.loadCustomerData(this.componentData().pageNumber);
+        },
+        error: (error) => { console.error(error) }
+      });
+    }
   }
 }

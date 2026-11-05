@@ -27,6 +27,10 @@ export class OperationsService {
         return this.http.put<Customer>(`${this.apiUrlBase}/customers/${id}`, customer);
     }
 
+    deleteCustomerData(id: string): Observable<Customer> {
+        return this.http.delete<Customer>(`${this.apiUrlBase}/customers/${id}`);
+    }
+
     // Product Operations
     addProductData(product: Product): Observable<Product> {
         return this.http.post<Product>(`${this.apiUrlBase}/products`, product);
