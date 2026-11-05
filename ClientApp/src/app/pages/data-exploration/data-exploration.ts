@@ -221,6 +221,14 @@ export class DataExploration {
         },
         error: (error) => { console.error(error) }
       });
+    } else if (this.pageHeaderTitle() === 'Stores') {
+      this.operationsService.deleteStoreData(row.store_id).subscribe({
+        next: (response) => {
+          console.log('Store deleted successfully:', response);
+          this.loadStoreData(this.componentData().pageNumber);
+        },
+        error: (error) => { console.error(error) }
+      });
     }
   }
 }

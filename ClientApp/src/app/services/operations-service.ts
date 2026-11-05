@@ -65,6 +65,10 @@ export class OperationsService {
         return this.http.put<StoreData>(`${this.apiUrlBase}/stores/${id}`, store);
     }
 
+    deleteStoreData(id: string): Observable<StoreData> {
+        return this.http.delete<StoreData>(`${this.apiUrlBase}/stores/${id}`);
+    }
+
     // Order Operations
     getOrdersData(pageNumber: number, pageSize: number = 10): Observable<OrderDataResponse> {
         return this.http.get<OrderDataResponse>(`${this.apiUrlBase}/sales?pageNumber=${pageNumber}&pageSize=${pageSize}`);
