@@ -1,12 +1,11 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { PageHeader } from '../../../layout/page-header/page-header';
 import { CategoryMatrixChart } from '../../../shared/components/category-matrix-chart/category-matrix-chart';
 import { HorizontalBarChart } from '../../../shared/components/horizontal-bar-chart/horizontal-bar-chart';
-import { AnalyticsService } from '../../../core/services/analytics-service';
-import { ProductSalesResponse, SalesCategoryData } from '../../../core/models/sales';
 import { formatDate } from '../../../shared/utilities/date';
 import { buildCsvContent, downloadCsv } from '../../../shared/utilities/csv-exporter';
+import { SalesService } from '../../services/sales-service';
 
 @Component({
   imports: [FormsModule, PageHeader, CategoryMatrixChart, HorizontalBarChart],
@@ -14,8 +13,8 @@ import { buildCsvContent, downloadCsv } from '../../../shared/utilities/csv-expo
   styleUrl: './product-categories.css',
   templateUrl: './product-categories.html',
 })
-export class ProductCategories {
-  private businessKpiService = inject(AnalyticsService);
+export class ProductCategories implements OnInit {
+  private salesService = inject(SalesService);
 
   //Page Header Component Info
   pageHeaderTitle = "Product Categories";
@@ -29,37 +28,16 @@ export class ProductCategories {
   customStartDate = signal<string>(formatDate(this.currentDate));
   customEndDate = signal<string>(formatDate(this.currentDate));
 
-  salesCategoryData = signal<SalesCategoryData[]>([]);
-  productSalesData = signal<ProductSalesResponse>({
-    data: [],
-    pageNumber: 1,
-    pageSize: 10,
-    totalRecords: 0,
-    totalPages: 0,
-    hasPreviousPage: false,
-    hasNextPage: false,
-  });
+  salesCategoryData = this.salesService.salesCategoryData;
+  productSalesData = this.salesService.paginatedSalesData;
 
   ngOnInit(): void {
     this.setTimeRange('All');
   }
 
-  loadSalesCategoryData(startDate: string, endDate: string): void {
-    this.businessKpiService.getSalesCategoryData(startDate, endDate).subscribe({
-      next: (response: SalesCategoryData[]) => {
-        this.salesCategoryData.set(response);
-      },
-      error: (error) => {
-        console.error('Failed to load sales category data:', error);
-      }
-    });
-  }
-
-  loadProductSalesData(pageNumber: number = 1, startDate: string, endDate: string): void {
-    this.businessKpiService.getProductSalesData(pageNumber, 10, startDate, endDate).subscribe({
-      next: (response) => { this.productSalesData.set(response); },
-      error: (error) => { console.error(error); }
-    });
+  private loadSalesData(startDate: string, endDate: string): void {
+    this.salesService.loadSalesCategoryData(startDate, endDate);
+    this.salesService.loadProductSalesData(1, startDate, endDate);
   }
 
   onPageChange(pageNumber: number): void {
@@ -84,12 +62,7 @@ export class ProductCategories {
         break;
     }
 
-    this.loadProductSalesData(pageNumber, formatDate(startDate), formatDate(endDate));
-  }
-
-  private loadSalesData(startDate: string, endDate: string): void {
-    this.loadSalesCategoryData(startDate, endDate);
-    this.loadProductSalesData(1, startDate, endDate);
+    this.salesService.loadProductSalesData(pageNumber, formatDate(startDate), formatDate(endDate));
   }
 
   setTimeRange(range: string): void {
@@ -131,7 +104,6 @@ export class ProductCategories {
   onResetFilter(): void {
     this.setTimeRange('All');
   }
-
 
 
   // --- CSV Export Methods ---
