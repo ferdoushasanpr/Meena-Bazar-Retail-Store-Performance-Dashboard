@@ -1,14 +1,13 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { PageHeader } from '../../layout/page-header/page-header';
-import { MetricCard } from '../../shared/components/metric-card/metric-card';
-import { TrendChart } from '../../shared/components/trend-chart/trend-chart';
-import { HorizontalBarChart } from '../../shared/components/horizontal-bar-chart/horizontal-bar-chart';
-import { DonutChart } from '../../shared/components/donut-chart/donut-chart';
-import { SalesService } from '../../core/services/sales-service';
-import { BrandSalesData, DailySalesData, MonthlySalesData, SalesCategoryData, SalesData, YearlySalesData } from '../../core/models/sales';
-import { MetricCardProps } from '../../core/models/props';
-import { buildCsvContent, downloadCsv } from '../../shared/utilities/csv-exporter';
+import { PageHeader } from '../../../layout/page-header/page-header';
+import { MetricCard } from '../../../shared/components/metric-card/metric-card';
+import { TrendChart } from '../../../shared/components/trend-chart/trend-chart';
+import { HorizontalBarChart } from '../../../shared/components/horizontal-bar-chart/horizontal-bar-chart';
+import { DonutChart } from '../../../shared/components/donut-chart/donut-chart';
+import { MetricCardProps } from '../../../core/models/props';
+import { buildCsvContent, downloadCsv } from '../../../shared/utilities/csv-exporter';
+import { SalesService } from '../../services/sales-service';
 
 @Component({
   imports: [FormsModule, PageHeader, MetricCard, TrendChart, HorizontalBarChart, DonutChart],
@@ -17,26 +16,19 @@ import { buildCsvContent, downloadCsv } from '../../shared/utilities/csv-exporte
   templateUrl: './dashboard.html',
 })
 export class Dashboard implements OnInit {
-  private businessKpiService = inject(SalesService);
+  private salesService = inject(SalesService);
 
   //Page Header Component Info
   pageHeaderTitle = "Sales Overview";
   pageHeaderSubtitle = "Monitor revenue, transactions, and retail performance across your stores.";
 
   // Sales Data
-  salesKpiData = signal<SalesData>({
-    totalSales: 0.0,
-    numberOfTransactions: 0,
-    averageBasketValue: 0.0,
-    averageDailySales: 0.0
-  });
-
-  salesCategoryData = signal<SalesCategoryData[]>([]);
-  dailySalesData = signal<DailySalesData[]>([]);
-  monthlySalesData = signal<MonthlySalesData[]>([]);
-  yearlySalesData = signal<YearlySalesData[]>([]);
-  brandSalesData = signal<BrandSalesData[]>([]);
-
+  salesKpiData = this.salesService.salesKpiData;
+  salesCategoryData = this.salesService.salesCategoryData;
+  dailySalesData = this.salesService.dailySalesData;
+  monthlySalesData = this.salesService.monthlySalesData;
+  yearlySalesData = this.salesService.yearlySalesData;
+  brandSalesData = this.salesService.brandSalesData;
 
 
   totalSalesCard = computed((): MetricCardProps => {
@@ -84,74 +76,12 @@ export class Dashboard implements OnInit {
   });
 
   ngOnInit(): void {
-    this.loadSalesKpiData();
-    this.loadSalesCategoryData();
-    this.loadDailySalesData();
-    this.loadMonthlySalesData();
-    this.loadYearlySalesData();
-    this.loadBrandSalesData();
-  }
-
-  loadSalesKpiData(): void {
-    this.businessKpiService.getSalesData().subscribe({
-      next: (response) => { this.salesKpiData.set(response) },
-      error: (error) => { console.error(error) }
-    });
-  }
-
-  loadSalesCategoryData(): void {
-    this.businessKpiService.getSalesCategoryData().subscribe({
-      next: (response) => {
-        this.salesCategoryData.set(response);
-      },
-      error: (error) => {
-        console.error(error);
-      }
-    });
-  }
-
-  loadDailySalesData(): void {
-    this.businessKpiService.getDailySalesData().subscribe({
-      next: (response) => {
-        this.dailySalesData.set(response);
-      },
-      error: (error) => {
-        console.error(error);
-      }
-    });
-  }
-
-  loadMonthlySalesData(): void {
-    this.businessKpiService.getMonthlySalesData().subscribe({
-      next: (response) => {
-        this.monthlySalesData.set(response);
-      },
-      error: (error) => {
-        console.error(error);
-      }
-    });
-  }
-
-  loadYearlySalesData(): void {
-    this.businessKpiService.getYearlySalesData().subscribe({
-      next: (response) => {
-        this.yearlySalesData.set(response);
-      },
-      error: (error) => {
-        console.error(error);
-      }
-    });
-  }
-
-  loadBrandSalesData(): void {
-    this.businessKpiService.getBrandSalesData().subscribe({
-      next: (response) => {
-        this.brandSalesData.set(response);
-      },
-      error: (error) => {
-        console.error(error);
-      }
-    });
+    this.salesService.loadSalesKpiData();
+    this.salesService.loadSalesCategoryData();
+    this.salesService.loadDailySalesData();
+    this.salesService.loadMonthlySalesData();
+    this.salesService.loadYearlySalesData();
+    this.salesService.loadBrandSalesData();
   }
 
 

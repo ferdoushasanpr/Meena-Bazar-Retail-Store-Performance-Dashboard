@@ -1,10 +1,10 @@
 import { Routes } from '@angular/router';
-import { Dashboard } from './pages/dashboard/dashboard';
-import { DataExploration } from './pages/data-exploration/data-exploration';
-import { AddData } from './pages/add-data/add-data';
-import { SalesAnalytics } from './pages/sales/sales-analytics/sales-analytics';
-import { StorePerformance } from './pages/sales/store-performance/store-performance';
-import { ProductCategories } from './pages/sales/product-categories/product-categories';
+import { Dashboard } from './pages/components/dashboard/dashboard';
+import { SalesAnalytics } from './pages/components/sales-analytics/sales-analytics';
+import { StorePerformance } from './pages/components/store-performance/store-performance';
+import { ProductCategories } from './pages/components/product-categories/product-categories';
+import { AddData } from './pages/components/add-data/add-data';
+import { DataExploration } from './pages/components/data-exploration/data-exploration';
 
 export const routes: Routes = [
     {
