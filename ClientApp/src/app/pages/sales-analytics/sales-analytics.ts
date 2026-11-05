@@ -10,6 +10,7 @@ import { VerticalBarChart } from '../../shared/vertical-bar-chart/vertical-bar-c
 import { formatDate } from '../../utilities/date';
 import { StoreData } from '../../models/store';
 import { OperationsService } from '../../services/operations-service';
+import { buildCsvContent, downloadCsv } from '../../utilities/csv-exporter';
 
 @Component({
   imports: [FormsModule, PageHeader, MetricCard, TrendChart, VerticalBarChart],
@@ -212,5 +213,84 @@ export class SalesAnalytics implements OnInit {
   onResetFilter(): void {
     this.selectedStore.set('All Stores');
     this.setTimeRange('All');
+  }
+
+
+
+  // --- CSV Export Methods ---
+
+  /**
+   * Generates and downloads a consolidated CSV report containing Active Filters,
+   * Summary KPIs, Store Breakdown, and Category Breakdown.
+   */
+  exportConsolidatedReport(): void {
+    const kpis = this.filteredSalesData();
+    const storeData = this.dailyStoreSalesData();
+    const categoryData = this.filteredStoreCategorySalesData();
+    const currentStore = this.selectedStore();
+
+    const dateRangeLabel = this.selectedTimeRange === 'Select Range'
+      ? `${this.customStartDate()} to ${this.customEndDate()}`
+      : this.selectedTimeRange;
+
+    const rows: (string | number)[][] = [];
+
+    // Metadata Section
+    rows.push(['SALES ANALYTICS REPORT']);
+    rows.push(['Generated Date', new Date().toISOString().split('T')[0]]);
+    rows.push(['Selected Store Filter', currentStore]);
+    rows.push(['Time Range', dateRangeLabel]);
+    rows.push([]);
+
+    // KPI Summary Section
+    rows.push(['--- EXECUTIVE SUMMARY ---']);
+    rows.push(['Metric', 'Value']);
+    rows.push(['Total Sales ($)', kpis.totalSales.toFixed(2)]);
+    rows.push(['Total Transactions', kpis.numberOfTransactions]);
+    rows.push(['Average Basket Value ($)', kpis.averageBasketValue.toFixed(2)]);
+    rows.push(['Average Daily Sales ($)', kpis.averageDailySales.toFixed(2)]);
+    rows.push([]);
+
+    // Store Performance Section
+    rows.push(['--- STORE SALES BREAKDOWN ---']);
+    rows.push(['Sales Date', 'Store Name', 'Total Transactions', 'Total Sales ($)', 'Average Basket Value ($)']);
+    if (storeData.length > 0) {
+      storeData.forEach(item => {
+        rows.push([
+          item.salesDate,
+          item.store_name,
+          item.numberOfTransactions,
+          item.totalSales.toFixed(2),
+          item.averageBasketValue.toFixed(2)
+        ]);
+      });
+    } else {
+      rows.push(['No store sales data available']);
+    }
+    rows.push([]);
+
+    // Category Sales Section
+    rows.push(['--- CATEGORY BREAKDOWN ---']);
+    rows.push(['Store ID', 'Store Name', 'Category', 'Units Sold', 'Transactions', 'Total Sales ($)']);
+    if (categoryData.length > 0) {
+      categoryData.forEach(item => {
+        rows.push([
+          item.store_id,
+          item.store_name,
+          item.category,
+          item.unitsSold,
+          item.numberOfTransactions,
+          item.totalSales.toFixed(2)
+        ]);
+      });
+    } else {
+      rows.push(['No category sales data available']);
+    }
+
+    const csvContent = buildCsvContent(rows);
+    const sanitizeStoreName = currentStore.toLowerCase().replace(/[^a-z0-0]/gi, '_');
+    const fileName = `sales_report_${sanitizeStoreName}_${formatDate(new Date())}.csv`;
+
+    downloadCsv(csvContent, fileName);
   }
 }

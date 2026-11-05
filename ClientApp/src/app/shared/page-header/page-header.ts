@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 
 @Component({
   imports: [],
@@ -9,4 +9,9 @@ import { Component, input } from '@angular/core';
 export class PageHeader {
   title = input.required<string>();
   subtitle = input.required<string>();
+  exportReport = output<void>();
+
+  onExportReport(): void {
+    this.exportReport.emit();
+  }
 }

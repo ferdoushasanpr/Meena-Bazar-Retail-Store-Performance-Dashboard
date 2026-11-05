@@ -1,6 +1,7 @@
 <div class="container">
     <!-- Top Navigation Header -->
-    <app-page-header [title]="pageHeaderTitle" [subtitle]="pageHeaderSubtitle" />
+    <app-page-header [title]="pageHeaderTitle" [subtitle]="pageHeaderSubtitle"
+        (exportReport)="exportConsolidatedReport()" />
 
     <!-- Filter Control Bar -->
     <section class="filter-bar">

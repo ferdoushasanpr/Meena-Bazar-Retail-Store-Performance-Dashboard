@@ -6,6 +6,7 @@ import { CategoryMatrixChart } from '../../shared/category-matrix-chart/category
 import { PageHeader } from '../../shared/page-header/page-header';
 import { HorizontalBarChart } from '../../shared/horizontal-bar-chart/horizontal-bar-chart';
 import { formatDate } from '../../utilities/date';
+import { buildCsvContent, downloadCsv } from '../../utilities/csv-exporter';
 
 @Component({
   imports: [FormsModule, PageHeader, CategoryMatrixChart, HorizontalBarChart],
@@ -129,5 +130,60 @@ export class ProductCategories {
 
   onResetFilter(): void {
     this.setTimeRange('All');
+  }
+
+
+
+  // --- CSV Export Methods ---
+
+  /**
+   * Generates and downloads a consolidated CSV report containing Active Filters,
+   * Category Performance Breakdown, and Product Sales Performance Breakdown.
+   */
+  exportConsolidatedReport(): void {
+    const categorySales = this.salesCategoryData();
+    const productSales = this.productSalesData().data;
+
+    const dateRangeLabel = this.selectedTimeRange === 'Select Range'
+      ? `${this.customStartDate()} to ${this.customEndDate()}`
+      : this.selectedTimeRange;
+
+    const rows: (string | number)[][] = [];
+
+    // Metadata Header
+    rows.push(['PRODUCT CATEGORIES REPORT']);
+    rows.push(['Generated Date', new Date().toISOString().split('T')[0]]);
+    rows.push(['Time Range', dateRangeLabel]);
+    rows.push([]);
+
+    // Category Sales Breakdown
+    rows.push(['--- CATEGORY PERFORMANCE BREAKDOWN ---']);
+    if (categorySales.length > 0) {
+      const headers = Object.keys(categorySales[0]);
+      rows.push(headers);
+      categorySales.forEach((item: Record<string, any>) => {
+        rows.push(headers.map(key => item[key]));
+      });
+    } else {
+      rows.push(['No category sales data available']);
+    }
+    rows.push([]);
+
+    // Product Sales Breakdown
+    rows.push(['--- PRODUCT SALES BREAKDOWN ---']);
+    if (productSales.length > 0) {
+      const prodHeaders = Object.keys(productSales[0]);
+      rows.push(prodHeaders);
+      productSales.forEach((item: Record<string, any>) => {
+        rows.push(prodHeaders.map(key => item[key]));
+      });
+    } else {
+      rows.push(['No product sales data available']);
+    }
+
+    const csvContent = buildCsvContent(rows);
+    const fileName = `product_categories_${formatDate(new Date())}.csv`;
+
+    downloadCsv(csvContent, fileName);
   }
 }
