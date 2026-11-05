@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, input, OnChanges, ViewChild } from '@angular/core';
-import { SalesCategoryData, SalesData } from '../../models/sales';
 import { Chart } from 'chart.js';
+import { SalesCategoryData, SalesData } from '../../../core/models/sales';
 
 @Component({
   imports: [],

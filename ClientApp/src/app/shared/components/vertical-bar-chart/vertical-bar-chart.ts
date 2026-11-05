@@ -1,6 +1,6 @@
 import { Component, input, output, signal, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { StoreCategorySalesData } from '../../models/sales';
+import { StoreCategorySalesData } from '../../../core/models/sales';
 
 @Component({
   imports: [FormsModule],

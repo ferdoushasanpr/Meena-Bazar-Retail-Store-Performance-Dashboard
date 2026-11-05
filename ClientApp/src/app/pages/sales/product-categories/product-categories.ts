@@ -1,12 +1,12 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { SalesService } from '../../services/sales-service';
-import { ProductSalesResponse, SalesCategoryData } from '../../models/sales';
-import { CategoryMatrixChart } from '../../shared/category-matrix-chart/category-matrix-chart';
-import { PageHeader } from '../../shared/page-header/page-header';
-import { HorizontalBarChart } from '../../shared/horizontal-bar-chart/horizontal-bar-chart';
-import { formatDate } from '../../utilities/date';
-import { buildCsvContent, downloadCsv } from '../../utilities/csv-exporter';
+import { PageHeader } from '../../../layout/page-header/page-header';
+import { CategoryMatrixChart } from '../../../shared/components/category-matrix-chart/category-matrix-chart';
+import { HorizontalBarChart } from '../../../shared/components/horizontal-bar-chart/horizontal-bar-chart';
+import { SalesService } from '../../../core/services/sales-service';
+import { ProductSalesResponse, SalesCategoryData } from '../../../core/models/sales';
+import { formatDate } from '../../../shared/utilities/date';
+import { buildCsvContent, downloadCsv } from '../../../shared/utilities/csv-exporter';
 
 @Component({
   imports: [FormsModule, PageHeader, CategoryMatrixChart, HorizontalBarChart],

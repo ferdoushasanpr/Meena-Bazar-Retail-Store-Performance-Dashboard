@@ -1,6 +1,6 @@
 import { Component, input, output, inject, effect } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { EntityType, UpdatePayload } from '../../models/props';
+import { EntityType, UpdatePayload } from '../../../core/models/props';
 
 @Component({
   imports: [ReactiveFormsModule],
