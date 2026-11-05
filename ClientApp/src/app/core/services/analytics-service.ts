@@ -6,7 +6,7 @@ import { BrandSalesData, DailySalesData, DailyStoreSalesData, MonthlySalesData, 
 @Injectable({
     providedIn: 'root'
 })
-export class SalesService {
+export class AnalyticsService {
     private http = inject(HttpClient);
 
     private readonly apiUrlBase = 'http://localhost:5253/analytics';

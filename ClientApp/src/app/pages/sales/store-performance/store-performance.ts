@@ -4,7 +4,7 @@ import { PageHeader } from '../../../layout/page-header/page-header';
 import { MetricCard } from '../../../shared/components/metric-card/metric-card';
 import { HorizontalBarChart } from '../../../shared/components/horizontal-bar-chart/horizontal-bar-chart';
 import { TableChart } from '../../../shared/components/table-chart/table-chart';
-import { SalesService } from '../../../core/services/sales-service';
+import { AnalyticsService } from '../../../core/services/analytics-service';
 import { OperationsService } from '../../../core/services/operations-service';
 import { formatDate } from '../../../shared/utilities/date';
 import { SalesData, StoreCategorySalesResponse, StoreSalesData } from '../../../core/models/sales';
@@ -25,7 +25,7 @@ export interface PageChangeEvent {
 })
 
 export class StorePerformance {
-  private businessKpiService = inject(SalesService);
+  private businessKpiService = inject(AnalyticsService);
   private operationsService = inject(OperationsService);
   //Page Header Component Info
   pageHeaderTitle = "Store Performance";

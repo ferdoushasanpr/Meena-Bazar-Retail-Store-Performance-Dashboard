@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { PageHeader } from '../../../layout/page-header/page-header';
 import { CategoryMatrixChart } from '../../../shared/components/category-matrix-chart/category-matrix-chart';
 import { HorizontalBarChart } from '../../../shared/components/horizontal-bar-chart/horizontal-bar-chart';
-import { SalesService } from '../../../core/services/sales-service';
+import { AnalyticsService } from '../../../core/services/analytics-service';
 import { ProductSalesResponse, SalesCategoryData } from '../../../core/models/sales';
 import { formatDate } from '../../../shared/utilities/date';
 import { buildCsvContent, downloadCsv } from '../../../shared/utilities/csv-exporter';
@@ -15,7 +15,7 @@ import { buildCsvContent, downloadCsv } from '../../../shared/utilities/csv-expo
   templateUrl: './product-categories.html',
 })
 export class ProductCategories {
-  private businessKpiService = inject(SalesService);
+  private businessKpiService = inject(AnalyticsService);
 
   //Page Header Component Info
   pageHeaderTitle = "Product Categories";

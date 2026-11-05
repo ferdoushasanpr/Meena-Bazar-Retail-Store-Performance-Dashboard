@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 
 import { Chart, registerables } from 'chart.js';
-import { SalesService } from '../../../core/services/sales-service';
+import { AnalyticsService } from '../../../core/services/analytics-service';
 import { SalesCategoryData } from '../../../core/models/sales';
 
 Chart.register(...registerables);
@@ -27,7 +27,7 @@ export class CategoryMatrixChart
   @ViewChild('matrixChartCanvas')
   matrixChartCanvas!: ElementRef<HTMLCanvasElement>;
 
-  private businessKpiService = inject(SalesService);
+  private businessKpiService = inject(AnalyticsService);
 
   inputData = input<SalesCategoryData[]>([]);
 

@@ -5,7 +5,7 @@ import { MetricCard } from '../../shared/components/metric-card/metric-card';
 import { TrendChart } from '../../shared/components/trend-chart/trend-chart';
 import { HorizontalBarChart } from '../../shared/components/horizontal-bar-chart/horizontal-bar-chart';
 import { DonutChart } from '../../shared/components/donut-chart/donut-chart';
-import { SalesService } from '../../core/services/sales-service';
+import { AnalyticsService } from '../../core/services/analytics-service';
 import { BrandSalesData, DailySalesData, MonthlySalesData, SalesCategoryData, SalesData, YearlySalesData } from '../../core/models/sales';
 import { MetricCardProps } from '../../core/models/props';
 import { buildCsvContent, downloadCsv } from '../../shared/utilities/csv-exporter';
@@ -17,7 +17,7 @@ import { buildCsvContent, downloadCsv } from '../../shared/utilities/csv-exporte
   templateUrl: './dashboard.html',
 })
 export class Dashboard implements OnInit {
-  private businessKpiService = inject(SalesService);
+  private businessKpiService = inject(AnalyticsService);
 
   //Page Header Component Info
   pageHeaderTitle = "Sales Overview";
