@@ -1,30 +1,35 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { SalesService } from '../../services/sales-service';
-import { DailyStoreSalesData, SalesData, StoreCategorySalesData } from '../../models/sales';
-import { MetricCardProps } from '../../models/props';
-import { MetricCard } from '../../shared/metric-card/metric-card';
-import { PageHeader } from '../../shared/page-header/page-header';
-import { TrendChart } from '../../shared/trend-chart/trend-chart';
-import { VerticalBarChart } from '../../shared/vertical-bar-chart/vertical-bar-chart';
-import { formatDate } from '../../utilities/date';
-import { StoreData } from '../../models/store';
-import { OperationsService } from '../../services/operations-service';
-import { buildCsvContent, downloadCsv } from '../../utilities/csv-exporter';
+import { PageHeader } from '../../../layout/page-header/page-header';
+import { MetricCard } from '../../../shared/components/metric-card/metric-card';
+import { HorizontalBarChart } from '../../../shared/components/horizontal-bar-chart/horizontal-bar-chart';
+import { TableChart } from '../../../shared/components/table-chart/table-chart';
+import { SalesService } from '../../../core/services/sales-service';
+import { OperationsService } from '../../../core/services/operations-service';
+import { formatDate } from '../../../shared/utilities/date';
+import { SalesData, StoreCategorySalesResponse, StoreSalesData } from '../../../core/models/sales';
+import { StoreData } from '../../../core/models/store';
+import { MetricCardProps } from '../../../core/models/props';
+import { buildCsvContent, downloadCsv } from '../../../shared/utilities/csv-exporter';
+
+export interface PageChangeEvent {
+  pageNumber: number;
+  pageSize: number;
+}
 
 @Component({
-  imports: [FormsModule, PageHeader, MetricCard, TrendChart, VerticalBarChart],
-  selector: 'app-sales-analytics',
-  styleUrl: './sales-analytics.css',
-  templateUrl: './sales-analytics.html',
+  imports: [FormsModule, PageHeader, MetricCard, HorizontalBarChart, TableChart],
+  selector: 'app-store-performance',
+  styleUrl: './store-performance.css',
+  templateUrl: './store-performance.html',
 })
-export class SalesAnalytics implements OnInit {
+
+export class StorePerformance {
   private businessKpiService = inject(SalesService);
   private operationsService = inject(OperationsService);
-
   //Page Header Component Info
-  pageHeaderTitle = "Sales Analytics";
-  pageHeaderSubtitle = "In-depth multi-dimensional trend analysis, period-over-period comparisons, and volume metrics.";
+  pageHeaderTitle = "Store Performance";
+  pageHeaderSubtitle = "Benchmark, rank, and analyze revenue, customer volume, and efficiency across all retail locations.";
 
   // Filters & State
   selectedTimeRange = 'All';
@@ -36,19 +41,33 @@ export class SalesAnalytics implements OnInit {
   customEndDate = signal<string>(formatDate(this.currentDate));
 
   // Sales Data
-  filteredSalesData = signal<SalesData>({
+  filteredSalesKpiData = signal<SalesData>({
     totalSales: 0.0,
     numberOfTransactions: 0,
     averageBasketValue: 0.0,
     averageDailySales: 0.0
   });
 
-  dailyStoreSalesData = signal<DailyStoreSalesData[]>([]);
-  filteredStoreCategorySalesData = signal<StoreCategorySalesData[]>([]);
+  storesSalesData = signal<StoreSalesData[]>([]);
   storesArr = signal<StoreData[]>([]);
 
+  storeCategorySalesData = signal<StoreCategorySalesResponse>({
+    data: [],
+    pageNumber: 1,
+    pageSize: 10,
+    totalRecords: 0,
+    totalPages: 0,
+    hasPreviousPage: false,
+    hasNextPage: false,
+  });
+
+  ngOnInit(): void {
+    this.setTimeRange('All');
+    this.loadStoresData();
+  }
+
   totalSalesCard = computed((): MetricCardProps => {
-    const sales = this.filteredSalesData();
+    const sales = this.filteredSalesKpiData();
 
     return {
       title: 'TOTAL SALES',
@@ -59,7 +78,7 @@ export class SalesAnalytics implements OnInit {
   });
 
   transactionsCard = computed((): MetricCardProps => {
-    const sales = this.filteredSalesData();
+    const sales = this.filteredSalesKpiData();
 
     return {
       title: 'TRANSACTIONS',
@@ -70,7 +89,7 @@ export class SalesAnalytics implements OnInit {
   });
 
   averageBasketCard = computed((): MetricCardProps => {
-    const sales = this.filteredSalesData();
+    const sales = this.filteredSalesKpiData();
 
     return {
       title: 'AVG. BASKET VALUE',
@@ -81,7 +100,7 @@ export class SalesAnalytics implements OnInit {
   });
 
   avgDailySalesCard = computed((): MetricCardProps => {
-    const sales = this.filteredSalesData();
+    const sales = this.filteredSalesKpiData();
 
     return {
       title: 'AVG DAILY SALES',
@@ -91,29 +110,32 @@ export class SalesAnalytics implements OnInit {
     }
   });
 
-  ngOnInit(): void {
-    this.setTimeRange('All');
-    this.loadStoresData();
-  }
-
   loadFilteredSalesData(startDate: string, endDate: string, storeId?: string): void {
     this.businessKpiService.getFilteredSalesData(startDate, endDate, storeId).subscribe({
-      next: (response) => { this.filteredSalesData.set(response); },
-      error: (error) => { console.error(error); }
-    });
-  }
-
-  loadDailyStoreSalesData(startDate: string, endDate: string, storeId: string): void {
-    this.businessKpiService.getDailyStoresSalesData(startDate, endDate, storeId).subscribe({
-      next: (response) => { this.dailyStoreSalesData.set(response); },
+      next: (response) => { this.filteredSalesKpiData.set(response); },
       error: (error) => { console.error(error) }
     });
   }
 
-  loadFilteredStoreCategorySalesData(startDate: string, endDate: string, storeId?: string): void {
-    this.businessKpiService.getFilteredStoreCategorySalesData(startDate, endDate, storeId).subscribe({
-      next: (response) => { this.filteredStoreCategorySalesData.set(response); },
-      error: (error) => { console.error(error); }
+  loadStoresSalesData(startDate: string, endDate: string): void {
+    this.businessKpiService.getStoresSalesData(startDate, endDate).subscribe({
+      next: (response) => {
+        this.storesSalesData.set(response);
+      },
+      error: (error) => {
+        console.error(error);
+      }
+    });
+  }
+
+  loadStoreCategorySalesData(pageNumber: number = 1, storeId?: string, startDate?: string, endDate?: string): void {
+    this.businessKpiService.getStoreCategorySalesData(pageNumber, 10, storeId, startDate, endDate).subscribe({
+      next: (response) => {
+        this.storeCategorySalesData.set(response);
+      },
+      error: (error) => {
+        console.error(error);
+      }
     });
   }
 
@@ -158,20 +180,47 @@ export class SalesAnalytics implements OnInit {
     this.loadSalesData(startDate, endDate);
   }
 
+  onPageChange(pageNumber: number): void {
+    const endDate = new Date(this.currentDate);
+    const startDate = new Date(this.currentDate);
+
+    const storeId = this.selectedStore() === 'All Stores'
+      ? undefined
+      : this.selectedStore();
+
+    switch (this.selectedTimeRange) {
+      case 'All':
+        startDate.setFullYear(startDate.getFullYear() - 2);
+        break;
+
+      case 'Today':
+        startDate.setDate(startDate.getDate() - 1);
+        break;
+
+      case 'Last 7 Days':
+        startDate.setDate(startDate.getDate() - 6);
+        break;
+
+      case 'Last 30 Days':
+        startDate.setDate(startDate.getDate() - 29);
+        break;
+    }
+
+    if (storeId === 'All Stores') {
+      this.loadStoreCategorySalesData(pageNumber, undefined, formatDate(startDate), formatDate(endDate));
+    } else {
+      this.loadStoreCategorySalesData(pageNumber, storeId, formatDate(startDate), formatDate(endDate));
+    }
+  }
+
   private loadSalesData(startDate: string, endDate: string): void {
     const storeId = this.selectedStore() === 'All Stores'
       ? undefined
       : this.selectedStore();
 
     this.loadFilteredSalesData(startDate, endDate, storeId);
-
-    if (storeId == undefined) {
-      this.loadDailyStoreSalesData(startDate, endDate, 'ST001');
-      this.loadFilteredStoreCategorySalesData(startDate, endDate, 'ST001');
-    } else {
-      this.loadDailyStoreSalesData(startDate, endDate, storeId);
-      this.loadFilteredStoreCategorySalesData(startDate, endDate, storeId);
-    }
+    this.loadStoresSalesData(startDate, endDate);
+    this.loadStoreCategorySalesData(1, storeId, startDate, endDate);
   }
 
   setTimeRange(range: string): void {
@@ -216,17 +265,16 @@ export class SalesAnalytics implements OnInit {
   }
 
 
-
   // --- CSV Export Methods ---
 
   /**
    * Generates and downloads a consolidated CSV report containing Active Filters,
-   * Summary KPIs, Store Breakdown, and Category Breakdown.
+   * KPI Summary, Store Sales Performance Breakdown, and Store Category Data.
    */
   exportConsolidatedReport(): void {
-    const kpis = this.filteredSalesData();
-    const storeData = this.dailyStoreSalesData();
-    const categoryData = this.filteredStoreCategorySalesData();
+    const kpis = this.filteredSalesKpiData();
+    const storeSales = this.storesSalesData();
+    const categorySales = this.storeCategorySalesData().data;
     const currentStore = this.selectedStore();
 
     const dateRangeLabel = this.selectedTimeRange === 'Select Range'
@@ -235,14 +283,14 @@ export class SalesAnalytics implements OnInit {
 
     const rows: (string | number)[][] = [];
 
-    // Metadata Section
-    rows.push(['SALES ANALYTICS REPORT']);
+    // Metadata Header
+    rows.push(['STORE PERFORMANCE REPORT']);
     rows.push(['Generated Date', new Date().toISOString().split('T')[0]]);
     rows.push(['Selected Store Filter', currentStore]);
     rows.push(['Time Range', dateRangeLabel]);
     rows.push([]);
 
-    // KPI Summary Section
+    // Executive Summary KPIs
     rows.push(['--- EXECUTIVE SUMMARY ---']);
     rows.push(['Metric', 'Value']);
     rows.push(['Total Sales ($)', kpis.totalSales.toFixed(2)]);
@@ -251,45 +299,34 @@ export class SalesAnalytics implements OnInit {
     rows.push(['Average Daily Sales ($)', kpis.averageDailySales.toFixed(2)]);
     rows.push([]);
 
-    // Store Performance Section
+    // Store Sales Breakdown
     rows.push(['--- STORE SALES BREAKDOWN ---']);
-    rows.push(['Sales Date', 'Store Name', 'Total Transactions', 'Total Sales ($)', 'Average Basket Value ($)']);
-    if (storeData.length > 0) {
-      storeData.forEach(item => {
-        rows.push([
-          item.salesDate,
-          item.store_name,
-          item.numberOfTransactions,
-          item.totalSales.toFixed(2),
-          item.averageBasketValue.toFixed(2)
-        ]);
+    if (storeSales.length > 0) {
+      const headers = Object.keys(storeSales[0]);
+      rows.push(headers);
+      storeSales.forEach((item: Record<string, any>) => {
+        rows.push(headers.map(key => item[key]));
       });
     } else {
       rows.push(['No store sales data available']);
     }
     rows.push([]);
 
-    // Category Sales Section
-    rows.push(['--- CATEGORY BREAKDOWN ---']);
-    rows.push(['Store ID', 'Store Name', 'Category', 'Units Sold', 'Transactions', 'Total Sales ($)']);
-    if (categoryData.length > 0) {
-      categoryData.forEach(item => {
-        rows.push([
-          item.store_id,
-          item.store_name,
-          item.category,
-          item.unitsSold,
-          item.numberOfTransactions,
-          item.totalSales.toFixed(2)
-        ]);
+    // Store Category Breakdown
+    rows.push(['--- STORE CATEGORY BREAKDOWN ---']);
+    if (categorySales.length > 0) {
+      const catHeaders = Object.keys(categorySales[0]);
+      rows.push(catHeaders);
+      categorySales.forEach((item: Record<string, any>) => {
+        rows.push(catHeaders.map(key => item[key]));
       });
     } else {
       rows.push(['No category sales data available']);
     }
 
     const csvContent = buildCsvContent(rows);
-    const sanitizeStoreName = currentStore.toLowerCase().replace(/[^a-z0-0]/gi, '_');
-    const fileName = `sales_report_${sanitizeStoreName}_${formatDate(new Date())}.csv`;
+    const sanitizeStoreName = currentStore.toLowerCase().replace(/[^a-z0-9]/gi, '_');
+    const fileName = `store_performance_${sanitizeStoreName}_${formatDate(new Date())}.csv`;
 
     downloadCsv(csvContent, fileName);
   }

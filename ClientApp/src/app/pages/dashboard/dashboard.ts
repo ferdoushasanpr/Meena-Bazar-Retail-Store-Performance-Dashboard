@@ -1,14 +1,14 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { SalesService } from '../../services/sales-service';
-import { BrandSalesData, DailySalesData, MonthlySalesData, SalesCategoryData, SalesData, YearlySalesData } from '../../models/sales';
-import { MetricCardProps } from '../../models/props';
-import { MetricCard } from '../../shared/metric-card/metric-card';
-import { DonutChart } from '../../shared/donut-chart/donut-chart';
-import { TrendChart } from '../../shared/trend-chart/trend-chart';
-import { PageHeader } from '../../shared/page-header/page-header';
-import { HorizontalBarChart } from '../../shared/horizontal-bar-chart/horizontal-bar-chart';
-import { buildCsvContent, downloadCsv } from '../../utilities/csv-exporter';
+import { PageHeader } from '../../layout/page-header/page-header';
+import { MetricCard } from '../../shared/components/metric-card/metric-card';
+import { TrendChart } from '../../shared/components/trend-chart/trend-chart';
+import { HorizontalBarChart } from '../../shared/components/horizontal-bar-chart/horizontal-bar-chart';
+import { DonutChart } from '../../shared/components/donut-chart/donut-chart';
+import { SalesService } from '../../core/services/sales-service';
+import { BrandSalesData, DailySalesData, MonthlySalesData, SalesCategoryData, SalesData, YearlySalesData } from '../../core/models/sales';
+import { MetricCardProps } from '../../core/models/props';
+import { buildCsvContent, downloadCsv } from '../../shared/utilities/csv-exporter';
 
 @Component({
   imports: [FormsModule, PageHeader, MetricCard, TrendChart, HorizontalBarChart, DonutChart],

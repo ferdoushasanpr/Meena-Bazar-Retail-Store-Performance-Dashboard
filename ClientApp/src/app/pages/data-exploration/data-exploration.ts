@@ -1,17 +1,17 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { PageHeader } from '../../shared/page-header/page-header';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs';
-import { CustomerDataResponse } from '../../models/customer';
-import { OperationsService } from '../../services/operations-service';
-import { DynamicTable } from '../../shared/dynamic-table/dynamic-table';
-import { ProductDataResponse } from '../../models/product';
-import { StoreDataResponse } from '../../models/store';
-import { OrderDataResponse } from '../../models/order';
-import { TransactionDataResponse } from '../../models/transaction';
-import { ModalForm } from '../../shared/modal-form/modal-form';
-import { EntityType, UpdatePayload } from '../../models/props';
-import { DialogBox } from '../../shared/dialog-box/dialog-box';
+import { PageHeader } from '../../layout/page-header/page-header';
+import { DynamicTable } from '../../shared/components/dynamic-table/dynamic-table';
+import { ModalForm } from '../../shared/components/modal-form/modal-form';
+import { DialogBox } from '../../shared/components/dialog-box/dialog-box';
+import { OperationsService } from '../../core/services/operations-service';
+import { CustomerDataResponse } from '../../core/models/customer';
+import { ProductDataResponse } from '../../core/models/product';
+import { StoreDataResponse } from '../../core/models/store';
+import { OrderDataResponse } from '../../core/models/order';
+import { TransactionDataResponse } from '../../core/models/transaction';
+import { EntityType, UpdatePayload } from '../../core/models/props';
 
 @Component({
   imports: [PageHeader, DynamicTable, ModalForm, DialogBox],

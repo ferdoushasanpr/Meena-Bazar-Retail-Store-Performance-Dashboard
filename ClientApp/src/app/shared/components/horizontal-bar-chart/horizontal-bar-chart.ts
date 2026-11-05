@@ -11,7 +11,7 @@ import {
   SimpleChanges
 } from '@angular/core';
 import { Chart, registerables } from 'chart.js';
-import { PaginatedResponse } from '../../models/sales';
+import { PaginatedResponse } from '../../../core/models/sales';
 
 Chart.register(...registerables);
 

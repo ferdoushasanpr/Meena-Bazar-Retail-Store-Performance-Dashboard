@@ -10,8 +10,8 @@ import {
 } from '@angular/core';
 
 import { Chart, registerables } from 'chart.js';
-import { SalesService } from '../../services/sales-service';
-import { SalesCategoryData } from '../../models/sales';
+import { SalesService } from '../../../core/services/sales-service';
+import { SalesCategoryData } from '../../../core/models/sales';
 
 Chart.register(...registerables);
 

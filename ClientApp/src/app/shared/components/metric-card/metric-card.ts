@@ -1,5 +1,5 @@
 import { Component, input } from '@angular/core';
-import { MetricCardProps } from '../../models/props';
+import { MetricCardProps } from '../../../core/models/props';
 
 @Component({
   imports: [],

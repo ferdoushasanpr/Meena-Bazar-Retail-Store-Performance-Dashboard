@@ -1,8 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { PageHeader } from '../../shared/page-header/page-header';
-import { OperationsService } from '../../services/operations-service';
 import { Router } from '@angular/router';
+import { PageHeader } from '../../layout/page-header/page-header';
+import { OperationsService } from '../../core/services/operations-service';
 
 export type DataTab = 'Customer' | 'Product' | 'Store';
 

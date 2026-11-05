@@ -8,8 +8,8 @@ import {
   effect
 } from '@angular/core';
 
-import { DailySalesData, DailyStoreSalesData, MonthlySalesData, YearlySalesData } from '../../models/sales';
 import { Chart, registerables } from 'chart.js';
+import { DailySalesData, DailyStoreSalesData, MonthlySalesData, YearlySalesData } from '../../../core/models/sales';
 
 Chart.register(...registerables);
 
