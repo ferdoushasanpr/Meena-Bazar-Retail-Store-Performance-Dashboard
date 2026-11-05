@@ -213,6 +213,14 @@ export class DataExploration {
         },
         error: (error) => { console.error(error) }
       });
+    } else if (this.pageHeaderTitle() === 'Products') {
+      this.operationsService.deleteProductData(row.product_id).subscribe({
+        next: (response) => {
+          console.log('Product deleted successfully:', response);
+          this.loadProductData(this.componentData().pageNumber);
+        },
+        error: (error) => { console.error(error) }
+      });
     }
   }
 }
