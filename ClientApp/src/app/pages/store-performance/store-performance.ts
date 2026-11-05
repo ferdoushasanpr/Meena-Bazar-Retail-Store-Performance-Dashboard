@@ -9,7 +9,7 @@ export interface PageChangeEvent {
   pageSize: number;
 }
 import { TableChart } from '../../shared/table-chart/table-chart';
-import { MetricCardProps } from '../../models/matric-card';
+import { MetricCardProps } from '../../models/props';
 import { MetricCard } from '../../shared/metric-card/metric-card';
 import { formatDate } from '../../utilities/date';
 import { FormsModule } from '@angular/forms';

@@ -9,9 +9,11 @@ import { ProductDataResponse } from '../../models/product';
 import { StoreDataResponse } from '../../models/store';
 import { OrderDataResponse } from '../../models/order';
 import { TransactionDataResponse } from '../../models/transaction';
+import { ModalForm } from '../../shared/modal-form/modal-form';
+import { EntityType, UpdatePayload } from '../../models/props';
 
 @Component({
-  imports: [PageHeader, DynamicTable],
+  imports: [PageHeader, DynamicTable, ModalForm],
   selector: 'app-data-exploration',
   styleUrl: './data-exploration.css',
   templateUrl: './data-exploration.html',
@@ -59,6 +61,11 @@ export class DataExploration {
     }
   };
 
+  // Modal State Signals
+  isModalOpen = signal<boolean>(false);
+  selectedRowData = signal<any>(null);
+  activeEntityType = signal<EntityType>('Customer');
+
   tableHeader = computed(() => {
     return this.tableConfig[this.pageHeaderTitle()] ?? {
       title: 'Data',
@@ -87,10 +94,13 @@ export class DataExploration {
 
   loadComponentData(): void {
     if (this.pageHeaderTitle() === 'Customers') {
+      this.activeEntityType.set('Customer');
       this.loadCustomerData(1);
     } else if (this.pageHeaderTitle() === 'Products') {
+      this.activeEntityType.set('Product');
       this.loadProductData(1);
     } else if (this.pageHeaderTitle() === 'Stores') {
+      this.activeEntityType.set('Store');
       this.loadStoreData(1);
     } else if (this.pageHeaderTitle() === 'Orders') {
       this.loadOrderData(1);
@@ -149,13 +159,60 @@ export class DataExploration {
 
   }
 
+  // Triggered when Update Icon is clicked in any table
+  handleSaveUpdate(payload: UpdatePayload): void {
+    payload.data[`${payload.type.toLowerCase()}_id`] = payload.id;
+
+    if (payload.type === "Customer") {
+      this.operationsService.updateCustomerData(payload.data, payload.id).subscribe({
+        next: (response) => {
+          console.log('Customer updated successfully:', response);
+          this.isModalOpen.set(false);
+          this.loadCustomerData(this.componentData().pageNumber);
+        },
+        error: (error) => { console.error(error) }
+      });
+    } else if (payload.type === "Product") {
+      this.operationsService.updateProductData(payload.data, payload.id).subscribe({
+        next: (response) => {
+          console.log('Product updated successfully:', response);
+          this.isModalOpen.set(false);
+          this.loadProductData(this.componentData().pageNumber);
+        },
+        error: (error) => { console.error(error) }
+      });
+    } else if (payload.type === "Store") {
+      this.operationsService.updateStoreData(payload.data, payload.id).subscribe({
+        next: (response) => {
+          console.log('Store updated successfully:', response);
+          this.isModalOpen.set(false);
+          this.loadStoreData(this.componentData().pageNumber);
+        },
+        error: (error) => { console.error(error) }
+      });
+    }
+  }
+
+  handleCloseModal(): void {
+    this.isModalOpen.set(false);
+  }
+
   handleUpdate(row: any): void {
-    console.log('Update clicked for order item:', row.order_item_id, row);
-    // Trigger modal or navigation logic here
+    console.log('Update clicked for order item:', row);
+    this.selectedRowData.set(row);
+    this.isModalOpen.set(true);
   }
 
   handleDelete(row: any): void {
-    console.log('Delete clicked for order item:', row.order_item_id, row);
-    // Trigger delete confirmation logic here
+    console.log('Delete clicked for order item:', row);
+    if (this.pageHeaderTitle() === 'Customers') {
+      this.operationsService.deleteCustomerData(row.customer_id).subscribe({
+        next: (response) => {
+          console.log('Customer deleted successfully:', response);
+          this.loadCustomerData(this.componentData().pageNumber);
+        },
+        error: (error) => { console.error(error) }
+      });
+    }
   }
 }

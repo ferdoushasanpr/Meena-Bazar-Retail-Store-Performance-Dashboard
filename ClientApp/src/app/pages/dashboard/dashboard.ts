@@ -2,7 +2,7 @@ import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SalesService } from '../../services/sales-service';
 import { BrandSalesData, DailySalesData, MonthlySalesData, SalesCategoryData, SalesData, YearlySalesData } from '../../models/sales';
-import { MetricCardProps } from '../../models/matric-card';
+import { MetricCardProps } from '../../models/props';
 import { MetricCard } from '../../shared/metric-card/metric-card';
 import { DonutChart } from '../../shared/donut-chart/donut-chart';
 import { TrendChart } from '../../shared/trend-chart/trend-chart';
