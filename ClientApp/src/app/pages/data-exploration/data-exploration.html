@@ -10,4 +10,8 @@
 
     <app-modal-form [isOpen]="isModalOpen()" [entityType]="activeEntityType()" [initialData]="selectedRowData()"
         (closeModal)="handleCloseModal()" (saveData)="handleSaveUpdate($event)" />
+
+    <app-dialog-box [isOpen]="isDeleteModalOpen()" title="Delete Item" [itemName]="itemToDelete()?.order_item_id"
+        message="Are you sure you want to delete this item record?" (closeModal)="onCloseDeleteModal()"
+        (confirmDelete)="onConfirmDelete()" />
 </div>
