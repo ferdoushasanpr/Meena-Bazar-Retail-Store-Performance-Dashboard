@@ -1,0 +1,41 @@
+@if (isOpen()) {
+<div class="modal-backdrop" (click)="onClose()">
+    <div class="modal-card delete-card" (click)="$event.stopPropagation()">
+        <!-- Modal Header -->
+        <div class="modal-header">
+            <div class="header-icon-title">
+                <div class="icon-warning">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <div>
+                    <h3>{{ title() }}</h3>
+                    <p class="subtitle">Action required</p>
+                </div>
+            </div>
+            <button class="close-btn" (click)="onClose()">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="modal-body">
+            <p class="delete-message">{{ message() }}</p>
+
+            @if (itemName()) {
+            <div class="item-badge-box">
+                <span class="badge-label">Record:</span>
+                <strong class="item-name">{{ itemName() }}</strong>
+            </div>
+            }
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="modal-footer">
+            <button type="button" class="btn btn-ghost" (click)="onClose()">Cancel</button>
+            <button type="button" class="btn btn-danger" (click)="onConfirm()">
+                <i class="fa-solid fa-trash-can"></i> Confirm Delete
+            </button>
+        </div>
+    </div>
+</div>
+}

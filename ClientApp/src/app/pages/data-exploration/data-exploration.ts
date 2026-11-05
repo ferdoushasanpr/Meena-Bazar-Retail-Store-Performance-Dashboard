@@ -11,9 +11,10 @@ import { OrderDataResponse } from '../../models/order';
 import { TransactionDataResponse } from '../../models/transaction';
 import { ModalForm } from '../../shared/modal-form/modal-form';
 import { EntityType, UpdatePayload } from '../../models/props';
+import { DialogBox } from '../../shared/dialog-box/dialog-box';
 
 @Component({
-  imports: [PageHeader, DynamicTable, ModalForm],
+  imports: [PageHeader, DynamicTable, ModalForm, DialogBox],
   selector: 'app-data-exploration',
   styleUrl: './data-exploration.css',
   templateUrl: './data-exploration.html',
@@ -65,6 +66,10 @@ export class DataExploration {
   isModalOpen = signal<boolean>(false);
   selectedRowData = signal<any>(null);
   activeEntityType = signal<EntityType>('Customer');
+
+  // Delete Modal State Signals
+  isDeleteModalOpen = signal<boolean>(false);
+  itemToDelete = signal<any>(null);
 
   tableHeader = computed(() => {
     return this.tableConfig[this.pageHeaderTitle()] ?? {
@@ -204,15 +209,48 @@ export class DataExploration {
   }
 
   handleDelete(row: any): void {
-    console.log('Delete clicked for order item:', row);
+    console.log('Delete clicked for item:', row);
+    this.itemToDelete.set(row);
+    this.isDeleteModalOpen.set(true);
+  }
+
+  onConfirmDelete(): void {
+    const record = this.itemToDelete();
+    console.log('Deleting record from backend:', record);
+
     if (this.pageHeaderTitle() === 'Customers') {
-      this.operationsService.deleteCustomerData(row.customer_id).subscribe({
+      this.operationsService.deleteCustomerData(record.customer_id).subscribe({
         next: (response) => {
           console.log('Customer deleted successfully:', response);
           this.loadCustomerData(this.componentData().pageNumber);
         },
         error: (error) => { console.error(error) }
       });
+    } else if (this.pageHeaderTitle() === 'Products') {
+      this.operationsService.deleteProductData(record.product_id).subscribe({
+        next: (response) => {
+          console.log('Product deleted successfully:', response);
+          this.loadProductData(this.componentData().pageNumber);
+        },
+        error: (error) => { console.error(error) }
+      });
+    } else if (this.pageHeaderTitle() === 'Stores') {
+      this.operationsService.deleteStoreData(record.store_id).subscribe({
+        next: (response) => {
+          console.log('Store deleted successfully:', response);
+          this.loadStoreData(this.componentData().pageNumber);
+        },
+        error: (error) => { console.error(error) }
+      });
     }
+
+    this.isDeleteModalOpen.set(false);
+    this.itemToDelete.set(null);
+  }
+
+  // 3. Close Delete Modal
+  onCloseDeleteModal(): void {
+    this.isDeleteModalOpen.set(false);
+    this.itemToDelete.set(null);
   }
 }
