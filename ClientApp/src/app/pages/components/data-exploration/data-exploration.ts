@@ -27,6 +27,9 @@ export class DataExploration {
   pageHeaderTitle = signal<string>('');
   pageHeaderSubtitle = signal<string>('');
 
+  // Search Input
+  searchQuery = signal<string>('');
+
   // Contents
   componentData = signal<CustomerDataResponse | ProductDataResponse | StoreDataResponse | OrderDataResponse | TransactionDataResponse>({
     data: [],
@@ -114,6 +117,23 @@ export class DataExploration {
     }
   }
 
+  onSearch(searchTerm: string): void {
+    this.searchQuery.set(searchTerm);
+
+    if (this.searchQuery() === '') {
+      this.loadCustomerData(1);
+    } else {
+      this.loadSearchCustomerData(1, searchTerm);
+    }
+  }
+
+  loadSearchCustomerData(pageNumber: number, searchTerm?: string) {
+    this.operationsService.searchCustomersData(pageNumber, undefined, searchTerm).subscribe({
+      next: (response) => { this.componentData.set(response); },
+      error: (error) => { console.error(error) }
+    });
+  }
+
   loadCustomerData(pageNumber: number, pageSize?: number) {
     this.operationsService.getCustomersData(pageNumber, pageSize).subscribe({
       next: (response) => { this.componentData.set(response); },
@@ -151,7 +171,11 @@ export class DataExploration {
 
   onPageChange(pageNumber: number): void {
     if (this.pageHeaderTitle() === 'Customers') {
-      this.loadCustomerData(pageNumber);
+      if (this.searchQuery() === '') {
+        this.loadCustomerData(pageNumber);
+      } else {
+        this.loadSearchCustomerData(pageNumber, this.searchQuery());
+      }
     } else if (this.pageHeaderTitle() === 'Products') {
       this.loadProductData(pageNumber);
     } else if (this.pageHeaderTitle() === 'Stores') {

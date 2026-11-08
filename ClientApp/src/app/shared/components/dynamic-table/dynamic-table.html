@@ -7,6 +7,11 @@
             <p class="table-subtitle">{{ subtitle() }}</p>
             }
         </div>
+        <div class="table-search-container">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" class="table-search-input" placeholder="Search records..." [value]="searchQuery()"
+                (input)="onSearchChange($event)" />
+        </div>
     </div>
     }
 

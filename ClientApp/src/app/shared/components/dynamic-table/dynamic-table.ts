@@ -36,6 +36,16 @@ export class DynamicTable {
   sortColumn = signal<string | null>(null);
   sortDirection = signal<'asc' | 'desc'>('asc');
 
+  // Search implementation
+  searchQuery = signal('');
+  searchTerm = output<string>();
+
+  onSearchChange(event: Event) {
+    const value = (event.target as HTMLInputElement).value;
+    this.searchQuery.set(value);
+    this.searchTerm.emit(this.searchQuery());
+  }
+
   // Auto-generate data columns from the first object in the data array
   columns = computed<ColumnMeta[]>(() => {
     const firstRow = this.data()?.[0];

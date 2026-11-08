@@ -23,6 +23,10 @@ export class OperationsService {
         return this.http.get<CustomerDataResponse>(`${this.apiUrlBase}/customers?pageNumber=${pageNumber}&pageSize=${pageSize}`);
     }
 
+    searchCustomersData(pageNumber: number, pageSize: number = 10, searchTerm?: string): Observable<CustomerDataResponse> {
+        return this.http.get<CustomerDataResponse>(`${this.apiUrlBase}/customers/search?searchTerm=${searchTerm}&pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    }
+
     updateCustomerData(customer: Customer, id: string): Observable<Customer> {
         return this.http.put<Customer>(`${this.apiUrlBase}/customers/${id}`, customer);
     }
