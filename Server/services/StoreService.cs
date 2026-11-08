@@ -57,6 +57,40 @@ public class StoreService : IStoreService
             .FirstOrDefaultAsync(s => s.store_id == store_id);
     }
 
+    public async Task<PaginatedResponse<Store>> SearchStoresAsync(string? searchTerm, int pageNumber = 1, int pageSize = 10)
+    {
+        var query = _context.DemoStores.AsNoTracking();
+
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            searchTerm = searchTerm.Trim();
+
+            query = query.Where(s =>
+                s.store_id.Contains(searchTerm) ||
+                s.store_name.Contains(searchTerm) ||
+                s.city.Contains(searchTerm)
+            );
+        }
+
+        var totalRecords = await query.CountAsync();
+        var totalPages = (int)Math.Ceiling(totalRecords / (double)pageSize);
+
+        var stores = await query
+            .OrderByDescending(s => s.store_id)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return new PaginatedResponse<Store>
+        {
+            Data = stores,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalRecords = totalRecords,
+            TotalPages = totalPages
+        };
+    }
+
     public async Task<bool> AddStoreAsync(Store store)
     {
         var lastStore = await _context.DemoStores
