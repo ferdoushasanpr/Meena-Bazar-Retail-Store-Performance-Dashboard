@@ -29,6 +29,16 @@ public static class CustomerRoute
                 : Results.NotFound();
         });
 
+        group.MapGet("/search", async (string? searchTerm, int pageNumber, int pageSize, ICustomerService service) =>
+        {
+            if (pageNumber < 1 || pageSize < 1)
+                return Results.BadRequest("Invalid pagination parameters.");
+
+            var result = await service.SearchCustomersAsync(searchTerm, pageNumber, pageSize);
+
+            return Results.Ok(result);
+        });
+
         group.MapPost("/", async (
             Customer customer,
             ICustomerService service) =>
