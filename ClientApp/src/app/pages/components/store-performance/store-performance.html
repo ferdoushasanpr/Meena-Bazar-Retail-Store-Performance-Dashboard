@@ -4,51 +4,7 @@
         (exportReport)="exportConsolidatedReport()" />
 
     <!-- Filter Control Bar -->
-    <section class="filter-bar">
-        <div class="time-pills">
-            @for (range of timeRanges; track range) {
-            <button class="pill-btn" [class.active]="selectedTimeRange === range" (click)="setTimeRange(range)">
-                {{ range }}
-            </button>
-            }
-        </div>
-
-        @if (selectedTimeRange === 'Select Range') {
-        <div class="custom-date-range">
-            <label>
-                Start:
-                <input type="date" [ngModel]="customStartDate()"
-                    (ngModelChange)="customStartDate.set($event); onCustomDateChange()" />
-            </label>
-            <label>
-                End:
-                <input type="date" [ngModel]="customEndDate()"
-                    (ngModelChange)="customEndDate.set($event); onCustomDateChange()" />
-            </label>
-        </div>
-        }
-
-        <div class="filter-controls">
-            <div class="store-filter">
-                <i class="fa-solid fa-store"></i>
-
-                <select [ngModel]="selectedStore()" (ngModelChange)="onStoreChange($event)">
-                    <option value="All Stores">All Stores</option>
-                    @for (store of storesArr(); track $index) {
-                    <option [value]="store.store_id">
-                        {{ store.store_name }} ({{ store.city }})
-                    </option>
-                    }
-                </select>
-            </div>
-
-            <button class="btn-text" (click)="onResetFilter()">
-                <i class="fa-solid fa-arrow-rotate-left"></i>
-                Reset Filters
-            </button>
-
-        </div>
-    </section>
+    <app-filter (filterCriteria)="loadSalesData($event)" />
 
     <!-- Metric Cards Grid (4 Columns) -->
     <section class="metrics-grid">

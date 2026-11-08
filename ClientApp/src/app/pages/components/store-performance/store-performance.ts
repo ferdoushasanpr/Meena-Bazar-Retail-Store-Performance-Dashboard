@@ -8,14 +8,11 @@ import { formatDate } from '../../../shared/utilities/date';
 import { MetricCardProps } from '../../../core/models/props';
 import { buildCsvContent, downloadCsv } from '../../../shared/utilities/csv-exporter';
 import { SalesService } from '../../services/sales-service';
-
-export interface PageChangeEvent {
-  pageNumber: number;
-  pageSize: number;
-}
+import { Filter } from '../../shared/components/filter/filter';
+import { FilterCriteria } from '../../shared/models/filter-model';
 
 @Component({
-  imports: [FormsModule, PageHeader, MetricCard, HorizontalBarChart, TableChart],
+  imports: [FormsModule, PageHeader, Filter, MetricCard, HorizontalBarChart, TableChart],
   selector: 'app-store-performance',
   styleUrl: './store-performance.css',
   templateUrl: './store-performance.html',
@@ -28,20 +25,15 @@ export class StorePerformance {
   pageHeaderSubtitle = "Benchmark, rank, and analyze revenue, customer volume, and efficiency across all retail locations.";
 
   // Filters & State
-  selectedTimeRange = 'All';
-  selectedStore = signal<string>('All Stores');
-  timeRanges = ['All', 'Today', 'Last 7 Days', 'Last 30 Days', 'Select Range'];
-  private readonly currentDate = new Date(2025, 3, 1);
-
-  customStartDate = signal<string>(formatDate(this.currentDate));
-  customEndDate = signal<string>(formatDate(this.currentDate));
+  currentFilters = signal<FilterCriteria>({
+    startDate: '',
+    endDate: '',
+    storeId: 'All Stores'
+  });
 
   // Sales Data
   salesKpiData = this.salesService.salesKpiData;
-
   storesSalesData = this.salesService.storesSalesData;
-  storesArr = this.salesService.storesArr;
-
   storeCategorySalesData = this.salesService.paginatedSalesData;
 
   totalSalesCard = computed((): MetricCardProps => {
@@ -88,127 +80,32 @@ export class StorePerformance {
     }
   });
 
-  ngOnInit(): void {
-    this.setTimeRange('All');
-    this.salesService.loadStoresData();
-  }
+  loadSalesData({ startDate, endDate, storeId }: FilterCriteria): void {
+    this.currentFilters.set({ startDate, endDate, storeId });
 
-  private loadSalesData(startDate: string, endDate: string): void {
-    const storeId = this.selectedStore() === 'All Stores'
+    const selectedStore = storeId === 'All Stores'
       ? undefined
-      : this.selectedStore();
+      : storeId;
 
-    this.salesService.loadFilteredSalesData(startDate, endDate, storeId);
+    this.salesService.loadFilteredSalesData(startDate, endDate, selectedStore);
     this.salesService.loadStoresSalesData(startDate, endDate);
-    this.salesService.loadStoreCategorySalesData(1, storeId, startDate, endDate);
-  }
-
-  onStoreChange(storeId: string): void {
-    this.selectedStore.set(storeId);
-
-    const endDate = this.selectedTimeRange === 'Select Range'
-      ? this.customEndDate()
-      : formatDate(this.currentDate);
-
-    let startDate: string;
-
-    if (this.selectedTimeRange === 'Select Range') {
-      startDate = this.customStartDate();
-    } else {
-      const start = new Date(this.currentDate);
-
-      switch (this.selectedTimeRange) {
-        case 'Today':
-          start.setDate(start.getDate() - 1);
-          break;
-        case 'Last 7 Days':
-          start.setDate(start.getDate() - 6);
-          break;
-        case 'Last 30 Days':
-          start.setDate(start.getDate() - 29);
-          break;
-        default:
-          start.setFullYear(start.getFullYear() - 2);
-      }
-
-      startDate = formatDate(start);
-    }
-
-    this.loadSalesData(startDate, endDate);
+    this.salesService.loadStoreCategorySalesData(1, selectedStore, startDate, endDate);
   }
 
   onPageChange(pageNumber: number): void {
-    const endDate = new Date(this.currentDate);
-    const startDate = new Date(this.currentDate);
+    const filters = this.currentFilters();
+    const endDate = new Date(filters.endDate);
+    const startDate = new Date(filters.startDate);
 
-    const storeId = this.selectedStore() === 'All Stores'
+    const storeId = filters.storeId === 'All Stores'
       ? undefined
-      : this.selectedStore();
-
-    switch (this.selectedTimeRange) {
-      case 'All':
-        startDate.setFullYear(startDate.getFullYear() - 2);
-        break;
-
-      case 'Today':
-        startDate.setDate(startDate.getDate() - 1);
-        break;
-
-      case 'Last 7 Days':
-        startDate.setDate(startDate.getDate() - 6);
-        break;
-
-      case 'Last 30 Days':
-        startDate.setDate(startDate.getDate() - 29);
-        break;
-    }
+      : filters.storeId;
 
     if (storeId === 'All Stores') {
       this.salesService.loadStoreCategorySalesData(pageNumber, undefined, formatDate(startDate), formatDate(endDate));
     } else {
       this.salesService.loadStoreCategorySalesData(pageNumber, storeId, formatDate(startDate), formatDate(endDate));
     }
-  }
-
-  setTimeRange(range: string): void {
-    this.selectedTimeRange = range;
-
-    const endDate = new Date(this.currentDate);
-    const startDate = new Date(this.currentDate);
-
-    switch (range) {
-      case 'All':
-        startDate.setFullYear(startDate.getFullYear() - 2);
-        break;
-
-      case 'Today':
-        startDate.setDate(startDate.getDate() - 1);
-        break;
-
-      case 'Last 7 Days':
-        startDate.setDate(startDate.getDate() - 6);
-        break;
-
-      case 'Last 30 Days':
-        startDate.setDate(startDate.getDate() - 29);
-        break;
-    }
-
-    this.loadSalesData(
-      formatDate(startDate),
-      formatDate(endDate)
-    );
-  }
-
-  onCustomDateChange(): void {
-    if (this.selectedTimeRange === 'Select Range') {
-      this.loadSalesData(this.customStartDate(), this.customEndDate());
-    }
-  }
-
-  onResetFilter(): void {
-    this.selectedStore.set('All Stores');
-    this.setTimeRange('All');
   }
 
 
@@ -222,11 +119,11 @@ export class StorePerformance {
     const kpis = this.salesKpiData();
     const storeSales = this.storesSalesData();
     const categorySales = this.storeCategorySalesData().data;
-    const currentStore = this.selectedStore();
+    const filters = this.currentFilters();
+    const currentStore = this.currentFilters().storeId;
 
-    const dateRangeLabel = this.selectedTimeRange === 'Select Range'
-      ? `${this.customStartDate()} to ${this.customEndDate()}`
-      : this.selectedTimeRange;
+    const dateRangeLabel =
+      `${filters.startDate} to ${filters.endDate}`;
 
     const rows: (string | number)[][] = [];
 

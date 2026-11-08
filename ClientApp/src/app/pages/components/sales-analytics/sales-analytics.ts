@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { PageHeader } from '../../../layout/page-header/page-header';
 import { MetricCard } from '../../../shared/components/metric-card/metric-card';
@@ -8,35 +8,33 @@ import { formatDate } from '../../../shared/utilities/date';
 import { MetricCardProps } from '../../../core/models/props';
 import { buildCsvContent, downloadCsv } from '../../../shared/utilities/csv-exporter';
 import { SalesService } from '../../services/sales-service';
+import { Filter } from '../../shared/components/filter/filter';
+import { FilterCriteria } from '../../shared/models/filter-model';
 
 @Component({
-  imports: [FormsModule, PageHeader, MetricCard, TrendChart, VerticalBarChart],
+  imports: [FormsModule, PageHeader, Filter, MetricCard, TrendChart, VerticalBarChart],
   selector: 'app-sales-analytics',
   styleUrl: './sales-analytics.css',
   templateUrl: './sales-analytics.html',
 })
-export class SalesAnalytics implements OnInit {
+export class SalesAnalytics {
   private salesService = inject(SalesService);
 
   //Page Header Component Info
   pageHeaderTitle = "Sales Analytics";
   pageHeaderSubtitle = "In-depth multi-dimensional trend analysis, period-over-period comparisons, and volume metrics.";
 
-  // Filters & State
-  selectedTimeRange = 'All';
-  selectedStore = signal<string>('All Stores');
-  timeRanges = ['All', 'Today', 'Last 7 Days', 'Last 30 Days', 'Select Range'];
-  private readonly currentDate = new Date(2025, 3, 1);
-
-  customStartDate = signal<string>(formatDate(this.currentDate));
-  customEndDate = signal<string>(formatDate(this.currentDate));
+  // Filter Criteria
+  currentFilters = signal<FilterCriteria>({
+    startDate: '',
+    endDate: '',
+    storeId: 'All Stores'
+  });
 
   // Sales Data
   salesKpiData = this.salesService.salesKpiData;
-
   dailyStoreSalesData = this.salesService.dailyStoreSalesData;
   filteredStoreCategorySalesData = this.salesService.filteredStoreCategorySalesData;
-  storesArr = this.salesService.storesArr;
 
   totalSalesCard = computed((): MetricCardProps => {
     const sales = this.salesKpiData();
@@ -82,102 +80,23 @@ export class SalesAnalytics implements OnInit {
     }
   });
 
-  ngOnInit(): void {
-    this.setTimeRange('All');
-    this.salesService.loadStoresData();
-  }
+  loadSalesData({ startDate, endDate, storeId }: FilterCriteria): void {
+    this.currentFilters.set({ startDate, endDate, storeId });
 
-  loadSalesData(startDate: string, endDate: string): void {
-    const storeId = this.selectedStore() === 'All Stores'
+    const selectedStore = storeId === 'All Stores'
       ? undefined
-      : this.selectedStore();
+      : storeId;
 
-    this.salesService.loadFilteredSalesData(startDate, endDate, storeId);
+    this.salesService.loadFilteredSalesData(startDate, endDate, selectedStore);
 
-    if (storeId == undefined) {
+    if (selectedStore == undefined) {
       this.salesService.loadDailyStoreSalesData(startDate, endDate, 'ST001');
       this.salesService.loadFilteredStoreCategorySalesData(startDate, endDate, 'ST001');
     } else {
-      this.salesService.loadDailyStoreSalesData(startDate, endDate, storeId);
-      this.salesService.loadFilteredStoreCategorySalesData(startDate, endDate, storeId);
+      this.salesService.loadDailyStoreSalesData(startDate, endDate, selectedStore);
+      this.salesService.loadFilteredStoreCategorySalesData(startDate, endDate, selectedStore);
     }
   }
-
-  onStoreChange(storeId: string): void {
-    this.selectedStore.set(storeId);
-
-    const endDate = this.selectedTimeRange === 'Select Range'
-      ? this.customEndDate()
-      : formatDate(this.currentDate);
-
-    let startDate: string;
-
-    if (this.selectedTimeRange === 'Select Range') {
-      startDate = this.customStartDate();
-    } else {
-      const start = new Date(this.currentDate);
-
-      switch (this.selectedTimeRange) {
-        case 'Today':
-          start.setDate(start.getDate() - 1);
-          break;
-        case 'Last 7 Days':
-          start.setDate(start.getDate() - 6);
-          break;
-        case 'Last 30 Days':
-          start.setDate(start.getDate() - 29);
-          break;
-        default:
-          start.setFullYear(start.getFullYear() - 2);
-      }
-
-      startDate = formatDate(start);
-    }
-
-    this.loadSalesData(startDate, endDate);
-  }
-
-  setTimeRange(range: string): void {
-    this.selectedTimeRange = range;
-
-    const endDate = new Date(this.currentDate);
-    const startDate = new Date(this.currentDate);
-
-    switch (range) {
-      case 'All':
-        startDate.setFullYear(startDate.getFullYear() - 2);
-        break;
-
-      case 'Today':
-        startDate.setDate(startDate.getDate() - 1);
-        break;
-
-      case 'Last 7 Days':
-        startDate.setDate(startDate.getDate() - 6);
-        break;
-
-      case 'Last 30 Days':
-        startDate.setDate(startDate.getDate() - 29);
-        break;
-    }
-
-    this.loadSalesData(
-      formatDate(startDate),
-      formatDate(endDate)
-    );
-  }
-
-  onCustomDateChange(): void {
-    if (this.selectedTimeRange === 'Select Range') {
-      this.loadSalesData(this.customStartDate(), this.customEndDate());
-    }
-  }
-
-  onResetFilter(): void {
-    this.selectedStore.set('All Stores');
-    this.setTimeRange('All');
-  }
-
 
   // --- CSV Export Methods ---
 
@@ -189,11 +108,11 @@ export class SalesAnalytics implements OnInit {
     const kpis = this.salesKpiData();
     const storeData = this.salesService.dailyStoreSalesData();
     const categoryData = this.salesService.filteredStoreCategorySalesData();
-    const currentStore = this.selectedStore();
+    const filters = this.currentFilters();
+    const currentStore = this.currentFilters().storeId;
 
-    const dateRangeLabel = this.selectedTimeRange === 'Select Range'
-      ? `${this.customStartDate()} to ${this.customEndDate()}`
-      : this.selectedTimeRange;
+    const dateRangeLabel =
+      `${filters.startDate} to ${filters.endDate}`;
 
     const rows: (string | number)[][] = [];
 

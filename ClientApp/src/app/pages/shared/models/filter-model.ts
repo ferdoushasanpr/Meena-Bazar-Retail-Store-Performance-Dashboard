@@ -1,0 +1,1 @@
+export interface FilterCriteria { startDate: string, endDate: string, storeId: string }
