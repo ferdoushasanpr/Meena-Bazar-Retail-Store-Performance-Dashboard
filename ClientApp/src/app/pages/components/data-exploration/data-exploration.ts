@@ -138,6 +138,12 @@ export class DataExploration {
       } else {
         this.loadSearchStoreData(1, searchTerm);
       }
+    } else if (this.pageHeaderTitle() === 'Orders') {
+      if (this.searchQuery() === '') {
+        this.loadOrderData(1);
+      } else {
+        this.loadSearchOrderData(1, searchTerm);
+      }
     }
   }
 
@@ -157,6 +163,13 @@ export class DataExploration {
 
   loadSearchStoreData(pageNumber: number, searchTerm?: string) {
     this.operationsService.searchStoresData(pageNumber, undefined, searchTerm).subscribe({
+      next: (response) => { this.componentData.set(response); },
+      error: (error) => { console.error(error) }
+    });
+  }
+
+  loadSearchOrderData(pageNumber: number, searchTerm?: string) {
+    this.operationsService.searchOrdersData(pageNumber, undefined, searchTerm).subscribe({
       next: (response) => { this.componentData.set(response); },
       error: (error) => { console.error(error) }
     });
@@ -217,7 +230,11 @@ export class DataExploration {
         this.loadSearchStoreData(pageNumber, this.searchQuery());
       }
     } else if (this.pageHeaderTitle() === 'Orders') {
-      this.loadOrderData(pageNumber);
+      if (this.searchQuery() === '') {
+        this.loadOrderData(pageNumber);
+      } else {
+        this.loadSearchOrderData(pageNumber, this.searchQuery());
+      }
     } else if (this.pageHeaderTitle() === 'Transactions') {
       this.loadTransactionsData(pageNumber);
     }

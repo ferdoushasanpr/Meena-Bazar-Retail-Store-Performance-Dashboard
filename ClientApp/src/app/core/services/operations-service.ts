@@ -86,6 +86,10 @@ export class OperationsService {
         return this.http.get<OrderDataResponse>(`${this.apiUrlBase}/sales?pageNumber=${pageNumber}&pageSize=${pageSize}`);
     }
 
+    searchOrdersData(pageNumber: number, pageSize: number = 10, searchTerm?: string): Observable<OrderDataResponse> {
+        return this.http.get<OrderDataResponse>(`${this.apiUrlBase}/sales/search?searchTerm=${searchTerm}&pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    }
+
     // Transactions Operations
     getTransactionsData(pageNumber: number, pageSize: number = 10): Observable<TransactionDataResponse> {
         return this.http.get<TransactionDataResponse>(`${this.apiUrlBase}/transactions?pageNumber=${pageNumber}&pageSize=${pageSize}`);
