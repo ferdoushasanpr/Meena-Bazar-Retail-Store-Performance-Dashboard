@@ -47,6 +47,49 @@ public class SaleService : ISaleService
             .FirstOrDefaultAsync(s => s.order_id == order_id);
     }
 
+    public async Task<PaginatedResponse<Sale>> SearchSalesAsync(string? searchTerm, int pageNumber = 1, int pageSize = 10)
+    {
+        var query = _context.DemoSales.AsNoTracking();
+
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            searchTerm = searchTerm.Trim();
+
+            query = query.Where(s =>
+                s.order_id.Contains(searchTerm) ||
+                s.order_datetime.ToString().Contains(searchTerm) ||
+                s.store_id.Contains(searchTerm) ||
+                (s.customer_id != null && s.customer_id.Contains(searchTerm)) ||
+                s.order_channel.Contains(searchTerm) ||
+                s.payment_method.Contains(searchTerm) ||
+                s.order_status.Contains(searchTerm) ||
+                s.subtotal.ToString().Contains(searchTerm) ||
+                s.discount_total.ToString().Contains(searchTerm) ||
+                s.vat_total.ToString().Contains(searchTerm) ||
+                s.delivery_fee.ToString().Contains(searchTerm) ||
+                s.total_amount.ToString().Contains(searchTerm)
+            );
+        }
+
+        var totalRecords = await query.CountAsync();
+        var totalPages = (int)Math.Ceiling(totalRecords / (double)pageSize);
+
+        var sales = await query
+            .OrderByDescending(s => s.order_id)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return new PaginatedResponse<Sale>
+        {
+            Data = sales,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalRecords = totalRecords,
+            TotalPages = totalPages
+        };
+    }
+
     public async Task<bool> AddSaleAsync(Sale sale)
     {
         await _context.DemoSales.AddAsync(sale);
