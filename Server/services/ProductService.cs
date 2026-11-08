@@ -47,6 +47,45 @@ public class ProductService : IProductService
             .FirstOrDefaultAsync(p => p.product_id == product_id);
     }
 
+    public async Task<PaginatedResponse<Product>> SearchProductsAsync(string? searchTerm, int pageNumber = 1, int pageSize = 10)
+    {
+        var query = _context.DemoProducts.AsNoTracking();
+
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            searchTerm = searchTerm.Trim();
+
+            query = query.Where(p =>
+                p.product_id.Contains(searchTerm) ||
+                p.product_name.Contains(searchTerm) ||
+                p.category.Contains(searchTerm) ||
+                p.brand.Contains(searchTerm) ||
+                p.unit_cost.ToString().Contains(searchTerm) ||
+                p.unit_price.ToString().Contains(searchTerm) ||
+                p.vat_rate.ToString().Contains(searchTerm)
+            );
+        }
+
+        var totalRecords = await query.CountAsync();
+
+        var totalPages = (int)Math.Ceiling(totalRecords / (double)pageSize);
+
+        var products = await query
+            .OrderByDescending(p => p.product_id)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return new PaginatedResponse<Product>
+        {
+            Data = products,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalRecords = totalRecords,
+            TotalPages = totalPages
+        };
+    }
+
     public async Task<bool> AddProductAsync(Product product)
     {
         var lastProduct = await _context.DemoProducts
