@@ -132,6 +132,12 @@ export class DataExploration {
       } else {
         this.loadSearchProductData(1, searchTerm);
       }
+    } else if (this.pageHeaderTitle() === 'Stores') {
+      if (this.searchQuery() === '') {
+        this.loadStoreData(1);
+      } else {
+        this.loadSearchStoreData(1, searchTerm);
+      }
     }
   }
 
@@ -144,6 +150,13 @@ export class DataExploration {
 
   loadSearchProductData(pageNumber: number, searchTerm?: string) {
     this.operationsService.searchProductsData(pageNumber, undefined, searchTerm).subscribe({
+      next: (response) => { this.componentData.set(response); },
+      error: (error) => { console.error(error) }
+    });
+  }
+
+  loadSearchStoreData(pageNumber: number, searchTerm?: string) {
+    this.operationsService.searchStoresData(pageNumber, undefined, searchTerm).subscribe({
       next: (response) => { this.componentData.set(response); },
       error: (error) => { console.error(error) }
     });
@@ -198,7 +211,11 @@ export class DataExploration {
         this.loadSearchProductData(pageNumber, this.searchQuery());
       }
     } else if (this.pageHeaderTitle() === 'Stores') {
-      this.loadStoreData(pageNumber);
+      if (this.searchQuery() === '') {
+        this.loadStoreData(pageNumber);
+      } else {
+        this.loadSearchStoreData(pageNumber, this.searchQuery());
+      }
     } else if (this.pageHeaderTitle() === 'Orders') {
       this.loadOrderData(pageNumber);
     } else if (this.pageHeaderTitle() === 'Transactions') {
