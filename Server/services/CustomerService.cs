@@ -47,6 +47,51 @@ public class CustomerService : ICustomerService
             .FirstOrDefaultAsync(c => c.customer_id == customer_id);
     }
 
+    public async Task<PaginatedResponse<Customer>> SearchCustomersAsync(
+    string? searchTerm,
+    int pageNumber = 1,
+    int pageSize = 10)
+    {
+        var query = _context.DemoCustomers.AsNoTracking();
+
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            searchTerm = searchTerm.Trim();
+
+            query = query.Where(c =>
+                c.customer_id.Contains(searchTerm) ||
+                c.first_name.Contains(searchTerm) ||
+                c.last_name.Contains(searchTerm) ||
+                c.email.Contains(searchTerm) ||
+                c.city.Contains(searchTerm) ||
+                c.signup_date.ToString().Contains(searchTerm) ||
+                c.loyalty_tier.Contains(searchTerm) ||
+                c.customer_segment.Contains(searchTerm)
+            );
+        }
+
+        var totalRecords = await query.CountAsync();
+
+        var totalPages = (int)Math.Ceiling(
+            totalRecords / (double)pageSize
+        );
+
+        var customers = await query
+            .OrderByDescending(c => c.customer_id)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return new PaginatedResponse<Customer>
+        {
+            Data = customers,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalRecords = totalRecords,
+            TotalPages = totalPages
+        };
+    }
+
     public async Task<bool> AddCustomerAsync(Customer customer)
     {
         var lastCustomer = await _context.DemoCustomers

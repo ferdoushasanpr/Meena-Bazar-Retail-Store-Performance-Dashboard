@@ -47,6 +47,45 @@ public class TransactionService : ITransactionService
             .FirstOrDefaultAsync(t => t.order_item_id == order_item_id);
     }
 
+    public async Task<PaginatedResponse<Transaction>> SearchTransactionsAsync(string? searchTerm, int pageNumber = 1, int pageSize = 10)
+    {
+        var query = _context.DemoTransactions.AsNoTracking();
+
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            searchTerm = searchTerm.Trim();
+
+            query = query.Where(t =>
+                t.order_item_id.Contains(searchTerm) ||
+                t.order_id.Contains(searchTerm) ||
+                t.product_id.Contains(searchTerm) ||
+                t.quantity.ToString().Contains(searchTerm) ||
+                t.unit_price.ToString().Contains(searchTerm) ||
+                t.discount_amount.ToString().Contains(searchTerm) ||
+                t.line_net_amount.ToString().Contains(searchTerm) ||
+                t.line_vat_amount.ToString().Contains(searchTerm)
+            );
+        }
+
+        var totalRecords = await query.CountAsync();
+        var totalPages = (int)Math.Ceiling(totalRecords / (double)pageSize);
+
+        var transactions = await query
+            .OrderByDescending(t => t.order_item_id)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return new PaginatedResponse<Transaction>
+        {
+            Data = transactions,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalRecords = totalRecords,
+            TotalPages = totalPages
+        };
+    }
+
     public async Task<bool> AddTransactionAsync(Transaction transaction)
     {
         await _context.DemoTransactions.AddAsync(transaction);
