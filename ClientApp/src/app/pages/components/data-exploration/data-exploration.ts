@@ -5,13 +5,12 @@ import { PageHeader } from '../../../layout/page-header/page-header';
 import { DynamicTable } from '../../../shared/components/dynamic-table/dynamic-table';
 import { ModalForm } from '../../../shared/components/modal-form/modal-form';
 import { DialogBox } from '../../../shared/components/dialog-box/dialog-box';
-import { OperationsService } from '../../../core/services/operations-service';
-import { CustomerDataResponse } from '../../../core/models/customer';
-import { ProductDataResponse } from '../../../core/models/product';
-import { StoreDataResponse } from '../../../core/models/store';
-import { OrderDataResponse } from '../../../core/models/order';
-import { TransactionDataResponse } from '../../../core/models/transaction';
 import { EntityType, UpdatePayload } from '../../../core/models/props';
+import { CustomerService } from '../../services/customer-service';
+import { ProductService } from '../../services/product-service';
+import { StoreService } from '../../services/store-service';
+import { OrderService } from '../../services/order-service';
+import { TransactionService } from '../../services/transaction-service';
 
 @Component({
   imports: [PageHeader, DynamicTable, ModalForm, DialogBox],
@@ -21,21 +20,31 @@ import { EntityType, UpdatePayload } from '../../../core/models/props';
 })
 export class DataExploration {
   private router = inject(Router);
-  private operationsService = inject(OperationsService);
+  private customerService = inject(CustomerService);
+  private productService = inject(ProductService);
+  private storeService = inject(StoreService);
+  private orderService = inject(OrderService);
+  private transactionService = inject(TransactionService);
 
   // Header Info
   pageHeaderTitle = signal<string>('');
   pageHeaderSubtitle = signal<string>('');
 
+  // Search Input
+  searchQuery = signal<string>('');
+
   // Contents
-  componentData = signal<CustomerDataResponse | ProductDataResponse | StoreDataResponse | OrderDataResponse | TransactionDataResponse>({
-    data: [],
-    pageNumber: 1,
-    pageSize: 10,
-    totalRecords: 0,
-    totalPages: 0,
-    hasPreviousPage: false,
-    hasNextPage: false,
+  componentData = computed(() => {
+    const title = this.pageHeaderTitle();
+
+    switch (title) {
+      case 'Customers': return this.customerService.componentData();
+      case 'Products': return this.productService.componentData();
+      case 'Stores': return this.storeService.componentData();
+      case 'Orders': return this.orderService.componentData();
+      case 'Transactions': return this.transactionService.componentData();
+      default: return { data: [], pageNumber: 1, pageSize: 10, totalRecords: 0, totalPages: 0, hasPreviousPage: false, hasNextPage: false };
+    }
   });
 
   // Table Header Configuration
@@ -66,17 +75,8 @@ export class DataExploration {
   isModalOpen = signal<boolean>(false);
   selectedRowData = signal<any>(null);
   activeEntityType = signal<EntityType>('Customer');
-
-  // Delete Modal State Signals
   isDeleteModalOpen = signal<boolean>(false);
   itemToDelete = signal<any>(null);
-
-  tableHeader = computed(() => {
-    return this.tableConfig[this.pageHeaderTitle()] ?? {
-      title: 'Data',
-      subtitle: 'Explore and analyze your data.'
-    };
-  });
 
   constructor() {
     this.updatePath();
@@ -85,6 +85,13 @@ export class DataExploration {
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe(() => this.updatePath());
   }
+
+  tableHeader = computed(() => {
+    return this.tableConfig[this.pageHeaderTitle()] ?? {
+      title: 'Data',
+      subtitle: 'Explore and analyze your data.'
+    };
+  });
 
   updatePath() {
     const lastSegment = this.router.url
@@ -100,106 +107,88 @@ export class DataExploration {
   loadComponentData(): void {
     if (this.pageHeaderTitle() === 'Customers') {
       this.activeEntityType.set('Customer');
-      this.loadCustomerData(1);
+      this.customerService.loadCustomerData(1);
     } else if (this.pageHeaderTitle() === 'Products') {
       this.activeEntityType.set('Product');
-      this.loadProductData(1);
+      this.productService.loadProductData(1);
     } else if (this.pageHeaderTitle() === 'Stores') {
       this.activeEntityType.set('Store');
-      this.loadStoreData(1);
+      this.storeService.loadStoreData(1);
     } else if (this.pageHeaderTitle() === 'Orders') {
-      this.loadOrderData(1);
+      this.orderService.loadOrderData(1);
     } else if (this.pageHeaderTitle() === 'Transactions') {
-      this.loadTransactionsData(1);
+      this.transactionService.loadTransactionsData(1);
     }
   }
 
-  loadCustomerData(pageNumber: number, pageSize?: number) {
-    this.operationsService.getCustomersData(pageNumber, pageSize).subscribe({
-      next: (response) => { this.componentData.set(response); },
-      error: (error) => { console.error(error) }
-    })
-  }
+  onSearch(searchTerm: string): void {
+    this.searchQuery.set(searchTerm);
 
-  loadProductData(pageNumber: number, pageSize?: number) {
-    this.operationsService.getProductsData(pageNumber, pageSize).subscribe({
-      next: (response) => { this.componentData.set(response); },
-      error: (error) => { console.error(error) }
-    })
-  }
-
-  loadStoreData(pageNumber: number, pageSize?: number) {
-    this.operationsService.getStoresPaginatedData(pageNumber, pageSize).subscribe({
-      next: (response) => { this.componentData.set(response); },
-      error: (error) => { console.error(error) }
-    })
-  }
-
-  loadOrderData(pageNumber: number, pageSize?: number) {
-    this.operationsService.getOrdersData(pageNumber, pageSize).subscribe({
-      next: (response) => { this.componentData.set(response); },
-      error: (error) => { console.error(error) }
-    })
-  }
-
-  loadTransactionsData(pageNumber: number): void {
-    this.operationsService.getTransactionsData(pageNumber).subscribe({
-      next: (response) => { this.componentData.set(response); },
-      error: (error) => { console.error(error) }
-    });
+    if (this.pageHeaderTitle() === 'Customers') {
+      if (this.searchQuery() === '') {
+        this.customerService.loadCustomerData(1);
+      } else {
+        this.customerService.loadSearchCustomerData(1, searchTerm);
+      }
+    } else if (this.pageHeaderTitle() === 'Products') {
+      if (this.searchQuery() === '') {
+        this.productService.loadProductData(1);
+      } else {
+        this.productService.loadSearchProductData(1, searchTerm);
+      }
+    } else if (this.pageHeaderTitle() === 'Stores') {
+      if (this.searchQuery() === '') {
+        this.storeService.loadStoreData(1);
+      } else {
+        this.storeService.loadSearchStoreData(1, searchTerm);
+      }
+    } else if (this.pageHeaderTitle() === 'Orders') {
+      if (this.searchQuery() === '') {
+        this.orderService.loadOrderData(1);
+      } else {
+        this.orderService.loadSearchOrderData(1, searchTerm);
+      }
+    } else if (this.pageHeaderTitle() === 'Transactions') {
+      if (this.searchQuery() === '') {
+        this.transactionService.loadTransactionsData(1);
+      } else {
+        this.transactionService.loadSearchTransactionData(1, searchTerm);
+      }
+    }
   }
 
   onPageChange(pageNumber: number): void {
     if (this.pageHeaderTitle() === 'Customers') {
-      this.loadCustomerData(pageNumber);
+      if (this.searchQuery() === '') {
+        this.customerService.loadCustomerData(pageNumber);
+      } else {
+        this.customerService.loadSearchCustomerData(pageNumber, this.searchQuery());
+      }
     } else if (this.pageHeaderTitle() === 'Products') {
-      this.loadProductData(pageNumber);
+      if (this.searchQuery() === '') {
+        this.productService.loadProductData(pageNumber);
+      } else {
+        this.productService.loadSearchProductData(pageNumber, this.searchQuery());
+      }
     } else if (this.pageHeaderTitle() === 'Stores') {
-      this.loadStoreData(pageNumber);
+      if (this.searchQuery() === '') {
+        this.storeService.loadStoreData(pageNumber);
+      } else {
+        this.storeService.loadSearchStoreData(pageNumber, this.searchQuery());
+      }
     } else if (this.pageHeaderTitle() === 'Orders') {
-      this.loadOrderData(pageNumber);
+      if (this.searchQuery() === '') {
+        this.orderService.loadOrderData(pageNumber);
+      } else {
+        this.orderService.loadSearchOrderData(pageNumber, this.searchQuery());
+      }
     } else if (this.pageHeaderTitle() === 'Transactions') {
-      this.loadTransactionsData(pageNumber);
+      if (this.searchQuery() === '') {
+        this.transactionService.loadTransactionsData(pageNumber);
+      } else {
+        this.transactionService.loadSearchTransactionData(pageNumber, this.searchQuery());
+      }
     }
-
-  }
-
-  // Triggered when Update Icon is clicked in any table
-  handleSaveUpdate(payload: UpdatePayload): void {
-    payload.data[`${payload.type.toLowerCase()}_id`] = payload.id;
-
-    if (payload.type === "Customer") {
-      this.operationsService.updateCustomerData(payload.data, payload.id).subscribe({
-        next: (response) => {
-          console.log('Customer updated successfully:', response);
-          this.isModalOpen.set(false);
-          this.loadCustomerData(this.componentData().pageNumber);
-        },
-        error: (error) => { console.error(error) }
-      });
-    } else if (payload.type === "Product") {
-      this.operationsService.updateProductData(payload.data, payload.id).subscribe({
-        next: (response) => {
-          console.log('Product updated successfully:', response);
-          this.isModalOpen.set(false);
-          this.loadProductData(this.componentData().pageNumber);
-        },
-        error: (error) => { console.error(error) }
-      });
-    } else if (payload.type === "Store") {
-      this.operationsService.updateStoreData(payload.data, payload.id).subscribe({
-        next: (response) => {
-          console.log('Store updated successfully:', response);
-          this.isModalOpen.set(false);
-          this.loadStoreData(this.componentData().pageNumber);
-        },
-        error: (error) => { console.error(error) }
-      });
-    }
-  }
-
-  handleCloseModal(): void {
-    this.isModalOpen.set(false);
   }
 
   handleUpdate(row: any): void {
@@ -214,31 +203,65 @@ export class DataExploration {
     this.isDeleteModalOpen.set(true);
   }
 
+  //  Update Data in any Table
+  handleSaveUpdate(payload: UpdatePayload): void {
+    payload.data[`${payload.type.toLowerCase()}_id`] = payload.id;
+
+    if (payload.type === "Customer") {
+      this.customerService.updateCustomer(payload.id, payload.data).subscribe({
+        next: (response) => {
+          console.log('Customer updated successfully:', response);
+          this.isModalOpen.set(false);
+          this.customerService.loadCustomerData(this.componentData().pageNumber);
+        },
+        error: (error) => { console.error(error) }
+      });
+    } else if (payload.type === "Product") {
+      this.productService.updateProduct(payload.id, payload.data).subscribe({
+        next: (response) => {
+          console.log('Product updated successfully:', response);
+          this.isModalOpen.set(false);
+          this.productService.loadProductData(this.componentData().pageNumber);
+        },
+        error: (error) => { console.error(error) }
+      });
+    } else if (payload.type === "Store") {
+      this.storeService.updateStore(payload.id, payload.data).subscribe({
+        next: (response) => {
+          console.log('Store updated successfully:', response);
+          this.isModalOpen.set(false);
+          this.storeService.loadStoreData(this.componentData().pageNumber);
+        },
+        error: (error) => { console.error(error) }
+      });
+    }
+  }
+
   onConfirmDelete(): void {
     const record = this.itemToDelete();
     console.log('Deleting record from backend:', record);
 
     if (this.pageHeaderTitle() === 'Customers') {
-      this.operationsService.deleteCustomerData(record.customer_id).subscribe({
+      this.customerService.deleteCustomer(record.customer_id).subscribe({
         next: (response) => {
           console.log('Customer deleted successfully:', response);
-          this.loadCustomerData(this.componentData().pageNumber);
+          this.customerService.loadCustomerData(this.componentData().pageNumber);
         },
         error: (error) => { console.error(error) }
       });
     } else if (this.pageHeaderTitle() === 'Products') {
-      this.operationsService.deleteProductData(record.product_id).subscribe({
+      this.productService.deleteProduct(record.product_id).subscribe({
         next: (response) => {
           console.log('Product deleted successfully:', response);
-          this.loadProductData(this.componentData().pageNumber);
+          this.productService.loadProductData(this.componentData().pageNumber);
         },
         error: (error) => { console.error(error) }
       });
     } else if (this.pageHeaderTitle() === 'Stores') {
-      this.operationsService.deleteStoreData(record.store_id).subscribe({
+      this.storeService.deleteStore(record.store_id).subscribe({
         next: (response) => {
           console.log('Store deleted successfully:', response);
-          this.loadStoreData(this.componentData().pageNumber);
+          this.storeService.loadStoreData(this.componentData().pageNumber);
         },
         error: (error) => { console.error(error) }
       });
@@ -248,7 +271,11 @@ export class DataExploration {
     this.itemToDelete.set(null);
   }
 
-  // 3. Close Delete Modal
+  // Close Modal
+  handleCloseModal(): void {
+    this.isModalOpen.set(false);
+  }
+
   onCloseDeleteModal(): void {
     this.isDeleteModalOpen.set(false);
     this.itemToDelete.set(null);

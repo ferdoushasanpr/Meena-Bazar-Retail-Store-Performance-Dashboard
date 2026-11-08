@@ -23,6 +23,10 @@ export class OperationsService {
         return this.http.get<CustomerDataResponse>(`${this.apiUrlBase}/customers?pageNumber=${pageNumber}&pageSize=${pageSize}`);
     }
 
+    searchCustomersData(pageNumber: number, pageSize: number = 10, searchTerm?: string): Observable<CustomerDataResponse> {
+        return this.http.get<CustomerDataResponse>(`${this.apiUrlBase}/customers/search?searchTerm=${searchTerm}&pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    }
+
     updateCustomerData(customer: Customer, id: string): Observable<Customer> {
         return this.http.put<Customer>(`${this.apiUrlBase}/customers/${id}`, customer);
     }
@@ -38,6 +42,10 @@ export class OperationsService {
 
     getProductsData(pageNumber: number, pageSize: number = 10): Observable<ProductDataResponse> {
         return this.http.get<ProductDataResponse>(`${this.apiUrlBase}/products?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    }
+
+    searchProductsData(pageNumber: number, pageSize: number = 10, searchTerm?: string): Observable<ProductDataResponse> {
+        return this.http.get<ProductDataResponse>(`${this.apiUrlBase}/products/search?searchTerm=${searchTerm}&pageNumber=${pageNumber}&pageSize=${pageSize}`);
     }
 
     updateProductData(product: Product, id: string): Observable<Product> {
@@ -61,6 +69,10 @@ export class OperationsService {
         return this.http.get<StoreDataResponse>(`${this.apiUrlBase}/stores/paginated?pageNumber=${pageNumber}&pageSize=${pageSize}`);
     }
 
+    searchStoresData(pageNumber: number, pageSize: number = 10, searchTerm?: string): Observable<StoreDataResponse> {
+        return this.http.get<StoreDataResponse>(`${this.apiUrlBase}/stores/search?searchTerm=${searchTerm}&pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    }
+
     updateStoreData(store: StoreData, id: string): Observable<StoreData> {
         return this.http.put<StoreData>(`${this.apiUrlBase}/stores/${id}`, store);
     }
@@ -74,8 +86,16 @@ export class OperationsService {
         return this.http.get<OrderDataResponse>(`${this.apiUrlBase}/sales?pageNumber=${pageNumber}&pageSize=${pageSize}`);
     }
 
+    searchOrdersData(pageNumber: number, pageSize: number = 10, searchTerm?: string): Observable<OrderDataResponse> {
+        return this.http.get<OrderDataResponse>(`${this.apiUrlBase}/sales/search?searchTerm=${searchTerm}&pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    }
+
     // Transactions Operations
     getTransactionsData(pageNumber: number, pageSize: number = 10): Observable<TransactionDataResponse> {
         return this.http.get<TransactionDataResponse>(`${this.apiUrlBase}/transactions?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    }
+
+    searchTransactionsData(pageNumber: number, pageSize: number = 10, searchTerm?: string): Observable<TransactionDataResponse> {
+        return this.http.get<TransactionDataResponse>(`${this.apiUrlBase}/transactions/search?searchTerm=${searchTerm}&pageNumber=${pageNumber}&pageSize=${pageSize}`);
     }
 }

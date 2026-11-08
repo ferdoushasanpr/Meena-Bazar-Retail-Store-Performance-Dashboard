@@ -27,6 +27,43 @@
     color: #94a3b8;
 }
 
+/* Table Header Search Container */
+.table-search-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.table-search-container .search-icon {
+    position: absolute;
+    left: 12px;
+    color: #64748b;
+    font-size: 13px;
+    pointer-events: none;
+}
+
+.table-search-input {
+    background: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    color: #f8fafc;
+    font-size: 13px;
+    padding: 8px 12px 8px 36px;
+    outline: none;
+    width: 240px;
+    transition: all 0.2s ease;
+}
+
+.table-search-input::placeholder {
+    color: #64748b;
+}
+
+.table-search-input:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15);
+    width: 280px;
+}
+
 .table-responsive {
     width: 100%;
     overflow-x: auto;

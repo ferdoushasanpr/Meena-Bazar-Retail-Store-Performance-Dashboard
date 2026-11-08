@@ -2,7 +2,9 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PageHeader } from '../../../layout/page-header/page-header';
-import { OperationsService } from '../../../core/services/operations-service';
+import { CustomerService } from '../../services/customer-service';
+import { ProductService } from '../../services/product-service';
+import { StoreService } from '../../services/store-service';
 
 export type DataTab = 'Customer' | 'Product' | 'Store';
 
@@ -15,7 +17,9 @@ export type DataTab = 'Customer' | 'Product' | 'Store';
 export class AddData {
   private router = inject(Router);
   private fb = inject(FormBuilder);
-  private operationsService = inject(OperationsService)
+  private customerService = inject(CustomerService);
+  private productService = inject(ProductService);
+  private storeService = inject(StoreService);
 
   // Page Header Info
   pageHeaderTitle = 'Add Data';
@@ -56,7 +60,7 @@ export class AddData {
   onCustomerSubmit(): void {
     if (this.customerForm.valid) {
       //console.log('Customer Data:', this.customerForm.value);
-      this.operationsService.addCustomerData(this.customerForm.value).subscribe({
+      this.customerService.addCustomer(this.customerForm.value).subscribe({
         next: (response) => {
           this.router.navigate(['data-explorer/customers']);
         },
@@ -72,7 +76,7 @@ export class AddData {
   onProductSubmit(): void {
     if (this.productForm.valid) {
       //console.log('Product Data:', this.productForm.value);
-      this.operationsService.addProductData(this.productForm.value).subscribe({
+      this.productService.addProduct(this.productForm.value).subscribe({
         next: (response) => {
           this.router.navigate(['data-explorer/products']);
         },
@@ -88,7 +92,7 @@ export class AddData {
   onStoreSubmit(): void {
     if (this.storeForm.valid) {
       //console.log('Store Data:', this.storeForm.value);
-      this.operationsService.addStoreData(this.storeForm.value).subscribe({
+      this.storeService.addStore(this.storeForm.value).subscribe({
         next: (response) => {
           this.router.navigate(['data-explorer/stores']);
         },

@@ -6,7 +6,8 @@
         [pageNumber]="componentData().pageNumber" [pageSize]="componentData().pageSize"
         [totalRecords]="componentData().totalRecords" [totalPages]="componentData().totalPages"
         [hasPreviousPage]="componentData().hasPreviousPage" [hasNextPage]="componentData().hasNextPage"
-        (pageChange)="onPageChange($event)" (updateRow)="handleUpdate($event)" (deleteRow)="handleDelete($event)" />
+        (pageChange)="onPageChange($event)" (updateRow)="handleUpdate($event)" (deleteRow)="handleDelete($event)"
+        (searchTerm)="onSearch($event)" />
 
     <app-modal-form [isOpen]="isModalOpen()" [entityType]="activeEntityType()" [initialData]="selectedRowData()"
         (closeModal)="handleCloseModal()" (saveData)="handleSaveUpdate($event)" />
