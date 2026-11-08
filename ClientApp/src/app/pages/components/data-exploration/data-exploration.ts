@@ -120,15 +120,30 @@ export class DataExploration {
   onSearch(searchTerm: string): void {
     this.searchQuery.set(searchTerm);
 
-    if (this.searchQuery() === '') {
-      this.loadCustomerData(1);
-    } else {
-      this.loadSearchCustomerData(1, searchTerm);
+    if (this.pageHeaderTitle() === 'Customers') {
+      if (this.searchQuery() === '') {
+        this.loadCustomerData(1);
+      } else {
+        this.loadSearchCustomerData(1, searchTerm);
+      }
+    } else if (this.pageHeaderTitle() === 'Products') {
+      if (this.searchQuery() === '') {
+        this.loadProductData(1);
+      } else {
+        this.loadSearchProductData(1, searchTerm);
+      }
     }
   }
 
   loadSearchCustomerData(pageNumber: number, searchTerm?: string) {
     this.operationsService.searchCustomersData(pageNumber, undefined, searchTerm).subscribe({
+      next: (response) => { this.componentData.set(response); },
+      error: (error) => { console.error(error) }
+    });
+  }
+
+  loadSearchProductData(pageNumber: number, searchTerm?: string) {
+    this.operationsService.searchProductsData(pageNumber, undefined, searchTerm).subscribe({
       next: (response) => { this.componentData.set(response); },
       error: (error) => { console.error(error) }
     });
@@ -177,7 +192,11 @@ export class DataExploration {
         this.loadSearchCustomerData(pageNumber, this.searchQuery());
       }
     } else if (this.pageHeaderTitle() === 'Products') {
-      this.loadProductData(pageNumber);
+      if (this.searchQuery() === '') {
+        this.loadProductData(pageNumber);
+      } else {
+        this.loadSearchProductData(pageNumber, this.searchQuery());
+      }
     } else if (this.pageHeaderTitle() === 'Stores') {
       this.loadStoreData(pageNumber);
     } else if (this.pageHeaderTitle() === 'Orders') {

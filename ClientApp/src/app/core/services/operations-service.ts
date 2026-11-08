@@ -44,6 +44,10 @@ export class OperationsService {
         return this.http.get<ProductDataResponse>(`${this.apiUrlBase}/products?pageNumber=${pageNumber}&pageSize=${pageSize}`);
     }
 
+    searchProductsData(pageNumber: number, pageSize: number = 10, searchTerm?: string): Observable<ProductDataResponse> {
+        return this.http.get<ProductDataResponse>(`${this.apiUrlBase}/products/search?searchTerm=${searchTerm}&pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    }
+
     updateProductData(product: Product, id: string): Observable<Product> {
         return this.http.put<Product>(`${this.apiUrlBase}/products/${id}`, product);
     }
