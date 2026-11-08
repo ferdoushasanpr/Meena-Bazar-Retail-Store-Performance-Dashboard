@@ -26,6 +26,16 @@ public static class TransactionRoute
                 : Results.NotFound();
         });
 
+        group.MapGet("/search", async (string? searchTerm, int pageNumber, int pageSize, ITransactionService service) =>
+        {
+            if (pageNumber < 1 || pageSize < 1)
+                return Results.BadRequest("Invalid pagination parameters.");
+
+            var result = await service.SearchTransactionsAsync(searchTerm, pageNumber, pageSize);
+
+            return Results.Ok(result);
+        });
+
         group.MapPost("/", async (
             Transaction transaction,
             ITransactionService service) =>
