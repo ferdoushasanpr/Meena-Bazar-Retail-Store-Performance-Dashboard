@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { PageHeader } from '../../../layout/page-header/page-header';
 import { CategoryMatrixChart } from '../../../shared/components/category-matrix-chart/category-matrix-chart';
@@ -6,14 +6,16 @@ import { HorizontalBarChart } from '../../../shared/components/horizontal-bar-ch
 import { formatDate } from '../../../shared/utilities/date';
 import { buildCsvContent, downloadCsv } from '../../../shared/utilities/csv-exporter';
 import { SalesService } from '../../services/sales-service';
+import { Filter } from '../../shared/components/filter/filter';
+import { FilterCriteria } from '../../shared/models/filter-model';
 
 @Component({
-  imports: [FormsModule, PageHeader, CategoryMatrixChart, HorizontalBarChart],
+  imports: [FormsModule, PageHeader, Filter, CategoryMatrixChart, HorizontalBarChart],
   selector: 'app-product-categories',
   styleUrl: './product-categories.css',
   templateUrl: './product-categories.html',
 })
-export class ProductCategories implements OnInit {
+export class ProductCategories {
   private salesService = inject(SalesService);
 
   //Page Header Component Info
@@ -21,89 +23,31 @@ export class ProductCategories implements OnInit {
   pageHeaderSubtitle = "Benchmark, rank, and analyze revenue, customer volume, and efficiency across all product categories.";
 
   // Filters & State
-  selectedTimeRange = 'All';
-  timeRanges = ['All', 'Today', 'Last 7 Days', 'Last 30 Days', 'Select Range'];
-  private readonly currentDate = new Date(2025, 3, 1);
-
-  customStartDate = signal<string>(formatDate(this.currentDate));
-  customEndDate = signal<string>(formatDate(this.currentDate));
+  currentFilters = signal<FilterCriteria>({
+    startDate: '',
+    endDate: '',
+    storeId: 'All Stores'
+  });
 
   salesCategoryData = this.salesService.salesCategoryData;
   productSalesData = this.salesService.paginatedSalesData;
 
-  ngOnInit(): void {
-    this.setTimeRange('All');
-  }
 
-  private loadSalesData(startDate: string, endDate: string): void {
+  loadSalesData({ startDate, endDate, storeId }: FilterCriteria): void {
+    this.currentFilters.set({ startDate, endDate, storeId });
+
     this.salesService.loadSalesCategoryData(startDate, endDate);
     this.salesService.loadProductSalesData(1, startDate, endDate);
   }
 
   onPageChange(pageNumber: number): void {
-    const endDate = new Date(this.currentDate);
-    const startDate = new Date(this.currentDate);
+    const filters = this.currentFilters();
+    const endDate = filters.endDate;
+    const startDate = filters.startDate;
 
-    switch (this.selectedTimeRange) {
-      case 'All':
-        startDate.setFullYear(startDate.getFullYear() - 2);
-        break;
-
-      case 'Today':
-        startDate.setDate(startDate.getDate() - 1);
-        break;
-
-      case 'Last 7 Days':
-        startDate.setDate(startDate.getDate() - 6);
-        break;
-
-      case 'Last 30 Days':
-        startDate.setDate(startDate.getDate() - 29);
-        break;
-    }
-
-    this.salesService.loadProductSalesData(pageNumber, formatDate(startDate), formatDate(endDate));
+    this.salesService.loadProductSalesData(pageNumber, startDate, endDate);
   }
 
-  setTimeRange(range: string): void {
-    this.selectedTimeRange = range;
-
-    const endDate = new Date(this.currentDate);
-    const startDate = new Date(this.currentDate);
-
-    switch (range) {
-      case 'All':
-        startDate.setFullYear(startDate.getFullYear() - 2);
-        break;
-
-      case 'Today':
-        startDate.setDate(startDate.getDate() - 1);
-        break;
-
-      case 'Last 7 Days':
-        startDate.setDate(startDate.getDate() - 6);
-        break;
-
-      case 'Last 30 Days':
-        startDate.setDate(startDate.getDate() - 29);
-        break;
-    }
-
-    this.loadSalesData(
-      formatDate(startDate),
-      formatDate(endDate)
-    );
-  }
-
-  onCustomDateChange(): void {
-    if (this.selectedTimeRange === 'Select Range') {
-      this.loadSalesData(this.customStartDate(), this.customEndDate());
-    }
-  }
-
-  onResetFilter(): void {
-    this.setTimeRange('All');
-  }
 
 
   // --- CSV Export Methods ---
@@ -115,10 +59,10 @@ export class ProductCategories implements OnInit {
   exportConsolidatedReport(): void {
     const categorySales = this.salesCategoryData();
     const productSales = this.productSalesData().data;
+    const filters = this.currentFilters();
 
-    const dateRangeLabel = this.selectedTimeRange === 'Select Range'
-      ? `${this.customStartDate()} to ${this.customEndDate()}`
-      : this.selectedTimeRange;
+    const dateRangeLabel =
+      `${filters.startDate} to ${filters.endDate}`;
 
     const rows: (string | number)[][] = [];
 

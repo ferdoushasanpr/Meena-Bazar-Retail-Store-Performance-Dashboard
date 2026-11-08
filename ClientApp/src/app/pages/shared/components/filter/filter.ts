@@ -2,7 +2,7 @@ import { Component, inject, input, OnInit, output, signal } from '@angular/core'
 import { formatDate } from '../../../../shared/utilities/date';
 import { FormsModule } from '@angular/forms';
 import { SalesService } from '../../../services/sales-service';
-import { FilterCriteria } from './models/filter-model';
+import { FilterCriteria } from '../../models/filter-model';
 
 @Component({
   imports: [FormsModule],
@@ -15,6 +15,7 @@ export class Filter implements OnInit {
 
   timeRanges = ['All', 'Today', 'Last 7 Days', 'Last 30 Days', 'Select Range'];
   selectedTimeRange = 'All';
+  isStoreFilter = input<boolean>(true);
   selectedStore = signal<string>('All Stores');
   storesArr = this.salesService.storesArr;
 

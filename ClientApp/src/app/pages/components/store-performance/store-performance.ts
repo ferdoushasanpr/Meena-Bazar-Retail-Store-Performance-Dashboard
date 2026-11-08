@@ -8,8 +8,8 @@ import { formatDate } from '../../../shared/utilities/date';
 import { MetricCardProps } from '../../../core/models/props';
 import { buildCsvContent, downloadCsv } from '../../../shared/utilities/csv-exporter';
 import { SalesService } from '../../services/sales-service';
-import { FilterCriteria } from '../../shared/components/filter/models/filter-model';
 import { Filter } from '../../shared/components/filter/filter';
+import { FilterCriteria } from '../../shared/models/filter-model';
 
 @Component({
   imports: [FormsModule, PageHeader, Filter, MetricCard, HorizontalBarChart, TableChart],

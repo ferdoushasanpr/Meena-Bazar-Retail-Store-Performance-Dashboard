@@ -9,7 +9,7 @@ import { MetricCardProps } from '../../../core/models/props';
 import { buildCsvContent, downloadCsv } from '../../../shared/utilities/csv-exporter';
 import { SalesService } from '../../services/sales-service';
 import { Filter } from '../../shared/components/filter/filter';
-import { FilterCriteria } from '../../shared/components/filter/models/filter-model';
+import { FilterCriteria } from '../../shared/models/filter-model';
 
 @Component({
   imports: [FormsModule, PageHeader, Filter, MetricCard, TrendChart, VerticalBarChart],
