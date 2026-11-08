@@ -144,6 +144,12 @@ export class DataExploration {
       } else {
         this.loadSearchOrderData(1, searchTerm);
       }
+    } else if (this.pageHeaderTitle() === 'Transactions') {
+      if (this.searchQuery() === '') {
+        this.loadTransactionsData(1);
+      } else {
+        this.loadSearchTransactionData(1, searchTerm);
+      }
     }
   }
 
@@ -170,6 +176,13 @@ export class DataExploration {
 
   loadSearchOrderData(pageNumber: number, searchTerm?: string) {
     this.operationsService.searchOrdersData(pageNumber, undefined, searchTerm).subscribe({
+      next: (response) => { this.componentData.set(response); },
+      error: (error) => { console.error(error) }
+    });
+  }
+
+  loadSearchTransactionData(pageNumber: number, searchTerm?: string) {
+    this.operationsService.searchTransactionsData(pageNumber, undefined, searchTerm).subscribe({
       next: (response) => { this.componentData.set(response); },
       error: (error) => { console.error(error) }
     });
@@ -236,9 +249,12 @@ export class DataExploration {
         this.loadSearchOrderData(pageNumber, this.searchQuery());
       }
     } else if (this.pageHeaderTitle() === 'Transactions') {
-      this.loadTransactionsData(pageNumber);
+      if (this.searchQuery() === '') {
+        this.loadTransactionsData(pageNumber);
+      } else {
+        this.loadSearchTransactionData(pageNumber, this.searchQuery());
+      }
     }
-
   }
 
   // Triggered when Update Icon is clicked in any table

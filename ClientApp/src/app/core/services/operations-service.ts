@@ -94,4 +94,8 @@ export class OperationsService {
     getTransactionsData(pageNumber: number, pageSize: number = 10): Observable<TransactionDataResponse> {
         return this.http.get<TransactionDataResponse>(`${this.apiUrlBase}/transactions?pageNumber=${pageNumber}&pageSize=${pageSize}`);
     }
+
+    searchTransactionsData(pageNumber: number, pageSize: number = 10, searchTerm?: string): Observable<TransactionDataResponse> {
+        return this.http.get<TransactionDataResponse>(`${this.apiUrlBase}/transactions/search?searchTerm=${searchTerm}&pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    }
 }
