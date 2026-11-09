@@ -40,8 +40,7 @@ export class Sidebar {
     {
       sectionTitle: 'OPERATIONS',
       items: [
-        { title: 'Add Data', route: '/add-data', icon: 'fa-solid fa-square-plus' },
-        { title: 'Reports & Exports', route: '/report-export', icon: 'fa-solid fa-file-lines' }
+        { title: 'Add Data', route: '/add-data', icon: 'fa-solid fa-square-plus' }
       ]
     },
     {
