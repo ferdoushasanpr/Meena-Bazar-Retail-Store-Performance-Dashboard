@@ -1,6 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { OperationsService } from '../../core/services/operations-service';
-import { ProductDataResponse } from '../../core/models/product';
+import { OperationsService } from '../../../../core/services/operations-service';
+import { ProductDataResponse } from '../../../../core/models/product';
 
 @Injectable({
     providedIn: 'root'
