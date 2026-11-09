@@ -1,0 +1,130 @@
+:host {
+    display: block;
+    background-color: #0b1320;
+    color: #f1f5f9;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.not-found-container {
+    min-height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+
+.not-found-card {
+    background: #131e32;
+    border: 1px solid #1e293b;
+    border-radius: 16px;
+    padding: 32px 24px;
+    max-width: 480px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: slideUp 0.3s ease-out;
+}
+
+/* Glowing Compass Icon */
+.icon-wrapper {
+    width: 72px;
+    height: 72px;
+    background: rgba(99, 102, 241, 0.12);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    color: #818cf8;
+    margin-bottom: 20px;
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
+}
+
+/* Large 404 Text */
+.error-code {
+    margin: 0;
+    font-size: 72px;
+    font-weight: 800;
+    letter-spacing: -2px;
+    background: linear-gradient(180deg, #ffffff 0%, #818cf8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1;
+}
+
+.error-title {
+    margin: 16px 0 8px 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #f8fafc;
+}
+
+.error-message {
+    margin: 0 0 32px 0;
+    font-size: 13px;
+    color: #94a3b8;
+    line-height: 1.6;
+}
+
+/* Actions Layout */
+.action-buttons {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+    justify-content: center;
+}
+
+.btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    border: none;
+}
+
+.btn-primary {
+    background: #6366f1;
+    color: #ffffff;
+}
+
+.btn-primary:hover {
+    background: #4f46e5;
+    box-shadow: 0 2px 12px rgba(99, 102, 241, 0.4);
+}
+
+.btn-ghost {
+    background: #1e293b;
+    color: #94a3b8;
+    border: 1px solid #334155;
+}
+
+.btn-ghost:hover {
+    background: #334155;
+    color: #ffffff;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

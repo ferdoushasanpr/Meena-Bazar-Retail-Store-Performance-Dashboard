@@ -5,6 +5,7 @@ import { StorePerformance } from './pages/components/store-performance/store-per
 import { ProductCategories } from './pages/components/product-categories/product-categories';
 import { AddData } from './pages/components/add-data/add-data';
 import { DataExploration } from './pages/components/data-exploration/components/data-exploration';
+import { NotFound } from './pages/components/not-found/not-found';
 
 export const routes: Routes = [
     {
@@ -34,5 +35,9 @@ export const routes: Routes = [
     {
         path: 'data-explorer/:type',
         component: DataExploration
+    },
+    {
+        path: '**',
+        component: NotFound
     }
 ];
