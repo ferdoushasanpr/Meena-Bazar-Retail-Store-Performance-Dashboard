@@ -1,0 +1,114 @@
+<div class="container">
+    <!-- Top Page Header -->
+    <app-page-header [title]="pageHeaderTitle" [subtitle]="pageHeaderSubtitle" />
+
+    <!-- Main Unified Form Card -->
+    <div class="settings-card">
+
+        @if (saveSuccess()) {
+        <div class="alert alert-success">
+            <i class="fa-solid fa-circle-check"></i>
+            <span>{{ saveSuccess() }}</span>
+        </div>
+        }
+
+        <form [formGroup]="settingsForm" (ngSubmit)="onSubmit()" class="unified-form">
+            <div class="form-section">
+                <div class="section-title">
+                    <i class="fa-solid fa-user-gear"></i>
+                    <div>
+                        <h3>Personal Information</h3>
+                        <p>Manage your account name and email address</p>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="firstName">First Name *</label>
+                        <input id="firstName" type="text" formControlName="firstName" placeholder="First Name" />
+                        @if (settingsForm.get('firstName')?.invalid && settingsForm.get('firstName')?.touched) {
+                        <span class="error-msg">First name is required.</span>
+                        }
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lastName">Last Name *</label>
+                        <input id="lastName" type="text" formControlName="lastName" placeholder="Last Name" />
+                        @if (settingsForm.get('lastName')?.invalid && settingsForm.get('lastName')?.touched) {
+                        <span class="error-msg">Last name is required.</span>
+                        }
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address *</label>
+                    <input id="email" type="email" formControlName="email" placeholder="name@example.com" />
+                    @if (settingsForm.get('email')?.invalid && settingsForm.get('email')?.touched) {
+                    <span class="error-msg">Please enter a valid email address.</span>
+                    }
+                </div>
+            </div>
+            <div class="form-section">
+                <div class="form-group">
+                    <label for="currentPassword">Current Password</label>
+                    <div class="password-input-wrapper">
+                        <input id="currentPassword" [type]="showCurrentPassword() ? 'text' : 'password'"
+                            formControlName="currentPassword" placeholder="Enter current password" />
+                        <button type="button" class="icon-toggle" (click)="togglePassword('current')">
+                            <i class="fa-solid" [class.fa-eye]="!showCurrentPassword()"
+                                [class.fa-eye-slash]="showCurrentPassword()"></i>
+                        </button>
+                    </div>
+                    @if (settingsForm.hasError('currentRequired') && settingsForm.get('currentPassword')?.touched) {
+                    <span class="error-msg">Current password is required to set a new password.</span>
+                    }
+                </div>
+
+                <!-- New & Confirm Passwords (2-Column Desktop Grid) -->
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="newPassword">New Password</label>
+                        <div class="password-input-wrapper">
+                            <input id="newPassword" [type]="showNewPassword() ? 'text' : 'password'"
+                                formControlName="newPassword" placeholder="At least 8 characters" />
+                            <button type="button" class="icon-toggle" (click)="togglePassword('new')">
+                                <i class="fa-solid" [class.fa-eye]="!showNewPassword()"
+                                    [class.fa-eye-slash]="showNewPassword()"></i>
+                            </button>
+                        </div>
+                        @if (settingsForm.get('newPassword')?.invalid && settingsForm.get('newPassword')?.touched) {
+                        <span class="error-msg">New password must be at least 8 characters.</span>
+                        }
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm New Password</label>
+                        <div class="password-input-wrapper">
+                            <input id="confirmPassword" [type]="showConfirmPassword() ? 'text' : 'password'"
+                                formControlName="confirmPassword" placeholder="Re-enter new password" />
+                            <button type="button" class="icon-toggle" (click)="togglePassword('confirm')">
+                                <i class="fa-solid" [class.fa-eye]="!showConfirmPassword()"
+                                    [class.fa-eye-slash]="showConfirmPassword()"></i>
+                            </button>
+                        </div>
+                        @if (settingsForm.hasError('passwordMismatch') && settingsForm.get('confirmPassword')?.touched)
+                        {
+                        <span class="error-msg">Passwords do not match.</span>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- FORM ACTION FOOTER -->
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary" [disabled]="settingsForm.invalid || isSubmitting()">
+                    @if (isSubmitting()) {
+                    <i class="fa-solid fa-spinner fa-spin"></i> Saving...
+                    } @else {
+                    <i class="fa-solid fa-floppy-disk"></i> Save Settings
+                    }
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
