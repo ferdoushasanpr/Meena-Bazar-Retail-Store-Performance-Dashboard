@@ -6,10 +6,10 @@ import { HorizontalBarChart } from '../../../shared/components/horizontal-bar-ch
 import { TableChart } from '../../../shared/components/table-chart/table-chart';
 import { formatDate } from '../../../shared/utilities/date';
 import { MetricCardProps } from '../../../core/models/props';
-import { buildCsvContent, downloadCsv } from '../../../shared/utilities/csv-exporter';
 import { SalesService } from '../../services/sales-service';
 import { Filter } from '../../shared/components/filter/filter';
 import { FilterCriteria } from '../../shared/models/filter-model';
+import { ReportExporter } from '../../services/report-exporter';
 
 @Component({
   imports: [FormsModule, PageHeader, Filter, MetricCard, HorizontalBarChart, TableChart],
@@ -20,6 +20,8 @@ import { FilterCriteria } from '../../shared/models/filter-model';
 
 export class StorePerformance {
   private salesService = inject(SalesService);
+  private reportExportService = inject(ReportExporter);
+
   //Page Header Component Info
   pageHeaderTitle = "Store Performance";
   pageHeaderSubtitle = "Benchmark, rank, and analyze revenue, customer volume, and efficiency across all retail locations.";
@@ -109,69 +111,45 @@ export class StorePerformance {
   }
 
 
-  // --- CSV Export Methods ---
+  // CSV Export Methods
 
-  /**
-   * Generates and downloads a consolidated CSV report containing Active Filters,
-   * KPI Summary, Store Sales Performance Breakdown, and Store Category Data.
-   */
   exportConsolidatedReport(): void {
     const kpis = this.salesKpiData();
     const storeSales = this.storesSalesData();
     const categorySales = this.storeCategorySalesData().data;
     const filters = this.currentFilters();
-    const currentStore = this.currentFilters().storeId;
 
-    const dateRangeLabel =
-      `${filters.startDate} to ${filters.endDate}`;
+    this.reportExportService.export({
+      reportTitle: 'STORE PERFORMANCE REPORT',
+      fileName: `store_performance_${filters.storeId.toLowerCase().replace(/[^a-z0-9]/gi, '_')}`,
 
-    const rows: (string | number)[][] = [];
+      filters: {
+        'Selected Store Filter': filters.storeId,
+        'Time Range': `${filters.startDate} to ${filters.endDate}`
+      },
 
-    // Metadata Header
-    rows.push(['STORE PERFORMANCE REPORT']);
-    rows.push(['Generated Date', new Date().toISOString().split('T')[0]]);
-    rows.push(['Selected Store Filter', currentStore]);
-    rows.push(['Time Range', dateRangeLabel]);
-    rows.push([]);
+      summary: {
+        title: 'EXECUTIVE SUMMARY',
+        data: [
+          ['Total Sales ($)', kpis.totalSales.toFixed(2)],
+          ['Total Transactions', kpis.numberOfTransactions],
+          ['Average Basket Value ($)', kpis.averageBasketValue.toFixed(2)],
+          ['Average Daily Sales ($)', kpis.averageDailySales.toFixed(2)]
+        ]
+      },
 
-    // Executive Summary KPIs
-    rows.push(['--- EXECUTIVE SUMMARY ---']);
-    rows.push(['Metric', 'Value']);
-    rows.push(['Total Sales ($)', kpis.totalSales.toFixed(2)]);
-    rows.push(['Total Transactions', kpis.numberOfTransactions]);
-    rows.push(['Average Basket Value ($)', kpis.averageBasketValue.toFixed(2)]);
-    rows.push(['Average Daily Sales ($)', kpis.averageDailySales.toFixed(2)]);
-    rows.push([]);
-
-    // Store Sales Breakdown
-    rows.push(['--- STORE SALES BREAKDOWN ---']);
-    if (storeSales.length > 0) {
-      const headers = Object.keys(storeSales[0]);
-      rows.push(headers);
-      storeSales.forEach((item: Record<string, any>) => {
-        rows.push(headers.map(key => item[key]));
-      });
-    } else {
-      rows.push(['No store sales data available']);
-    }
-    rows.push([]);
-
-    // Store Category Breakdown
-    rows.push(['--- STORE CATEGORY BREAKDOWN ---']);
-    if (categorySales.length > 0) {
-      const catHeaders = Object.keys(categorySales[0]);
-      rows.push(catHeaders);
-      categorySales.forEach((item: Record<string, any>) => {
-        rows.push(catHeaders.map(key => item[key]));
-      });
-    } else {
-      rows.push(['No category sales data available']);
-    }
-
-    const csvContent = buildCsvContent(rows);
-    const sanitizeStoreName = currentStore.toLowerCase().replace(/[^a-z0-9]/gi, '_');
-    const fileName = `store_performance_${sanitizeStoreName}_${formatDate(new Date())}.csv`;
-
-    downloadCsv(csvContent, fileName);
+      sections: [
+        {
+          title: 'STORE SALES BREAKDOWN',
+          data: storeSales,
+          emptyMessage: 'No store sales data available'
+        },
+        {
+          title: 'STORE CATEGORY BREAKDOWN',
+          data: categorySales,
+          emptyMessage: 'No category sales data available'
+        }
+      ]
+    });
   }
 }

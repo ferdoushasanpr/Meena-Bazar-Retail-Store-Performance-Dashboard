@@ -3,11 +3,10 @@ import { FormsModule } from '@angular/forms';
 import { PageHeader } from '../../../layout/page-header/page-header';
 import { CategoryMatrixChart } from '../../../shared/components/category-matrix-chart/category-matrix-chart';
 import { HorizontalBarChart } from '../../../shared/components/horizontal-bar-chart/horizontal-bar-chart';
-import { formatDate } from '../../../shared/utilities/date';
-import { buildCsvContent, downloadCsv } from '../../../shared/utilities/csv-exporter';
 import { SalesService } from '../../services/sales-service';
 import { Filter } from '../../shared/components/filter/filter';
 import { FilterCriteria } from '../../shared/models/filter-model';
+import { ReportExporter } from '../../services/report-exporter';
 
 @Component({
   imports: [FormsModule, PageHeader, Filter, CategoryMatrixChart, HorizontalBarChart],
@@ -17,6 +16,7 @@ import { FilterCriteria } from '../../shared/models/filter-model';
 })
 export class ProductCategories {
   private salesService = inject(SalesService);
+  private reportExportService = inject(ReportExporter);
 
   //Page Header Component Info
   pageHeaderTitle = "Product Categories";
@@ -50,56 +50,33 @@ export class ProductCategories {
 
 
 
-  // --- CSV Export Methods ---
+  // CSV Export Methods
 
-  /**
-   * Generates and downloads a consolidated CSV report containing Active Filters,
-   * Category Performance Breakdown, and Product Sales Performance Breakdown.
-   */
   exportConsolidatedReport(): void {
     const categorySales = this.salesCategoryData();
     const productSales = this.productSalesData().data;
     const filters = this.currentFilters();
 
-    const dateRangeLabel =
-      `${filters.startDate} to ${filters.endDate}`;
+    this.reportExportService.export({
+      reportTitle: 'PRODUCT CATEGORIES REPORT',
+      fileName: 'product_categories',
 
-    const rows: (string | number)[][] = [];
+      filters: {
+        'Time Range': `${filters.startDate} to ${filters.endDate}`
+      },
 
-    // Metadata Header
-    rows.push(['PRODUCT CATEGORIES REPORT']);
-    rows.push(['Generated Date', new Date().toISOString().split('T')[0]]);
-    rows.push(['Time Range', dateRangeLabel]);
-    rows.push([]);
-
-    // Category Sales Breakdown
-    rows.push(['--- CATEGORY PERFORMANCE BREAKDOWN ---']);
-    if (categorySales.length > 0) {
-      const headers = Object.keys(categorySales[0]);
-      rows.push(headers);
-      categorySales.forEach((item: Record<string, any>) => {
-        rows.push(headers.map(key => item[key]));
-      });
-    } else {
-      rows.push(['No category sales data available']);
-    }
-    rows.push([]);
-
-    // Product Sales Breakdown
-    rows.push(['--- PRODUCT SALES BREAKDOWN ---']);
-    if (productSales.length > 0) {
-      const prodHeaders = Object.keys(productSales[0]);
-      rows.push(prodHeaders);
-      productSales.forEach((item: Record<string, any>) => {
-        rows.push(prodHeaders.map(key => item[key]));
-      });
-    } else {
-      rows.push(['No product sales data available']);
-    }
-
-    const csvContent = buildCsvContent(rows);
-    const fileName = `product_categories_${formatDate(new Date())}.csv`;
-
-    downloadCsv(csvContent, fileName);
+      sections: [
+        {
+          title: 'CATEGORY PERFORMANCE BREAKDOWN',
+          data: categorySales,
+          emptyMessage: 'No category sales data available'
+        },
+        {
+          title: 'PRODUCT SALES BREAKDOWN',
+          data: productSales,
+          emptyMessage: 'No product sales data available'
+        }
+      ]
+    });
   }
 }
