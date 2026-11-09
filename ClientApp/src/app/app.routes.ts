@@ -6,6 +6,7 @@ import { ProductCategories } from './pages/components/product-categories/product
 import { AddData } from './pages/components/add-data/add-data';
 import { DataExploration } from './pages/components/data-exploration/components/data-exploration';
 import { NotFound } from './pages/components/not-found/not-found';
+import { Settings } from './pages/components/settings/settings';
 
 export const routes: Routes = [
     {
@@ -35,6 +36,10 @@ export const routes: Routes = [
     {
         path: 'data-explorer/:type',
         component: DataExploration
+    },
+    {
+        path: 'settings',
+        component: Settings
     },
     {
         path: '**',
