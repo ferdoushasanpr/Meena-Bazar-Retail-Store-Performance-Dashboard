@@ -1,43 +1,65 @@
-<aside class="sidebar">
-    <!-- Brand / Header -->
+<!-- Mobile Header -->
+<div class="mobile-header">
+    <button class="menu-trigger" (click)="toggleSidebar()" aria-label="Toggle navigation">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+</div>
+
+<!-- Mobile Overlay -->
+<div class="sidebar-overlay" [class.visible]="isSidebarOpen" (click)="closeSidebar()">
+</div>
+
+<aside class="sidebar" [class.sidebar-open]="isSidebarOpen" [class.sidebar-collapsed]="isCollapsed">
+
+    <!-- Brand -->
     <div class="brand-container">
         <div class="logo-box">
             <i class="fa-solid fa-chart-line logo-icon"></i>
         </div>
+
         <span class="brand-name">Meena Bazar Retail Store</span>
+
+        <!-- Desktop Collapse Button -->
+        <button class="collapse-btn" (click)="toggleCollapse()" aria-label="Collapse sidebar">
+            <i class="fa-solid fa-angles-left"></i>
+        </button>
+
+        <!-- Mobile Close Button -->
+        <button class="mobile-close" (click)="closeSidebar()" aria-label="Close navigation">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
     </div>
 
-    <!-- Navigation Groups -->
-
+    <!-- Navigation -->
     <nav class="nav-container">
         @for (section of menuSections; track section.sectionTitle) {
         <div class="menu-section">
-            <h3 class="section-title">{{ section.sectionTitle }}</h3>
+            <h3 class="section-title">
+                {{ section.sectionTitle }}
+            </h3>
 
             <ul class="menu-list">
                 @for (item of section.items; track item.title) {
                 <li>
                     @if (item.children) {
-                    <!-- Parent Dropdown -->
                     <button class="nav-item dropdown-toggle"
                         [class.active]="item.children.some(child => child.title === activeItem)"
                         (click)="toggleSubmenu(item)">
 
                         <i [class]="item.icon + ' nav-icon'"></i>
-
                         <span class="nav-text">{{ item.title }}</span>
 
                         <i class="fa-solid fa-chevron-down dropdown-arrow" [class.rotated]="item.expanded">
                         </i>
                     </button>
 
-                    <!-- Dropdown Children -->
                     @if (item.expanded) {
                     <ul class="submenu">
                         @for (child of item.children; track child.title) {
                         <li>
                             <a [routerLink]="child.route" class="nav-item submenu-item"
-                                [class.active]="child.title === activeItem" (click)="selectItem(child.title)">
+                                [class.active]="child.title === activeItem"
+                                (click)="selectItem(child.title); closeSidebar()">
 
                                 <i [class]="child.icon + ' nav-icon'"></i>
                                 <span class="nav-text">{{ child.title }}</span>
@@ -47,9 +69,8 @@
                     </ul>
                     }
                     } @else {
-                    <!-- Normal Menu Item -->
                     <a [routerLink]="item.route" class="nav-item" [class.active]="item.title === activeItem"
-                        (click)="selectItem(item.title)">
+                        (click)="selectItem(item.title); closeSidebar()">
 
                         <i [class]="item.icon + ' nav-icon'"></i>
                         <span class="nav-text">{{ item.title }}</span>
@@ -62,11 +83,11 @@
         }
     </nav>
 
-
-    <!-- User Profile Section -->
+    <!-- User Profile -->
     <div class="user-profile">
         <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=100"
             alt="User Avatar" class="avatar" />
+
         <div class="user-info">
             <span class="user-name">Marcus Vance</span>
         </div>

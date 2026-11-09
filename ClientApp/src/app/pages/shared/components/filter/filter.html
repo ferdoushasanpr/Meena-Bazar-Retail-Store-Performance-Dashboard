@@ -1,48 +1,68 @@
 <section class="filter-bar">
     <div class="time-pills">
         @for (range of timeRanges; track range) {
-        <button class="pill-btn" [class.active]="selectedTimeRange === range" (click)="setTimeRange(range)">
+        <button type="button" class="pill-btn" [class.active]="selectedTimeRange === range"
+            (click)="setTimeRange(range)">
+
             {{ range }}
+
         </button>
         }
     </div>
 
+    <!-- Custom Date Range -->
     @if (selectedTimeRange === 'Select Range') {
     <div class="custom-date-range">
+
         <label>
-            Start:
+            <span>Start:</span>
+
             <input type="date" [ngModel]="customStartDate()"
                 (ngModelChange)="customStartDate.set($event); onCustomDateChange()" />
         </label>
 
         <label>
-            End:
+            <span>End:</span>
+
             <input type="date" [ngModel]="customEndDate()"
                 (ngModelChange)="customEndDate.set($event); onCustomDateChange()" />
         </label>
+
     </div>
     }
 
+    <!-- Filter Controls -->
     <div class="filter-controls">
+
         @if (isStoreFilter()) {
         <div class="store-filter">
+
             <i class="fa-solid fa-store"></i>
 
-            <select [ngModel]="selectedStore()" (ngModelChange)="onStoreChange($event)">
+            <select [ngModel]="selectedStore()" (ngModelChange)="onStoreChange($event)" aria-label="Select store">
+
                 <option value="All Stores">All Stores</option>
+
                 @for (store of storesArr(); track $index) {
                 <option [value]="store.store_id">
                     {{ store.store_name }} ({{ store.city }})
                 </option>
                 }
+
             </select>
+
+            <i class="fa-solid fa-chevron-down select-arrow"></i>
+
         </div>
         }
 
-        <button class="btn-text" (click)="onResetFilter()">
+        <button type="button" class="btn-text" (click)="onResetFilter()">
+
             <i class="fa-solid fa-arrow-rotate-left"></i>
-            Reset Filters
+            <span>Reset Filters</span>
+
         </button>
 
     </div>
+
 </section>

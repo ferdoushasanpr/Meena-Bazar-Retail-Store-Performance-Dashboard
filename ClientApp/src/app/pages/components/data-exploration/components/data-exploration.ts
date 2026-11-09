@@ -1,16 +1,16 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs';
-import { PageHeader } from '../../../layout/page-header/page-header';
-import { DynamicTable } from '../../../shared/components/dynamic-table/dynamic-table';
-import { ModalForm } from '../../../shared/components/modal-form/modal-form';
-import { DialogBox } from '../../../shared/components/dialog-box/dialog-box';
-import { EntityType, UpdatePayload } from '../../../core/models/props';
-import { CustomerService } from '../../services/customer-service';
-import { ProductService } from '../../services/product-service';
-import { StoreService } from '../../services/store-service';
-import { OrderService } from '../../services/order-service';
-import { TransactionService } from '../../services/transaction-service';
+import { PageHeader } from '../../../../layout/page-header/page-header';
+import { DynamicTable } from '../../../../shared/components/dynamic-table/dynamic-table';
+import { ModalForm } from '../../../../shared/components/modal-form/modal-form';
+import { DialogBox } from '../../../../shared/components/dialog-box/dialog-box';
+import { EntityType, UpdatePayload } from '../../../../core/models/props';
+import { CustomerService } from '../services/customer-service';
+import { ProductService } from '../services/product-service';
+import { StoreService } from '../services/store-service';
+import { OrderService } from '../services/order-service';
+import { TransactionService } from '../services/transaction-service';
 
 @Component({
   imports: [PageHeader, DynamicTable, ModalForm, DialogBox],

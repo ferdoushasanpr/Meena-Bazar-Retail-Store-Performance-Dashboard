@@ -1,0 +1,210 @@
+:host {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    box-sizing: border-box;
+    overflow: hidden;
+
+    background-color: #0b1320;
+    color: #f1f5f9;
+
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI',
+        Roboto, Helvetica, Arial, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+.not-found-container {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 12px;
+    overflow: auto;
+}
+
+.not-found-card {
+    background: #131e32;
+    border: 1px solid #1e293b;
+    border-radius: 16px;
+
+    width: 100%;
+    max-width: 480px;
+
+    padding: 24px;
+
+    text-align: center;
+
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.4);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    animation: slideUp 0.3s ease-out;
+}
+
+.icon-wrapper {
+    width: 60px;
+    height: 60px;
+    min-width: 60px;
+
+    background: rgba(99, 102, 241, 0.12);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 26px;
+    color: #818cf8;
+
+    margin-bottom: 14px;
+}
+
+.error-code {
+    margin: 0;
+    font-size: clamp(48px, 8vw, 68px);
+    font-weight: 800;
+    letter-spacing: -2px;
+
+    background: linear-gradient(180deg, #ffffff 0%, #818cf8 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    line-height: 1;
+}
+
+.error-title {
+    margin: 12px 0 6px;
+    font-size: 19px;
+    font-weight: 600;
+    color: #f8fafc;
+}
+
+.error-message {
+    margin: 0 0 20px;
+    max-width: 380px;
+
+    font-size: 13px;
+    color: #94a3b8;
+    line-height: 1.5;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.btn {
+    min-height: 40px;
+    padding: 9px 16px;
+
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    text-decoration: none;
+    white-space: nowrap;
+    border: none;
+
+    transition: all 0.2s ease;
+}
+
+.btn-primary {
+    background: #6366f1;
+    color: #ffffff;
+}
+
+.btn-primary:hover {
+    background: #4f46e5;
+}
+
+.btn-ghost {
+    background: #1e293b;
+    color: #94a3b8;
+    border: 1px solid #334155;
+}
+
+.btn-ghost:hover {
+    background: #334155;
+    color: #ffffff;
+}
+
+@media (max-width: 576px) {
+    .not-found-container {
+        padding: 10px;
+    }
+
+    .not-found-card {
+        padding: 22px 16px;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .btn {
+        width: 100%;
+        min-height: 42px;
+    }
+}
+
+@media (max-width: 360px) {
+    .not-found-card {
+        padding: 18px 12px;
+    }
+
+    .error-code {
+        font-size: 52px;
+    }
+
+    .error-title {
+        font-size: 17px;
+    }
+
+    .error-message {
+        font-size: 12px;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .not-found-card {
+        animation: none;
+    }
+}

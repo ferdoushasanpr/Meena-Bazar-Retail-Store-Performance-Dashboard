@@ -1,6 +1,6 @@
 import { inject, Service, signal } from '@angular/core';
-import { OperationsService } from '../../core/services/operations-service';
-import { TransactionDataResponse } from '../../core/models/transaction';
+import { OperationsService } from '../../../../core/services/operations-service';
+import { TransactionDataResponse } from '../../../../core/models/transaction';
 
 @Service()
 export class TransactionService {

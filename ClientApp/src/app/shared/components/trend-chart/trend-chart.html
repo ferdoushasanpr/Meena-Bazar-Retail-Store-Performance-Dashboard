@@ -1,26 +1,36 @@
 <div class="chart-card">
+    <!-- Chart Header -->
     <div class="chart-header">
-        <div>
-            <h2 class="chart-title">Sales Performance Trend</h2>
+        <div class="chart-heading">
+            <h2 class="chart-title">
+                Sales Performance Trend
+            </h2>
             <p class="chart-subtitle">
-                {{ selectedViewMode === 'Daily' ? 'Daily sales revenue over time'
-                : selectedViewMode === 'Monthly' ? 'Monthly sales revenue over time'
-                : selectedViewMode === 'Yearly' ? 'Yearly sales revenue over time'
+                {{ selectedViewMode === 'Daily'
+                ? 'Daily sales revenue over time'
+                : selectedViewMode === 'Monthly'
+                ? 'Monthly sales revenue over time'
+                : selectedViewMode === 'Yearly'
+                ? 'Yearly sales revenue over time'
                 : 'Daily sales breakdown by store' }}
             </p>
         </div>
 
+        <!-- Chart Controls -->
         @if (showControls()) {
         <div class="chart-controls">
             <div class="toggle-group">
-                <button class="toggle-btn" [class.active]="selectedViewMode === 'Daily'" (click)="setViewMode('Daily')">
+                <button type="button" class="toggle-btn" [class.active]="selectedViewMode === 'Daily'"
+                    (click)="setViewMode('Daily')">
                     Daily
                 </button>
-                <button class="toggle-btn" [class.active]="selectedViewMode === 'Monthly'"
+
+                <button type="button" class="toggle-btn" [class.active]="selectedViewMode === 'Monthly'"
                     (click)="setViewMode('Monthly')">
                     Monthly
                 </button>
-                <button class="toggle-btn" [class.active]="selectedViewMode === 'Yearly'"
+
+                <button type="button" class="toggle-btn" [class.active]="selectedViewMode === 'Yearly'"
                     (click)="setViewMode('Yearly')">
                     Yearly
                 </button>
@@ -29,17 +39,20 @@
         }
     </div>
 
-    <!-- Trend Chart -->
+    <!-- Chart Canvas -->
     <div class="canvas-container">
         <canvas #trendChartCanvas></canvas>
     </div>
 
-    <!-- Chart Legend Footer -->
+    <!-- Chart Footer -->
     <div class="chart-legend-footer">
         <div class="legend-info">
-            {{ selectedViewMode === 'Daily' ? dailyData().length + ' days of sales data'
-            : selectedViewMode === 'Monthly' ? monthlyData().length + ' months of sales data'
-            : selectedViewMode === 'Yearly' ? yearlyData().length + ' years of sales data'
+            {{ selectedViewMode === 'Daily'
+            ? dailyData().length + ' days of sales data'
+            : selectedViewMode === 'Monthly'
+            ? monthlyData().length + ' months of sales data'
+            : selectedViewMode === 'Yearly'
+            ? yearlyData().length + ' years of sales data'
             : dailyStoreData().length + ' store records' }}
         </div>
     </div>

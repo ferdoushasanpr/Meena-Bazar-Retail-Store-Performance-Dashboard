@@ -1,19 +1,142 @@
 :host {
     display: block;
+    width: 100%;
+    min-width: 0;
+
     background-color: #0b1320;
     color: #f1f5f9;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    min-height: 100vh;
+
+    font-family: -apple-system, BlinkMacSystemFont,
+        'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
     box-sizing: border-box;
 }
 
+*,
+*::before,
+*::after {
+    box-sizing: inherit;
+}
+
 .container {
+    width: 100%;
+    max-width: 1800px;
+
+    margin: 0 auto;
+
     padding: 24px 32px;
+
+    min-width: 0;
 }
 
 .charts-section {
     display: grid;
-    grid-template-columns: 1fr;
+
+    grid-template-columns: minmax(0, 1fr);
+
     gap: 16px;
-    align-items: start;
+
+    align-items: stretch;
+
+    width: 100%;
+    min-width: 0;
+}
+
+.charts-section>app-category-matrix-chart,
+.charts-section>app-horizontal-bar-chart {
+    display: block;
+    width: 100%;
+    min-width: 0;
+}
+
+@media (min-width: 1600px) {
+
+    .container {
+        padding: 32px 40px;
+    }
+
+    .charts-section {
+        gap: 24px;
+    }
+}
+
+@media (max-width: 1599px) {
+
+    .container {
+        padding: 24px 28px;
+    }
+
+}
+
+@media (max-width: 1199px) {
+
+    .container {
+        padding: 22px 24px;
+    }
+
+    .charts-section {
+        gap: 16px;
+    }
+
+}
+
+@media (max-width: 1023px) {
+
+    .container {
+        padding: 20px;
+    }
+
+    .charts-section {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 16px;
+    }
+
+}
+
+@media (max-width: 767px) {
+
+    .container {
+        padding: 16px;
+    }
+
+    .charts-section {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 14px;
+    }
+
+}
+
+@media (max-width: 480px) {
+
+    .container {
+        padding: 12px;
+    }
+
+    .charts-section {
+        gap: 12px;
+    }
+
+}
+
+@media (max-width: 360px) {
+
+    .container {
+        padding: 10px;
+    }
+
+    .charts-section {
+        gap: 10px;
+    }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+    }
+
 }

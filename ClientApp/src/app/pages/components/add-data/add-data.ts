@@ -2,9 +2,9 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PageHeader } from '../../../layout/page-header/page-header';
-import { CustomerService } from '../../services/customer-service';
-import { ProductService } from '../../services/product-service';
-import { StoreService } from '../../services/store-service';
+import { CustomerService } from '../data-exploration/services/customer-service';
+import { ProductService } from '../data-exploration/services/product-service';
+import { StoreService } from '../data-exploration/services/store-service';
 
 export type DataTab = 'Customer' | 'Product' | 'Store';
 

@@ -1,43 +1,39 @@
 <header class="topbar-wrapper">
-    <!-- Top Navigation Bar -->
     <div class="topbar-row">
-        <!-- Left: Breadcrumbs & Status -->
         <div class="left-group">
-            <nav class="breadcrumb">
+            <nav class="breadcrumb" aria-label="Breadcrumb">
                 <span class="breadcrumb-parent">Overview</span>
-                @for (path of pathSegments(); track i; let i = $index) {
+                @for (path of pathSegments(); track $index) {
                 <span class="breadcrumb-divider">/</span>
-                <a [routerLink]="'/' + path" class="breadcrumb-current">
+                <a [routerLink]="'/' + path" class="breadcrumb-current" [attr.aria-current]="$last ? 'page' : null">
+
                     {{ path.replaceAll('-', ' ') | titlecase }}
                 </a>
                 }
             </nav>
 
             <div class="vertical-divider"></div>
-
             <div class="status-indicator">
                 <span class="blue-dot"></span>
                 <span class="status-text">Updated 2m ago</span>
             </div>
         </div>
 
-        <!-- Right: Filters & Action Controls -->
+        <!-- Right: Actions -->
         <div class="right-group">
-            <!-- Notification Bell -->
+            <!-- Notifications -->
             <button class="icon-btn" type="button" aria-label="Notifications">
                 <i class="fa-regular fa-bell"></i>
                 <span class="bell-dot"></span>
             </button>
-
-            <!-- Refresh Icon -->
+            <!-- Refresh -->
             <button class="icon-btn" type="button" aria-label="Refresh" (click)="onRefresh()">
                 <i class="fa-solid fa-rotate-right"></i>
             </button>
-
-            <!-- Export CSV Button -->
+            <!-- Export -->
             <button class="btn-action" type="button" (click)="onExportCSV()">
                 <i class="fa-solid fa-download icon-left"></i>
-                <span>Export CSV</span>
+                <span class="export-text">Export CSV</span>
             </button>
         </div>
     </div>

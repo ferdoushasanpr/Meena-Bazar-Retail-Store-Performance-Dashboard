@@ -1,34 +1,37 @@
 <div class="dashboard-container">
-    <!-- Top Navigation Header -->
+    <!-- Page Header -->
     <app-page-header [title]="pageHeaderTitle" [subtitle]="pageHeaderSubtitle"
-        (exportReport)="exportConsolidatedReport()" />
+        (exportReport)="exportConsolidatedReport()">
+    </app-page-header>
 
-    <!-- Metric Cards Grid (4 Columns) -->
+    <!-- Metric Cards -->
     <section class="metrics-grid">
-        <!-- Card 1: Total Sales -->
-        <app-metric-card [card]="totalSalesCard()" />
+        <app-metric-card class="metric-item" [card]="totalSalesCard()">
+        </app-metric-card>
 
-        <!-- Card 2: Transactions -->
-        <app-metric-card [card]="transactionsCard()" />
+        <app-metric-card class="metric-item" [card]="transactionsCard()">
+        </app-metric-card>
 
-        <!-- Card 3: Avg. Basket Value -->
-        <app-metric-card [card]="averageBasketCard()" />
+        <app-metric-card class="metric-item" [card]="averageBasketCard()">
+        </app-metric-card>
 
-        <!-- Card 4: Avg Daily Sales -->
-        <app-metric-card [card]="avgDailySalesCard()" />
+        <app-metric-card class="metric-item" [card]="avgDailySalesCard()">
+        </app-metric-card>
     </section>
 
-    <!-- Charts Layout (2 Columns) -->
-
+    <!-- Charts Section -->
     <section class="charts-section">
-        <!-- Left column: Trend chart -->
-        <app-trend-chart [dailyData]="dailySalesData()" [monthlyData]="monthlySalesData()"
-            [yearlyData]="yearlySalesData()" />
+        <!-- Trend Chart -->
+        <app-trend-chart class="trend-chart" [dailyData]="dailySalesData()" [monthlyData]="monthlySalesData()"
+            [yearlyData]="yearlySalesData()">
+        </app-trend-chart>
 
-        <!-- Left column: Bar chart below trend chart -->
-        <app-horizontal-bar-chart [data]="brandSalesData()" labelKey="brand" salesKey="total_Sales" />
+        <!-- Brand Sales Chart -->
+        <app-horizontal-bar-chart class="bar-chart" [data]="brandSalesData()" labelKey="brand" salesKey="total_Sales">
+        </app-horizontal-bar-chart>
 
-        <!-- Right column: Donut chart spanning both rows -->
-        <app-donut-chart class="donut-chart" [data]="salesCategoryData()" [salesData]="salesKpiData()" />
+        <!-- Category Donut Chart -->
+        <app-donut-chart class="donut-chart" [data]="salesCategoryData()" [salesData]="salesKpiData()">
+        </app-donut-chart>
     </section>
 </div>
