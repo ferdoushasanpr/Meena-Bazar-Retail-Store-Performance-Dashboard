@@ -24,6 +24,9 @@ interface MenuSection {
 export class Sidebar {
   activeItem: string = 'Dashboard';
 
+  isSidebarOpen = false;
+  isCollapsed = false;
+
   menuSections: MenuSection[] = [
     {
       sectionTitle: 'OVERVIEW',
@@ -87,5 +90,17 @@ export class Sidebar {
 
   selectItem(itemTitle: string): void {
     this.activeItem = itemTitle;
+  }
+
+  toggleSidebar(): void {
+    this.isSidebarOpen = !this.isSidebarOpen;
+  }
+
+  closeSidebar(): void {
+    this.isSidebarOpen = false;
+  }
+
+  toggleCollapse(): void {
+    this.isCollapsed = !this.isCollapsed;
   }
 }

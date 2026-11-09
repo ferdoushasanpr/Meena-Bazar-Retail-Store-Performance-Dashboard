@@ -1,77 +1,95 @@
-/* Top Performing Stores Card Base */
 :host {
     display: block;
+    width: 100%;
     height: 100%;
+
+    min-width: 0;
     min-height: 0;
+
+    box-sizing: border-box;
 }
 
-.chart-card {
+*,
+*::before,
+*::after {
     box-sizing: border-box;
-    height: auto;
+}
+
+.chart-card,
+.stores-card {
+    width: 100%;
+    height: 100%;
+
+    min-width: 0;
     min-height: 0;
+
     background: #131e32;
+
     border: 1px solid #1e2d4a;
     border-radius: 12px;
-    padding: 20px;
+
+    padding: 22px;
+
     display: flex;
     flex-direction: column;
+
+    overflow: hidden;
 }
 
-.chart-header {
+.stores-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 14px;
+
+    gap: 16px;
+
+    margin-bottom: 22px;
+
+    min-width: 0;
+}
+
+.header-left {
+    flex: 1;
+    min-width: 0;
 }
 
 .chart-title {
     font-size: 17px;
     font-weight: 700;
+
+    line-height: 1.4;
+
     color: #ffffff;
+
     margin: 0;
+
+    overflow-wrap: anywhere;
 }
 
 .chart-subtitle {
     font-size: 12px;
+    line-height: 1.5;
+
     color: #64748b;
-    margin: 4px 0 0 0;
-}
 
-.chart-controls {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.stores-card {
-    box-sizing: border-box;
-    margin-top: 0;
-    height: 100%;
-    min-height: 0;
-    background: #131e32;
-    border: 1px solid #1e2d4a;
-    border-radius: 12px;
-    padding: 22px;
-    display: flex;
-    flex-direction: column;
-}
-
-/* Header Styles */
-.stores-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 20px;
+    margin: 4px 0 0;
 }
 
 .avg-badge {
     background: #0f172a;
+
     border: 1px solid #1e293b;
-    padding: 6px 14px;
     border-radius: 8px;
+
+    padding: 7px 12px;
+
     font-size: 13px;
+    font-family: monospace;
+
     color: #94a3b8;
-    font-family: monospace, monospace;
+
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .avg-badge strong {
@@ -79,63 +97,102 @@
     font-weight: 600;
 }
 
-/* Store List Container */
 .stores-list {
     display: flex;
     flex-direction: column;
-    gap: 18px;
-    margin-bottom: 24px;
+
+    gap: 19px;
+
+    width: 100%;
+    min-width: 0;
+
+    flex: 1 1 auto;
+
+    margin-bottom: 20px;
 }
 
 .store-item {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+
+    gap: 9px;
+
+    width: 100%;
+    min-width: 0;
 }
 
-/* Store Row Metadata */
 .store-info-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
+
+    gap: 12px;
+
+    width: 100%;
+    min-width: 0;
+
     font-size: 14px;
 }
 
 .store-meta {
     display: flex;
     align-items: center;
+
     gap: 12px;
+
+    flex: 1;
+    min-width: 0;
 }
 
 .store-rank {
     color: #64748b;
+
     font-weight: 700;
     font-size: 13px;
-    min-width: 20px;
+
+    min-width: 22px;
+    flex-shrink: 0;
 }
 
 .store-name {
     color: #ffffff;
+
     font-weight: 600;
+    font-size: 13px;
+
     letter-spacing: 0.2px;
+
+    min-width: 0;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
-/* Store Row Metrics */
 .store-metrics {
     display: flex;
     align-items: center;
-    gap: 16px;
+    justify-content: flex-end;
+
+    gap: 14px;
+
+    flex-shrink: 0;
+
     font-size: 13px;
 }
 
 .metric-txns {
     color: #64748b;
+
     font-family: inherit;
+    white-space: nowrap;
 }
 
 .metric-variance {
     color: #38bdf8;
+
     font-weight: 700;
+
     min-width: 55px;
     text-align: right;
 }
@@ -146,133 +203,478 @@
 
 .metric-sales {
     color: #ffffff;
+
     font-weight: 700;
-    min-width: 70px;
+
+    min-width: 75px;
+
     text-align: right;
-    letter-spacing: 0.3px;
+
+    letter-spacing: 0.2px;
+    white-space: nowrap;
 }
 
-/* Dynamic Progress Bar */
 .store-progress-track {
-    background: #0f172a;
-    height: 6px;
-    border-radius: 3px;
-    overflow: hidden;
     width: 100%;
+
+    height: 7px;
+    min-height: 7px;
+
+    background: #0f172a;
+
+    border-radius: 10px;
+
+    overflow: hidden;
 }
 
 .store-progress-fill {
     height: 100%;
-    border-radius: 3px;
+
+    border-radius: 10px;
+
     transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Bar Gradient Variants matching Image */
 .bar-purple {
-    background: linear-gradient(90deg, #6366f1, #818cf8);
+    background: linear-gradient(90deg,
+            #6366f1,
+            #818cf8);
 }
 
 .bar-cyan {
-    background: linear-gradient(90deg, #0284c7, #38bdf8);
+    background: linear-gradient(90deg,
+            #0284c7,
+            #38bdf8);
 }
 
 .bar-slate {
-    background: linear-gradient(90deg, #334155, #475569);
+    background: linear-gradient(90deg,
+            #334155,
+            #475569);
 }
 
-/* Footer Section */
 .stores-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
+
+    flex-wrap: wrap;
+
+    gap: 12px;
+
+    width: 100%;
+    min-width: 0;
+
     padding-top: 16px;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-    font-size: 13px;
-}
-
-.footer-count {
-    color: #64748b;
-}
-
-.footer-link-btn {
-    background: none;
-    border: none;
-    color: #a5b4fc;
-    font-weight: 600;
-    font-size: 13px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: color 0.2s ease, transform 0.2s ease;
-    padding: 0;
-}
-
-.footer-link-btn:hover {
-    color: #c7d2fe;
-    transform: translateX(2px);
-}
-
-/* Hidden canvas container for chart.js instance */
-.chart-canvas-hidden {
-    display: none;
-}
-
-/* Footer & Pagination Styles */
-.stores-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 16px;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-    font-size: 13px;
     margin-top: auto;
+
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+
+    font-size: 13px;
 }
 
 .footer-count {
     color: #64748b;
+
+    line-height: 1.5;
 }
 
 .pagination-controls {
     display: flex;
     align-items: center;
-    gap: 12px;
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    flex-wrap: nowrap;
 }
 
 .pagination-btn {
     background: #0f172a;
+
     border: 1px solid #1e293b;
-    color: #a5b4fc;
-    padding: 5px 12px;
     border-radius: 6px;
+
+    color: #a5b4fc;
+
+    padding: 6px 12px;
+
     font-size: 12px;
     font-weight: 600;
+
     cursor: pointer;
-    transition: all 0.2s ease;
+
     display: inline-flex;
     align-items: center;
     justify-content: center;
+
+    white-space: nowrap;
+
+    transition: all 0.2s ease;
 }
 
 .pagination-btn:hover:not(:disabled) {
     background: #1e293b;
+
     color: #ffffff;
     border-color: #38bdf8;
 }
 
 .pagination-btn:disabled {
     opacity: 0.4;
+
     cursor: not-allowed;
+
     color: #64748b;
     border-color: #1e293b;
 }
 
 .page-indicator {
     color: #64748b;
+
     font-size: 12px;
+    white-space: nowrap;
 }
 
 .page-indicator strong {
     color: #cbd5e1;
     font-weight: 600;
+}
+
+.chart-canvas-hidden {
+    display: none !important;
+}
+
+@media (min-width: 1440px) {
+
+    .stores-card {
+        padding: 24px;
+    }
+
+    .chart-title {
+        font-size: 19px;
+    }
+
+    .chart-subtitle {
+        font-size: 13px;
+    }
+
+    .stores-list {
+        gap: 22px;
+    }
+
+    .store-name {
+        font-size: 14px;
+    }
+
+    .store-metrics {
+        font-size: 14px;
+    }
+
+    .store-progress-track {
+        height: 8px;
+    }
+}
+
+@media (max-width: 1439px) {
+
+    .stores-card {
+        padding: 18px;
+    }
+
+    .stores-list {
+        gap: 17px;
+    }
+
+    .stores-header {
+        margin-bottom: 18px;
+    }
+}
+
+@media (max-width: 1023px) {
+
+    .stores-card {
+        min-height: 300px;
+        padding: 17px;
+    }
+
+    .stores-header {
+        gap: 12px;
+    }
+
+    .chart-title {
+        font-size: 16px;
+    }
+
+    .avg-badge {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+
+    .stores-list {
+        gap: 18px;
+    }
+
+    .store-info-row {
+        gap: 8px;
+    }
+
+    .store-meta {
+        gap: 9px;
+    }
+
+    .store-metrics {
+        gap: 10px;
+    }
+}
+
+@media (max-width: 767px) {
+
+    .stores-card {
+        height: auto;
+        min-height: 300px;
+
+        padding: 15px;
+
+        border-radius: 10px;
+    }
+
+    .stores-header {
+        flex-wrap: wrap;
+        align-items: center;
+
+        gap: 12px;
+
+        margin-bottom: 20px;
+    }
+
+    .header-left {
+        flex-basis: 100%;
+    }
+
+    .chart-title {
+        font-size: 16px;
+    }
+
+    .chart-subtitle {
+        font-size: 11px;
+    }
+
+    .avg-badge {
+        align-self: flex-start;
+
+        font-size: 12px;
+        padding: 6px 10px;
+    }
+
+    .stores-list {
+        gap: 18px;
+        margin-bottom: 18px;
+    }
+
+    .store-info-row {
+        gap: 8px;
+    }
+
+    .store-meta {
+        gap: 8px;
+    }
+
+    .store-rank {
+        font-size: 12px;
+        min-width: 20px;
+    }
+
+    .store-name {
+        font-size: 12px;
+    }
+
+    .store-metrics {
+        gap: 9px;
+        font-size: 12px;
+    }
+
+    .metric-txns {
+        font-size: 11px;
+    }
+
+    .metric-sales {
+        min-width: 65px;
+        font-size: 12px;
+    }
+
+    .store-progress-track {
+        height: 6px;
+        min-height: 6px;
+    }
+
+    .stores-footer {
+        padding-top: 13px;
+        gap: 12px;
+    }
+
+    .footer-count {
+        font-size: 11px;
+    }
+
+    .pagination-controls {
+        gap: 8px;
+    }
+
+    .pagination-btn {
+        padding: 6px 9px;
+        font-size: 11px;
+    }
+
+    .page-indicator {
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .stores-card {
+        padding: 12px;
+    }
+
+    .stores-header {
+        gap: 10px;
+        margin-bottom: 18px;
+    }
+
+    .chart-title {
+        font-size: 15px;
+    }
+
+    .avg-badge {
+        font-size: 11px;
+    }
+
+    .stores-list {
+        gap: 16px;
+    }
+
+    .store-info-row {
+        align-items: flex-start;
+        gap: 6px;
+    }
+
+    .store-meta {
+        gap: 6px;
+    }
+
+    .store-rank {
+        min-width: 18px;
+        font-size: 11px;
+    }
+
+    .store-name {
+        font-size: 11px;
+    }
+
+    .store-metrics {
+        gap: 7px;
+        font-size: 11px;
+    }
+
+    .metric-txns {
+        font-size: 10px;
+    }
+
+    .metric-sales {
+        min-width: 58px;
+        font-size: 11px;
+    }
+
+    .stores-footer {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    .footer-count {
+        text-align: center;
+    }
+
+    .pagination-controls {
+        justify-content: center;
+        width: 100%;
+    }
+
+    .pagination-btn {
+        padding: 7px 12px;
+    }
+}
+
+@media (max-width: 360px) {
+
+    .stores-card {
+        padding: 10px;
+    }
+
+    .chart-title {
+        font-size: 14px;
+    }
+
+    .chart-subtitle {
+        font-size: 10px;
+    }
+
+    .avg-badge {
+        padding: 5px 8px;
+        font-size: 10px;
+    }
+
+    .stores-list {
+        gap: 15px;
+    }
+
+    .store-info-row {
+        flex-wrap: wrap;
+        align-items: flex-start;
+    }
+
+    .store-meta {
+        flex: 1 1 100%;
+    }
+
+    .store-name {
+        font-size: 12px;
+    }
+
+    .store-metrics {
+        width: 100%;
+        justify-content: space-between;
+
+        padding-left: 24px;
+    }
+
+    .metric-sales {
+        min-width: auto;
+    }
+
+    .stores-footer {
+        gap: 10px;
+    }
+
+    .pagination-controls {
+        gap: 6px;
+    }
+
+    .pagination-btn {
+        padding: 6px 9px;
+        font-size: 10px;
+    }
+
+    .page-indicator {
+        font-size: 10px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .store-progress-fill,
+    .pagination-btn {
+        transition: none;
+    }
 }

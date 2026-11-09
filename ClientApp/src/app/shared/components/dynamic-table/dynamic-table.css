@@ -231,3 +231,176 @@
     opacity: 0.4;
     cursor: not-allowed;
 }
+
+
+/* Tablets and smaller laptops */
+@media screen and (max-width: 1024px) {
+    .table-header {
+        padding: 16px 20px;
+    }
+
+    .data-table th,
+    .data-table td {
+        padding: 11px 14px;
+    }
+
+    .table-search-input {
+        width: 210px;
+    }
+
+    .table-search-input:focus {
+        width: 240px;
+    }
+
+    .table-footer {
+        padding: 14px 20px;
+    }
+}
+
+/* Tablets and large mobile devices */
+@media screen and (max-width: 768px) {
+    .table-header {
+        flex-wrap: wrap;
+        gap: 14px;
+        padding: 16px;
+    }
+
+    .table-header>div:first-child {
+        width: 100%;
+    }
+
+    .table-search-container {
+        width: 100%;
+    }
+
+    .table-search-input,
+    .table-search-input:focus {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .data-table {
+        min-width: 700px;
+    }
+
+    .data-table th,
+    .data-table td {
+        padding: 11px 12px;
+    }
+
+    .table-footer {
+        flex-wrap: wrap;
+        gap: 12px;
+        padding: 14px 16px;
+    }
+
+    .pagination-info {
+        width: 100%;
+    }
+
+    .pagination-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .pagination-btn {
+        justify-content: center;
+        min-height: 36px;
+    }
+}
+
+/* Mobile devices */
+@media screen and (max-width: 480px) {
+    .table-card {
+        border-radius: 10px;
+    }
+
+    .table-header {
+        padding: 14px;
+        gap: 12px;
+    }
+
+    .table-title {
+        font-size: 15px;
+    }
+
+    .table-subtitle {
+        font-size: 11px;
+    }
+
+    .table-search-input,
+    .table-search-input:focus {
+        font-size: 12px;
+        padding: 10px 12px 10px 34px;
+    }
+
+    .data-table {
+        min-width: 650px;
+        font-size: 12px;
+    }
+
+    .data-table th {
+        font-size: 10px;
+        padding: 11px 10px;
+    }
+
+    .data-table td {
+        padding: 11px 10px;
+    }
+
+    .action-header,
+    .action-cell {
+        width: 55px;
+    }
+
+    .action-btn {
+        font-size: 13px;
+        padding: 7px 8px;
+    }
+
+    .table-footer {
+        padding: 12px 14px;
+        gap: 12px;
+    }
+
+    .pagination-info {
+        font-size: 11px;
+        line-height: 1.6;
+    }
+
+    .pagination-btn {
+        font-size: 11px;
+        padding: 8px 10px;
+        min-height: 36px;
+    }
+
+    .empty-state {
+        padding: 28px 16px !important;
+    }
+}
+
+/* Extra small mobile devices */
+@media screen and (max-width: 360px) {
+    .table-header {
+        padding: 12px;
+    }
+
+    .table-footer {
+        padding: 12px;
+    }
+
+    .pagination-btn {
+        padding: 7px 8px;
+        font-size: 10px;
+        gap: 4px;
+    }
+
+    .data-table {
+        min-width: 600px;
+    }
+}

@@ -1,12 +1,62 @@
 :host {
     display: block;
+    width: 100%;
+    min-width: 0;
+    min-height: 100%;
     background-color: #0b1320;
     color: #f1f5f9;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    min-height: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+        Helvetica, Arial, sans-serif;
+    box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
     box-sizing: border-box;
 }
 
 .container {
-    padding: 24px 32px;
+    width: 100%;
+    max-width: 1800px;
+    min-width: 0;
+    margin: 0 auto;
+    padding: clamp(14px, 2.5vw, 32px);
+}
+
+app-page-header,
+app-dynamic-table,
+app-modal-form,
+app-dialog-box {
+    display: block;
+    width: 100%;
+    min-width: 0;
+}
+
+app-dynamic-table {
+    overflow: hidden;
+}
+
+@media (max-width: 1024px) {
+    .container {
+        padding: 22px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 18px;
+    }
+}
+
+@media (max-width: 576px) {
+    .container {
+        padding: 12px;
+    }
+}
+
+@media (max-width: 360px) {
+    .container {
+        padding: 8px;
+    }
 }

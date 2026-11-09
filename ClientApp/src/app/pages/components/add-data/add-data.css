@@ -1,29 +1,41 @@
 :host {
     display: block;
+    width: 100%;
+    min-height: 100%;
     background-color: #0b1320;
     color: #f1f5f9;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    min-height: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+        Helvetica, Arial, sans-serif;
+    box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
     box-sizing: border-box;
 }
 
 .container {
-    padding: 24px 32px;
+    width: 100%;
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: clamp(16px, 3vw, 32px);
 }
 
-/* Tab Controls Bar */
 .tab-bar {
     display: flex;
+    width: fit-content;
+    max-width: 100%;
     margin-bottom: 24px;
     background: rgba(19, 30, 50, 0.7);
     padding: 8px;
     border-radius: 10px;
     border: 1px solid #1e293b;
-    width: fit-content;
 }
 
 .tab-pills {
     display: flex;
+    flex-wrap: wrap;
     gap: 6px;
     background: #0f172a;
     padding: 4px;
@@ -34,13 +46,15 @@
     background: transparent;
     border: none;
     color: #94a3b8;
-    padding: 8px 18px;
+    padding: 10px 18px;
     font-size: 13px;
     border-radius: 6px;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
+    white-space: nowrap;
     transition: all 0.2s ease;
 }
 
@@ -56,12 +70,13 @@
     box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
 }
 
-/* Form Card Container */
 .form-card {
+    width: 100%;
+    min-width: 0;
     background: #131e32;
     border: 1px solid #1e293b;
     border-radius: 12px;
-    padding: 28px 32px;
+    padding: clamp(18px, 3vw, 32px);
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
 }
 
@@ -73,7 +88,7 @@
 
 .form-header h3 {
     margin: 0;
-    font-size: 18px;
+    font-size: clamp(16px, 1.5vw, 18px);
     font-weight: 600;
     color: #f8fafc;
     display: flex;
@@ -86,28 +101,31 @@
 }
 
 .form-header p {
-    margin: 6px 0 0 0;
+    margin: 6px 0 0;
     font-size: 13px;
+    line-height: 1.6;
     color: #94a3b8;
 }
 
-/* Form Fields Layout */
 .data-form {
     display: flex;
     flex-direction: column;
     gap: 24px;
+    width: 100%;
 }
 
 .form-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 20px;
+    width: 100%;
 }
 
 .form-group {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 7px;
+    min-width: 0;
 }
 
 .form-group label {
@@ -119,11 +137,14 @@
 }
 
 .form-group input {
+    width: 100%;
+    min-width: 0;
+    min-height: 44px;
     background: #0f172a;
     border: 1px solid #334155;
     border-radius: 8px;
-    padding: 10px 14px;
-    font-size: 13px;
+    padding: 11px 14px;
+    font-size: 14px;
     color: #f8fafc;
     outline: none;
     transition: all 0.2s ease;
@@ -142,19 +163,21 @@
     font-size: 11px;
     color: #f87171;
     margin-top: 2px;
+    line-height: 1.5;
 }
 
-/* Form Action Buttons */
 .form-actions {
     display: flex;
     justify-content: flex-end;
     align-items: center;
+    flex-wrap: wrap;
     gap: 12px;
-    padding-top: 16px;
+    padding-top: 20px;
     border-top: 1px solid #1e293b;
 }
 
 .btn {
+    min-height: 42px;
     padding: 10px 20px;
     border-radius: 8px;
     font-size: 13px;
@@ -162,6 +185,7 @@
     cursor: pointer;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
     transition: all 0.2s ease;
     border: none;
@@ -186,4 +210,134 @@
 .btn-ghost:hover {
     background: #334155;
     color: #ffffff;
+}
+
+@media (min-width: 1400px) {
+    .container {
+        padding: 36px 48px;
+    }
+
+    .form-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 24px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+    }
+
+    .form-card {
+        padding: 22px;
+    }
+
+    .form-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .tab-bar {
+        width: 100%;
+    }
+
+    .tab-pills {
+        width: 100%;
+    }
+
+    .tab-btn {
+        flex: 1;
+        padding: 10px 12px;
+    }
+}
+
+@media (max-width: 576px) {
+    .container {
+        padding: 14px;
+    }
+
+    .tab-bar {
+        margin-bottom: 16px;
+        padding: 5px;
+    }
+
+    .tab-pills {
+        gap: 4px;
+        padding: 3px;
+    }
+
+    .tab-btn {
+        flex: 1 1 0;
+        min-width: 0;
+        padding: 10px 5px;
+        font-size: 12px;
+        gap: 5px;
+    }
+
+    .form-card {
+        padding: 18px 14px;
+        border-radius: 10px;
+    }
+
+    .form-header {
+        margin-bottom: 20px;
+    }
+
+    .form-header h3 {
+        font-size: 16px;
+    }
+
+    .form-header p {
+        font-size: 12px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .form-group input {
+        min-height: 46px;
+        font-size: 16px;
+    }
+
+    .data-form {
+        gap: 20px;
+    }
+
+    .form-actions {
+        flex-direction: column-reverse;
+        align-items: stretch;
+        gap: 10px;
+        padding-top: 16px;
+    }
+
+    .btn {
+        width: 100%;
+        min-height: 46px;
+    }
+}
+
+@media (max-width: 360px) {
+    .container {
+        padding: 10px;
+    }
+
+    .form-card {
+        padding: 15px 12px;
+    }
+
+    .tab-btn {
+        font-size: 11px;
+        padding: 10px 3px;
+        gap: 4px;
+    }
+
+    .tab-btn i {
+        font-size: 11px;
+    }
+
+    .form-header h3 {
+        font-size: 15px;
+    }
 }

@@ -1,20 +1,51 @@
 <header class="dashboard-header">
+
+    <!-- Header Title -->
     <div class="header-title">
+
         <div class="title-row">
-            <h1>{{title()}}</h1>
-            <span class="badge-tag">EXECUTIVE REGIONAL</span>
+            <h1>{{ title() }}</h1>
+
+            <span class="badge-tag">
+                EXECUTIVE REGIONAL
+            </span>
         </div>
-        <p class="subtitle">{{subtitle()}}</p>
+
+        <p class="subtitle">
+            {{ subtitle() }}
+        </p>
+
     </div>
 
+    <!-- Header Actions -->
     <div class="header-actions">
+
+        <!-- Last Updated -->
         <div class="last-updated">
+
             <span class="status-dot"></span>
-            <span>Last updated: <strong>10:42 AM</strong></span>
-            <button class="icon-btn" title="Refresh Data"><i class="fa-solid fa-rotate-right"></i></button>
+
+            <span class="updated-text">
+                Last updated: <strong>10:42 AM</strong>
+            </span>
+
+            <button class="icon-btn" type="button" title="Refresh Data" aria-label="Refresh Data">
+
+                <i class="fa-solid fa-rotate-right"></i>
+
+            </button>
+
         </div>
-        <button class="btn btn-outline" (click)="onExportReport()">
-            <i class="fa-solid fa-cloud-arrow-down"></i> Export CSV Report
+
+        <!-- Export -->
+        <button class="btn btn-outline" type="button" (click)="onExportReport()">
+
+            <i class="fa-solid fa-cloud-arrow-down"></i>
+
+            <span>Export CSV Report</span>
+
         </button>
+
     </div>
+
 </header>

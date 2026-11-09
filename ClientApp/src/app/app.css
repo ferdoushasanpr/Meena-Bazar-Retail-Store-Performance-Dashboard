@@ -1,28 +1,42 @@
 :host {
     display: block;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100dvh;
+    min-height: 0;
+    overflow: hidden;
+    box-sizing: border-box;
 }
 
+* {
+    box-sizing: border-box;
+}
+
+/* Main Application Layout */
 .app-layout {
     display: flex;
     width: 100%;
     height: 100%;
+    min-height: 0;
     overflow: hidden;
+    background: #f8fafc;
 }
 
+/* Sidebar */
 app-sidebar {
     display: block;
+    width: 260px;
     height: 100%;
     flex-shrink: 0;
+    min-height: 0;
 }
 
 .main-layout {
     flex: 1;
     display: flex;
     flex-direction: column;
-    height: 100%;
     min-width: 0;
+    min-height: 0;
+    height: 100%;
     overflow: hidden;
 }
 
@@ -34,5 +48,49 @@ app-topbar {
 
 .content-body {
     flex: 1;
+    min-width: 0;
+    min-height: 0;
+    overflow-x: hidden;
     overflow-y: auto;
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+
+    app-sidebar {
+        width: 76px;
+    }
+}
+
+@media (max-width: 767px) {
+
+    :host {
+        height: 100dvh;
+    }
+
+    .app-layout {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100dvh;
+    }
+
+    app-sidebar {
+        width: 100%;
+        height: auto;
+        flex: 0 0 auto;
+        position: relative;
+        z-index: 1003;
+    }
+
+    .main-layout {
+        width: 100%;
+        flex: 1;
+        min-height: 0;
+        min-width: 0;
+        overflow: hidden;
+    }
+
+    .content-body {
+        width: 100%;
+    }
 }

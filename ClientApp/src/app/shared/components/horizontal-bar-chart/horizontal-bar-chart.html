@@ -1,36 +1,59 @@
-<!-- Top Performing List Card -->
 <div class="chart-card stores-card">
+    <!-- Header -->
     <div class="stores-header">
         <div class="header-left">
             <h2 class="chart-title">
-                @if (labelKey() === 'store_name' || labelKey() === 'store') { Store }
-                @else if (labelKey() === 'brand') { Brand }
-                @else { Item } Performance Breakdown
+                @if (labelKey() === 'store_name' || labelKey() === 'store') {
+                Store
+                }
+                @else if (labelKey() === 'brand') {
+                Brand
+                }
+                @else {
+                Item
+                }
+                Performance Breakdown
             </h2>
-            <p class="chart-subtitle">Ranked by gross sales volume</p>
+            <p class="chart-subtitle">
+                Ranked by gross sales volume
+            </p>
         </div>
+
         <div class="avg-badge">
-            <span>Avg: <strong>${{ formattedAvgSales }}</strong></span>
+            <span>
+                Avg: <strong>${{ formattedAvgSales }}</strong>
+            </span>
         </div>
     </div>
 
     <div class="stores-list">
         @for (item of items(); track item[labelKey()] || $index; let i = $index) {
         <div class="store-item">
+            <!-- Store Information -->
             <div class="store-info-row">
                 <div class="store-meta">
-                    <span class="store-rank">{{ formatRank(getGlobalRank(i)) }}</span>
-                    <!-- Dynamic lookup for name/brand/product -->
-                    <span class="store-name">{{ item[labelKey()] }}</span>
+                    <span class="store-rank">
+                        {{ formatRank(getGlobalRank(i)) }}
+                    </span>
+
+                    <span class="store-name">
+                        {{ item[labelKey()] }}
+                    </span>
                 </div>
+                <!-- Sales Metrics -->
                 <div class="store-metrics">
                     @if (item.total_Transactions !== undefined) {
-                    <span class="metric-txns">{{ item.total_Transactions }} txns</span>
+                    <span class="metric-txns">
+                        {{ item.total_Transactions }} txns
+                    </span>
                     }
-                    <span class="metric-sales">${{ formatSales(item[salesKey()]) }}</span>
+                    <span class="metric-sales">
+                        ${{ formatSales(item[salesKey()]) }}
+                    </span>
                 </div>
             </div>
 
+            <!-- Progress Bar -->
             <div class="store-progress-track">
                 <div class="store-progress-fill" [class]="getBarColorClass(getGlobalRank(i) - 1)"
                     [style.width.%]="getBarWidthPercentage(item[salesKey()])">
@@ -40,13 +63,16 @@
         }
     </div>
 
+    <!-- Hidden Chart Canvas -->
     <div class="chart-canvas-hidden">
         <canvas #storesChartCanvas></canvas>
     </div>
 
+    <!-- Footer -->
     <div class="stores-footer">
         <div class="footer-count">
-            Showing {{ showingStart() }}–{{ showingEnd() }} of {{ totalRecords() }} items
+            Showing {{ showingStart() }}–{{ showingEnd() }}
+            of {{ totalRecords() }} items
         </div>
 
         @if (totalPages() > 1) {
@@ -56,8 +82,10 @@
                 ‹ Prev
             </button>
             <span class="page-indicator">
-                Page <strong>{{ pageNumber() }}</strong> of <strong>{{ totalPages() }}</strong>
+                Page <strong>{{ pageNumber() }}</strong>
+                of <strong>{{ totalPages() }}</strong>
             </span>
+
             <button type="button" class="pagination-btn" [disabled]="!hasNextPage()" (click)="onNextPage()"
                 aria-label="Next page">
                 Next ›
