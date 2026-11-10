@@ -15,6 +15,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Store> DemoStores { get; set; }
     public DbSet<Sale> DemoSales { get; set; }
     public DbSet<Transaction> DemoTransactions { get; set; }
+    public DbSet<User> DemoUsers { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -34,6 +35,9 @@ public class ApplicationDbContext : DbContext
 
         modelBuilder.Entity<Transaction>()
             .HasKey(t => t.order_item_id);
+
+        modelBuilder.Entity<User>()
+            .HasKey(u => u.user_id);
 
         modelBuilder.Entity<Sale>()
             .HasOne<Customer>()
@@ -65,5 +69,6 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<Store>().ToTable("DemoStores", "dbo");
         modelBuilder.Entity<Sale>().ToTable("DemoSales", "dbo");
         modelBuilder.Entity<Transaction>().ToTable("DemoTransactions", "dbo");
+        modelBuilder.Entity<User>().ToTable("DemoUsers", "dbo");
     }
 }
