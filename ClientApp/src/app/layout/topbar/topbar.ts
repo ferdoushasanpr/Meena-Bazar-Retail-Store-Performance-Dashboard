@@ -2,6 +2,7 @@ import { TitleCasePipe } from '@angular/common';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { filter } from 'rxjs';
+import { AuthService } from '../../auth/services/auth-service';
 
 @Component({
   imports: [RouterLink, TitleCasePipe],
@@ -10,6 +11,7 @@ import { filter } from 'rxjs';
   templateUrl: './topbar.html',
 })
 export class Topbar {
+  private authService = inject(AuthService);
   lastUpdatedTime: string = '10:42 AM';
 
   private router = inject(Router);
@@ -33,15 +35,7 @@ export class Topbar {
     this.pathSegments.set(segments);
   }
 
-  onExportCSV(): void {
-    console.log('Exporting CSV...');
-  }
-
-  onExportSummary(): void {
-    console.log('Exporting Summary...');
-  }
-
-  onRefresh(): void {
-    console.log('Refreshing data...');
+  onLogout(): void {
+    this.authService.logout();
   }
 }

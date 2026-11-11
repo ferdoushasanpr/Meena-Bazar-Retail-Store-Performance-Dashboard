@@ -33,4 +33,12 @@ export class AuthService {
             error: (error) => { console.error(error) }
         });
     }
+
+    logout(): void {
+        if (this.authData()) {
+            localStorage.removeItem('data');
+            this.authData.set(null);
+            this.router.navigate(['/']);
+        }
+    }
 }
