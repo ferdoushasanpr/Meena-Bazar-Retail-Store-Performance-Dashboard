@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Server.DTOs;
 using Server.Interfaces;
 using Server.Models;
 
@@ -90,7 +91,7 @@ public static class UserRoute
 
         group.MapPut("/{user_id}", async (
             string user_id,
-            [FromBody] User request,
+            [FromBody] UpdateRequest request,
             IUserService userService,
             HttpContext context) =>
         {
