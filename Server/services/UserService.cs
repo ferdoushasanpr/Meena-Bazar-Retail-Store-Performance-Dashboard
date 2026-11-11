@@ -3,16 +3,19 @@ using Server.Interfaces;
 using Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Server.DTOs;
+using Microsoft.AspNetCore.Identity;
 
 namespace Server.Services;
 
 public class UserService : IUserService
 {
     private readonly ApplicationDbContext _context;
+    private readonly PasswordHasher<User> _passwordHasher;
 
     public UserService(ApplicationDbContext context)
     {
         _context = context;
+        _passwordHasher = new PasswordHasher<User>();
     }
 
     public async Task<PaginatedResponse<UserResponse>> GetAllUsersAsync(int pageNumber, int pageSize)
@@ -105,7 +108,7 @@ public class UserService : IUserService
 
         return await _context.SaveChangesAsync() > 0;
     }
-    public async Task<bool> UpdateUserAsync(User user)
+    public async Task<bool> UpdateUserAsync(UpdateRequest user)
     {
         var existingUser = await _context.DemoUsers
                     .FirstOrDefaultAsync(u => u.user_id == user.user_id);
@@ -122,11 +125,13 @@ public class UserService : IUserService
 
         existingUser.user_name = user.user_name;
         existingUser.user_email = user.user_email;
-        existingUser.user_role = user.user_role;
 
-        if (!string.IsNullOrWhiteSpace(user.user_password_hash))
+        if (user.user_role != null)
+            existingUser.user_role = user.user_role;
+
+        if (!string.IsNullOrWhiteSpace(user.updated_password))
         {
-            existingUser.user_password_hash = user.user_password_hash;
+            existingUser.user_password_hash = _passwordHasher.HashPassword(existingUser, user.updated_password);
         }
 
         return await _context.SaveChangesAsync() > 0;
