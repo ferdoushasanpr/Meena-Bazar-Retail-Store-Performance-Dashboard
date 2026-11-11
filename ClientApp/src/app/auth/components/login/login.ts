@@ -15,7 +15,6 @@ export class Login {
   isLoginMode = signal<boolean>(true);
 
   authError = signal<string | null>(null);
-  authSuccess = signal<string | null>(null);
   isSubmitting = signal<boolean>(false);
 
   showLoginPassword = signal<boolean>(false);
@@ -30,8 +29,8 @@ export class Login {
   // Signup Form
   signupForm: FormGroup = this.fb.group(
     {
-      name: ['', [Validators.required, Validators.maxLength(50)]],
-      email: ['', [Validators.required, Validators.email, Validators.maxLength(50)]],
+      user_name: ['', [Validators.required, Validators.maxLength(50)]],
+      user_email: ['', [Validators.required, Validators.email, Validators.maxLength(50)]],
       password: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', [Validators.required]]
     },
@@ -47,7 +46,6 @@ export class Login {
   toggleAuthMode(): void {
     this.isLoginMode.update((mode) => !mode);
     this.authError.set(null);
-    this.authSuccess.set(null);
     this.loginForm.reset();
     this.signupForm.reset();
   }
@@ -71,13 +69,7 @@ export class Login {
     if (this.signupForm.valid) {
       this.isSubmitting.set(true);
       this.authError.set(null);
-      console.log('Signup Payload:', this.signupForm.value);
-
-      setTimeout(() => {
-        this.isSubmitting.set(false);
-        this.authSuccess.set('Account created successfully! You can now log in.');
-        setTimeout(() => this.toggleAuthMode(), 1200);
-      }, 600);
+      this.authService.signup(this.signupForm.value);
     } else {
       this.signupForm.markAllAsTouched();
     }

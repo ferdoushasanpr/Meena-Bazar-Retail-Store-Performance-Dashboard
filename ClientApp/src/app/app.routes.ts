@@ -12,14 +12,14 @@ import { authGuard } from './auth/guards/auth-guard';
 
 export const routes: Routes = [
     {
-        path: 'login',
+        path: '',
         component: Login,
         canActivate: [authGuard],
     },
     {
-        path: '',
-        pathMatch: 'full',
-        redirectTo: 'dashboard'
+        path: 'login',
+        component: Login,
+        canActivate: [authGuard],
     },
     {
         path: 'dashboard',

@@ -1,5 +1,5 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { AuthResponse, LoginRequest } from '../models/auth';
+import { AuthResponse, LoginRequest, RegisterRequest } from '../models/auth';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 
@@ -25,6 +25,17 @@ export class AuthService {
 
     login(request: LoginRequest): void {
         this.http.post<AuthResponse>(`${this.apiUrlBase}/login`, request).subscribe({
+            next: (response) => {
+                this.authData.set(response);
+                localStorage.setItem('data', JSON.stringify(response.data));
+                this.router.navigate(['/']);
+            },
+            error: (error) => { console.error(error) }
+        });
+    }
+
+    signup(request: RegisterRequest): void {
+        this.http.post<AuthResponse>(`${this.apiUrlBase}/register`, request).subscribe({
             next: (response) => {
                 this.authData.set(response);
                 localStorage.setItem('data', JSON.stringify(response.data));

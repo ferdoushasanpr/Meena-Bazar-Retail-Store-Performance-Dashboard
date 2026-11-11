@@ -8,8 +8,8 @@
             </div>
             <h2>{{ isLoginMode() ? 'Welcome Back' : 'Create an Account' }}</h2>
             <p>
-                {{ isLoginMode() ? 'Enter your credentials to access your dashboard' : 'Fill in your details to get
-                started' }}
+                {{ isLoginMode() ? 'Enter your credentials to access your dashboard' : 'Fill in your details to
+                getstarted' }}
             </p>
         </div>
 
@@ -18,13 +18,6 @@
         <div class="alert alert-danger">
             <i class="fa-solid fa-circle-exclamation"></i>
             <span>{{ authError() }}</span>
-        </div>
-        }
-
-        @if (authSuccess()) {
-        <div class="alert alert-success">
-            <i class="fa-solid fa-circle-check"></i>
-            <span>{{ authSuccess() }}</span>
         </div>
         }
 
@@ -80,9 +73,9 @@
                 <label for="signupName">Full Name</label>
                 <div class="input-wrapper">
                     <i class="fa-solid fa-user input-icon"></i>
-                    <input id="signupName" type="text" formControlName="name" placeholder="John Doe" />
+                    <input id="signupName" type="text" formControlName="user_name" placeholder="John Doe" />
                 </div>
-                @if (signupForm.get('name')?.invalid && signupForm.get('name')?.touched) {
+                @if (signupForm.get('user_name')?.invalid && signupForm.get('user_name')?.touched) {
                 <span class="error-msg">Full name is required.</span>
                 }
             </div>
@@ -91,9 +84,9 @@
                 <label for="signupEmail">Email Address</label>
                 <div class="input-wrapper">
                     <i class="fa-solid fa-envelope input-icon"></i>
-                    <input id="signupEmail" type="email" formControlName="email" placeholder="name@example.com" />
+                    <input id="signupEmail" type="email" formControlName="user_email" placeholder="name@example.com" />
                 </div>
-                @if (signupForm.get('email')?.invalid && signupForm.get('email')?.touched) {
+                @if (signupForm.get('user_email')?.invalid && signupForm.get('user_email')?.touched) {
                 <span class="error-msg">Please enter a valid email address.</span>
                 }
             </div>
