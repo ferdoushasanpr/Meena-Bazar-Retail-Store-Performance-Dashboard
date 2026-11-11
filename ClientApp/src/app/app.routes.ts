@@ -7,39 +7,54 @@ import { AddData } from './pages/components/add-data/add-data';
 import { DataExploration } from './pages/components/data-exploration/components/data-exploration';
 import { NotFound } from './pages/components/not-found/not-found';
 import { Settings } from './pages/components/settings/settings';
+import { Login } from './auth/components/login/login';
+import { authGuard } from './auth/guards/auth-guard';
 
 export const routes: Routes = [
     {
         path: '',
-        component: Dashboard
+        component: Login,
+        canActivate: [authGuard],
+    },
+    {
+        path: 'login',
+        component: Login,
+        canActivate: [authGuard],
     },
     {
         path: 'dashboard',
-        component: Dashboard
+        component: Dashboard,
+        canActivate: [authGuard]
     },
     {
         path: 'sales-analytics',
-        component: SalesAnalytics
+        component: SalesAnalytics,
+        canActivate: [authGuard]
     },
     {
         path: 'store-performance',
-        component: StorePerformance
+        component: StorePerformance,
+        canActivate: [authGuard]
     },
     {
         path: 'categories',
-        component: ProductCategories
+        component: ProductCategories,
+        canActivate: [authGuard]
     },
     {
         path: 'add-data',
-        component: AddData
+        component: AddData,
+        canActivate: [authGuard]
     },
     {
         path: 'data-explorer/:type',
-        component: DataExploration
+        component: DataExploration,
+        canActivate: [authGuard]
     },
     {
         path: 'settings',
-        component: Settings
+        component: Settings,
+        canActivate: [authGuard]
     },
     {
         path: '**',
