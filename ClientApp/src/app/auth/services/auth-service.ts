@@ -1,5 +1,5 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { AuthResponse, LoginRequest, RegisterRequest } from '../models/auth';
+import { AuthData, AuthResponse, LoginRequest, RegisterRequest } from '../models/auth';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 
@@ -12,7 +12,14 @@ export class AuthService {
     private router = inject(Router);
     private readonly apiUrlBase = 'http://localhost:5253/auth';
 
-    authData = signal<AuthResponse | null>(null);
+    authData = signal<AuthData | null>({
+        token: "",
+        expiresAt: "",
+        role: "",
+        userId: "",
+        userName: "",
+        userEmail: "",
+    });
 
     isAuth(): boolean {
         const data = localStorage.getItem('data');
@@ -26,7 +33,7 @@ export class AuthService {
     login(request: LoginRequest): void {
         this.http.post<AuthResponse>(`${this.apiUrlBase}/login`, request).subscribe({
             next: (response) => {
-                this.authData.set(response);
+                this.authData.set(response.data);
                 localStorage.setItem('data', JSON.stringify(response.data));
                 this.router.navigate(['/']);
             },
@@ -37,7 +44,7 @@ export class AuthService {
     signup(request: RegisterRequest): void {
         this.http.post<AuthResponse>(`${this.apiUrlBase}/register`, request).subscribe({
             next: (response) => {
-                this.authData.set(response);
+                this.authData.set(response.data);
                 localStorage.setItem('data', JSON.stringify(response.data));
                 this.router.navigate(['/']);
             },

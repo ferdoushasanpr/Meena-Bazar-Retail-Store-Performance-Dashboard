@@ -85,11 +85,11 @@
 
     <!-- User Profile -->
     <div class="user-profile">
-        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=100"
-            alt="User Avatar" class="avatar" />
-
+        <div class="avatar">
+            {{userInitials()}}
+        </div>
         <div class="user-info">
-            <span class="user-name">Marcus Vance</span>
+            <span class="user-name">{{username()}}</span>
         </div>
     </div>
 </aside>

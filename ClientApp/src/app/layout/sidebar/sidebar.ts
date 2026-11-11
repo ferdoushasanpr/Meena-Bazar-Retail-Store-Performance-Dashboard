@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { AuthService } from '../../auth/services/auth-service';
 
 interface MenuItem {
   title: string;
@@ -22,6 +23,19 @@ interface MenuSection {
   templateUrl: './sidebar.html',
 })
 export class Sidebar {
+  private authService = inject(AuthService);
+  authData = this.authService.authData;
+
+  username = computed(() =>
+    this.authData()?.userName ?? ''
+  );
+
+  userInitials = computed(() => {
+    const name = this.username();
+    if (!name) return '';
+    return name.split(" ").map(item => item[0].toUpperCase()).join('');
+  })
+
   activeItem: string = 'Dashboard';
 
   isSidebarOpen = false;
