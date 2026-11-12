@@ -23,4 +23,8 @@ export class UserService {
             error: (error) => { console.log(error) }
         });
     }
+
+    updateUser(user_id: string, user: any, token: string) {
+        return this.operationService.updateUserData(user_id, user, token);
+    }
 }

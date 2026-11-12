@@ -108,4 +108,12 @@ export class OperationsService {
 
         return this.http.get<UserData>(`${this.apiUrlBase}/users/${user_id}`, { headers });
     }
+
+    updateUserData(user_id: string, user: any, token: string): Observable<boolean> {
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        }
+
+        return this.http.put<boolean>(`${this.apiUrlBase}/users/${user_id}`, user, { headers });
+    }
 }
