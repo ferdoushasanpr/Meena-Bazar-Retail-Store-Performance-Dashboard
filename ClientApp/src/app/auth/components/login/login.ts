@@ -60,6 +60,7 @@ export class Login {
       this.isSubmitting.set(true);
       this.authError.set(null);
       this.authService.login(this.loginForm.value);
+      setTimeout(() => { this.isSubmitting.set(false); }, 2000);
     } else {
       this.loginForm.markAllAsTouched();
     }

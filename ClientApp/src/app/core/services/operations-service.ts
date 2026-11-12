@@ -6,6 +6,7 @@ import { TransactionDataResponse } from '../models/transaction';
 import { Customer, CustomerDataResponse } from '../models/customer';
 import { Product, ProductDataResponse } from '../models/product';
 import { OrderDataResponse } from '../models/order';
+import { UserData, UserDataResponse } from '../models/user';
 
 @Injectable({
     providedIn: "root"
@@ -97,5 +98,30 @@ export class OperationsService {
 
     searchTransactionsData(pageNumber: number, pageSize: number = 10, searchTerm?: string): Observable<TransactionDataResponse> {
         return this.http.get<TransactionDataResponse>(`${this.apiUrlBase}/transactions/search?searchTerm=${searchTerm}&pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    }
+
+    // User Operations
+    getUsersData(pageNumber: number, pageSize: number = 10, token: string): Observable<UserDataResponse> {
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        }
+
+        return this.http.get<UserDataResponse>(`${this.apiUrlBase}/users?pageNumber=${pageNumber}&pageSize=${pageSize}`, { headers });
+    }
+
+    getUserData(user_id: string, token: string): Observable<UserData> {
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        }
+
+        return this.http.get<UserData>(`${this.apiUrlBase}/users/${user_id}`, { headers });
+    }
+
+    updateUserData(user_id: string, user: any, token: string): Observable<boolean> {
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        }
+
+        return this.http.put<boolean>(`${this.apiUrlBase}/users/${user_id}`, user, { headers });
     }
 }

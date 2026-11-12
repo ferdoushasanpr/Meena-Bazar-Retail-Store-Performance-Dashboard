@@ -9,6 +9,7 @@ import { NotFound } from './pages/components/not-found/not-found';
 import { Settings } from './pages/components/settings/settings';
 import { Login } from './auth/components/login/login';
 import { authGuard } from './auth/guards/auth-guard';
+import { roleGuard } from './auth/guards/role-guard';
 
 export const routes: Routes = [
     {
@@ -45,6 +46,11 @@ export const routes: Routes = [
         path: 'add-data',
         component: AddData,
         canActivate: [authGuard]
+    },
+    {
+        path: 'data-explorer/users',
+        component: DataExploration,
+        canActivate: [authGuard, roleGuard]
     },
     {
         path: 'data-explorer/:type',

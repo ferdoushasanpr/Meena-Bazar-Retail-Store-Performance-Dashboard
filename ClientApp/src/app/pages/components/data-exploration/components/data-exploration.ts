@@ -11,6 +11,8 @@ import { ProductService } from '../services/product-service';
 import { StoreService } from '../services/store-service';
 import { OrderService } from '../services/order-service';
 import { TransactionService } from '../services/transaction-service';
+import { UserService } from '../../../services/user-service';
+import { AuthService } from '../../../../auth/services/auth-service';
 
 @Component({
   imports: [PageHeader, DynamicTable, ModalForm, DialogBox],
@@ -20,6 +22,8 @@ import { TransactionService } from '../services/transaction-service';
 })
 export class DataExploration {
   private router = inject(Router);
+  private authService = inject(AuthService);
+  private userService = inject(UserService);
   private customerService = inject(CustomerService);
   private productService = inject(ProductService);
   private storeService = inject(StoreService);
@@ -30,6 +34,9 @@ export class DataExploration {
   pageHeaderTitle = signal<string>('');
   pageHeaderSubtitle = signal<string>('');
 
+  authData = this.authService.authData();
+  userRole = this.authData?.role;
+  token = this.authData?.token;
   // Search Input
   searchQuery = signal<string>('');
 
@@ -38,6 +45,7 @@ export class DataExploration {
     const title = this.pageHeaderTitle();
 
     switch (title) {
+      case 'Users': return this.userService.componentData();
       case 'Customers': return this.customerService.componentData();
       case 'Products': return this.productService.componentData();
       case 'Stores': return this.storeService.componentData();
@@ -49,6 +57,10 @@ export class DataExploration {
 
   // Table Header Configuration
   private tableConfig: Record<string, { title: string; subtitle: string }> = {
+    Users: {
+      title: 'Users',
+      subtitle: 'Overview of user profiles, and demographics.'
+    },
     Customers: {
       title: 'Customers',
       subtitle: 'Overview of customer profiles, demographics, and purchasing behavior.'
@@ -118,6 +130,10 @@ export class DataExploration {
       this.orderService.loadOrderData(1);
     } else if (this.pageHeaderTitle() === 'Transactions') {
       this.transactionService.loadTransactionsData(1);
+    } else if (this.pageHeaderTitle() === 'Users') {
+      if (this.token && this.userRole === 'admin') {
+        this.userService.loadUserData(this.token, 1);
+      }
     }
   }
 

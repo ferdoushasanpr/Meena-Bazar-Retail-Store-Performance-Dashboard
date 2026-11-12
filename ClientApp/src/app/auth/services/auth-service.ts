@@ -2,6 +2,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { AuthData, AuthResponse, LoginRequest, RegisterRequest } from '../models/auth';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { UserService } from '../../pages/services/user-service';
 
 @Injectable({
     providedIn: 'root'
@@ -10,6 +11,7 @@ import { Router } from '@angular/router';
 export class AuthService {
     private http = inject(HttpClient);
     private router = inject(Router);
+    private userService = inject(UserService);
     private readonly apiUrlBase = 'http://localhost:5253/auth';
 
     authData = signal<AuthData | null>({
@@ -26,7 +28,10 @@ export class AuthService {
         if (!data) {
             return false;
         }
-        this.authData.set(JSON.parse(data));
+
+        const parsedData: AuthData = JSON.parse(data)
+        this.authData.set(parsedData);
+        this.userService.getUserById(parsedData.userId, parsedData.token);
         return true;
     }
 
@@ -35,6 +40,7 @@ export class AuthService {
             next: (response) => {
                 this.authData.set(response.data);
                 localStorage.setItem('data', JSON.stringify(response.data));
+                this.userService.getUserById(response.data.userId, response.data.token);
                 this.router.navigate(['/']);
             },
             error: (error) => { console.error(error) }
@@ -46,6 +52,7 @@ export class AuthService {
             next: (response) => {
                 this.authData.set(response.data);
                 localStorage.setItem('data', JSON.stringify(response.data));
+                this.userService.getUserById(response.data.userId, response.data.token);
                 this.router.navigate(['/']);
             },
             error: (error) => { console.error(error) }
