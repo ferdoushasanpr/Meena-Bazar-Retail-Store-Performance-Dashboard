@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, effect, inject, signal } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -8,6 +8,7 @@ import {
   Validators
 } from '@angular/forms';
 import { PageHeader } from '../../../layout/page-header/page-header';
+import { UserService } from '../../services/user-service';
 
 @Component({
   imports: [ReactiveFormsModule, PageHeader],
@@ -17,6 +18,10 @@ import { PageHeader } from '../../../layout/page-header/page-header';
 })
 export class Settings {
   private fb = inject(FormBuilder);
+  private userService = inject(UserService);
+
+  // User Data
+  userData = this.userService.userData;
 
   // Page Header Metadata
   pageHeaderTitle = 'Account Settings';
@@ -35,15 +40,27 @@ export class Settings {
   // Unified Single Form
   settingsForm: FormGroup = this.fb.group(
     {
-      firstName: ['John', [Validators.required, Validators.maxLength(50)]],
-      lastName: ['Doe', [Validators.required, Validators.maxLength(50)]],
-      email: ['john.doe@example.com', [Validators.required, Validators.email, Validators.maxLength(50)]],
+      user_name: ['', [Validators.required, Validators.maxLength(50)]],
+      user_email: ['', [Validators.required, Validators.email, Validators.maxLength(50)]],
       currentPassword: [''],
       newPassword: ['', [Validators.minLength(8)]],
       confirmPassword: ['']
     },
     { validators: this.passwordValidationHandler }
   );
+
+  constructor() {
+    effect(() => {
+      const user = this.userData();
+
+      if (user) {
+        this.settingsForm.patchValue({
+          user_name: user.user_name,
+          user_email: user.user_email
+        });
+      }
+    });
+  }
 
   // Custom Validator: Validates password requirements when changing password
   private passwordValidationHandler(group: AbstractControl): ValidationErrors | null {

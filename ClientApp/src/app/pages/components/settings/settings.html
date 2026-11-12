@@ -17,33 +17,30 @@
                 <div class="section-title">
                     <i class="fa-solid fa-user-gear"></i>
                     <div>
-                        <h3>Personal Information</h3>
+                        <h3>{{userData().user_name}}'s Personal Information</h3>
                         <p>Manage your account name and email address</p>
                     </div>
                 </div>
 
                 <div class="form-grid">
                     <div class="form-group">
-                        <label for="firstName">First Name *</label>
-                        <input id="firstName" type="text" formControlName="firstName" placeholder="First Name" />
-                        @if (settingsForm.get('firstName')?.invalid && settingsForm.get('firstName')?.touched) {
-                        <span class="error-msg">First name is required.</span>
+                        <label for="Name">Name *</label>
+                        <input id="Name" type="text" formControlName="user_name" placeholder="Name" />
+                        @if (settingsForm.get('user_name')?.invalid && settingsForm.get('user_name')?.touched) {
+                        <span class="error-msg">name is required.</span>
                         }
                     </div>
-
                     <div class="form-group">
-                        <label for="lastName">Last Name *</label>
-                        <input id="lastName" type="text" formControlName="lastName" placeholder="Last Name" />
-                        @if (settingsForm.get('lastName')?.invalid && settingsForm.get('lastName')?.touched) {
-                        <span class="error-msg">Last name is required.</span>
-                        }
+                        <label for="userRole">User Role</label>
+                        <input id="userRole" type="text" [value]="userData().user_role" readonly
+                            class="readonly-input" />
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="email">Email Address *</label>
-                    <input id="email" type="email" formControlName="email" placeholder="name@example.com" />
-                    @if (settingsForm.get('email')?.invalid && settingsForm.get('email')?.touched) {
+                    <input id="email" type="email" formControlName="user_email" placeholder="name@example.com" />
+                    @if (settingsForm.get('user_email')?.invalid && settingsForm.get('user_email')?.touched) {
                     <span class="error-msg">Please enter a valid email address.</span>
                     }
                 </div>

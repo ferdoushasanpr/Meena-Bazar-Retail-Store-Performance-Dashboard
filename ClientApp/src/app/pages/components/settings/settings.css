@@ -135,7 +135,13 @@
     box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
 }
 
-/* Password Toggle Wrapper */
+.readonly-input {
+    background-color: #f1f3f5;
+    color: #6c757d;
+    cursor: not-allowed;
+    border: 1px solid #dee2e6;
+}
+
 .password-input-wrapper {
     position: relative;
     display: flex;

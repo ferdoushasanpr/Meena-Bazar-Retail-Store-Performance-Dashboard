@@ -6,6 +6,7 @@ import { TransactionDataResponse } from '../models/transaction';
 import { Customer, CustomerDataResponse } from '../models/customer';
 import { Product, ProductDataResponse } from '../models/product';
 import { OrderDataResponse } from '../models/order';
+import { UserData } from '../models/user';
 
 @Injectable({
     providedIn: "root"
@@ -97,5 +98,14 @@ export class OperationsService {
 
     searchTransactionsData(pageNumber: number, pageSize: number = 10, searchTerm?: string): Observable<TransactionDataResponse> {
         return this.http.get<TransactionDataResponse>(`${this.apiUrlBase}/transactions/search?searchTerm=${searchTerm}&pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    }
+
+    // User Operations
+    getUserData(user_id: string, token: string): Observable<UserData> {
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        }
+
+        return this.http.get<UserData>(`${this.apiUrlBase}/users/${user_id}`, { headers });
     }
 }
