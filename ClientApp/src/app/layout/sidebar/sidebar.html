@@ -32,7 +32,7 @@
 
     <!-- Navigation -->
     <nav class="nav-container">
-        @for (section of menuSections; track section.sectionTitle) {
+        @for (section of menuSections(); track section.sectionTitle) {
         <div class="menu-section">
             <h3 class="section-title">
                 {{ section.sectionTitle }}
@@ -44,7 +44,7 @@
                     @if (item.children) {
                     <button class="nav-item dropdown-toggle"
                         [class.active]="item.children.some(child => child.title === activeItem)"
-                        (click)="toggleSubmenu(item)">
+                        (click)="toggleSubmenu()">
 
                         <i [class]="item.icon + ' nav-icon'"></i>
                         <span class="nav-text">{{ item.title }}</span>

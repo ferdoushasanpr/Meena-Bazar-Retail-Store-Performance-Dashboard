@@ -6,3 +6,13 @@ export interface UserData {
     user_role?: string,
     user_signup?: string
 }
+
+export interface UserDataResponse {
+    data: UserData[],
+    pageNumber: number,
+    pageSize: number,
+    totalRecords: number,
+    totalPages: number,
+    hasPreviousPage: boolean,
+    hasNextPage: boolean
+}

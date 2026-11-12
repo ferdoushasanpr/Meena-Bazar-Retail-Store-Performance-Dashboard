@@ -6,7 +6,7 @@ import { TransactionDataResponse } from '../models/transaction';
 import { Customer, CustomerDataResponse } from '../models/customer';
 import { Product, ProductDataResponse } from '../models/product';
 import { OrderDataResponse } from '../models/order';
-import { UserData } from '../models/user';
+import { UserData, UserDataResponse } from '../models/user';
 
 @Injectable({
     providedIn: "root"
@@ -101,6 +101,14 @@ export class OperationsService {
     }
 
     // User Operations
+    getUsersData(pageNumber: number, pageSize: number = 10, token: string): Observable<UserDataResponse> {
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        }
+
+        return this.http.get<UserDataResponse>(`${this.apiUrlBase}/users?pageNumber=${pageNumber}&pageSize=${pageSize}`, { headers });
+    }
+
     getUserData(user_id: string, token: string): Observable<UserData> {
         const headers = {
             'Authorization': `Bearer ${token}`
