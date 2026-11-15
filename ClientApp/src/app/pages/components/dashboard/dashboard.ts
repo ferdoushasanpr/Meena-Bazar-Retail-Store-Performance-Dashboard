@@ -24,6 +24,7 @@ export class Dashboard implements OnInit {
   pageHeaderSubtitle = "Monitor revenue, transactions, and retail performance across your stores.";
 
   // Sales Data
+  entityCountData = this.salesService.entityCountData;
   salesKpiData = this.salesService.salesKpiData;
   salesCategoryData = this.salesService.salesCategoryData;
   dailySalesData = this.salesService.dailySalesData;
@@ -31,6 +32,49 @@ export class Dashboard implements OnInit {
   yearlySalesData = this.salesService.yearlySalesData;
   brandSalesData = this.salesService.brandSalesData;
 
+  totalCustomerCard = computed((): MetricCardProps => {
+    const data = this.entityCountData();
+
+    return {
+      title: 'TOTAL CUSTOMERS',
+      icon: 'fa-solid fa-users-line',
+      value: data.numberOfCustomer,
+      visualIcon: 'fa-solid fa-chart-column comparison-icon bars-icon'
+    };
+  });
+
+  totalProductCard = computed((): MetricCardProps => {
+    const data = this.entityCountData();
+
+    return {
+      title: 'TOTAL PRODUCTS',
+      icon: 'fa-solid fa-box-open',
+      value: data.numberOfProduct,
+      visualIcon: 'fa-solid fa-cubes comparison-icon sparkline-icon'
+    };
+  });
+
+  totalStoreCard = computed((): MetricCardProps => {
+    const data = this.entityCountData();
+
+    return {
+      title: 'TOTAL STORES',
+      icon: 'fa-solid fa-store',
+      value: data.numberOfStore,
+      visualIcon: 'fa-solid fa-gauge-high comparison-icon gauge-icon'
+    };
+  });
+
+  totalOrderCard = computed((): MetricCardProps => {
+    const data = this.entityCountData();
+
+    return {
+      title: 'TOTAL ORDERS',
+      icon: 'fa-solid fa-cart-shopping',
+      value: data.numberOfOrder,
+      visualIcon: 'fa-solid fa-chart-line comparison-icon sparkline-icon'
+    }
+  });
 
   totalSalesCard = computed((): MetricCardProps => {
     const sales = this.salesKpiData();
@@ -77,6 +121,7 @@ export class Dashboard implements OnInit {
   });
 
   ngOnInit(): void {
+    this.salesService.loadEntityCountData();
     this.salesService.loadSalesKpiData();
     this.salesService.loadSalesCategoryData();
     this.salesService.loadDailySalesData();

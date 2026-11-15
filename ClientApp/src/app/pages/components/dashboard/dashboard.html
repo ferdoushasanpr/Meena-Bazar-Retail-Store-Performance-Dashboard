@@ -6,6 +6,18 @@
 
     <!-- Metric Cards -->
     <section class="metrics-grid">
+        <app-metric-card class="metric-item" [card]="totalCustomerCard()">
+        </app-metric-card>
+
+        <app-metric-card class="metric-item" [card]="totalProductCard()">
+        </app-metric-card>
+
+        <app-metric-card class="metric-item" [card]="totalStoreCard()">
+        </app-metric-card>
+
+        <app-metric-card class="metric-item" [card]="totalOrderCard()">
+        </app-metric-card>
+
         <app-metric-card class="metric-item" [card]="totalSalesCard()">
         </app-metric-card>
 

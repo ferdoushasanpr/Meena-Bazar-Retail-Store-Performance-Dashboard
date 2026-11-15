@@ -1,7 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { AnalyticsService } from '../../core/services/analytics-service';
 import { OperationsService } from '../../core/services/operations-service';
-import { BrandSalesData, DailySalesData, DailyStoreSalesData, MonthlySalesData, ProductSalesResponse, SalesCategoryData, SalesData, StoreCategorySalesData, StoreCategorySalesResponse, StoreSalesData, YearlySalesData } from '../../core/models/sales';
+import { BrandSalesData, DailySalesData, DailyStoreSalesData, EntityCountData, MonthlySalesData, ProductSalesResponse, SalesCategoryData, SalesData, StoreCategorySalesData, StoreCategorySalesResponse, StoreSalesData, YearlySalesData } from '../../core/models/sales';
 import { StoreData } from '../../core/models/store';
 
 @Injectable({
@@ -11,6 +11,13 @@ import { StoreData } from '../../core/models/store';
 export class SalesService {
     private businessKpiService = inject(AnalyticsService);
     private operationsService = inject(OperationsService);
+
+    entityCountData = signal<EntityCountData>({
+        numberOfCustomer: 0,
+        numberOfOrder: 0,
+        numberOfProduct: 0,
+        numberOfStore: 0,
+    })
 
     // Sales Data
     salesKpiData = signal<SalesData>({
@@ -39,6 +46,13 @@ export class SalesService {
     filteredStoreCategorySalesData = signal<StoreCategorySalesData[]>([]);
     storesSalesData = signal<StoreSalesData[]>([]);
     storesArr = signal<StoreData[]>([]);
+
+    loadEntityCountData(): void {
+        this.businessKpiService.getEntityCountData().subscribe({
+            next: (response) => { console.log(this.entityCountData()); this.entityCountData.set(response); console.log(this.entityCountData()); },
+            error: (error) => { console.error(error) }
+        });
+    }
 
     loadSalesKpiData(): void {
         this.businessKpiService.getSalesData().subscribe({

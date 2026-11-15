@@ -1,3 +1,10 @@
+export interface EntityCountData {
+    numberOfCustomer: number,
+    numberOfOrder: number,
+    numberOfProduct: number,
+    numberOfStore: number,
+}
+
 export interface SalesData {
     totalSales: number;
     numberOfTransactions: number;
