@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { PageHeader } from '../../../layout/page-header/page-header';
 import { CategoryMatrixChart } from '../../../shared/components/category-matrix-chart/category-matrix-chart';
@@ -7,9 +7,10 @@ import { SalesService } from '../../services/sales-service';
 import { Filter } from '../../shared/components/filter/filter';
 import { FilterCriteria } from '../../shared/models/filter-model';
 import { ReportExporter } from '../../services/report-exporter';
+import { Loading } from '../../../shared/components/loading/loading';
 
 @Component({
-  imports: [FormsModule, PageHeader, Filter, CategoryMatrixChart, HorizontalBarChart],
+  imports: [FormsModule, PageHeader, Filter, Loading, CategoryMatrixChart, HorizontalBarChart],
   selector: 'app-product-categories',
   styleUrl: './product-categories.css',
   templateUrl: './product-categories.html',
@@ -22,6 +23,10 @@ export class ProductCategories {
   pageHeaderTitle = "Product Categories";
   pageHeaderSubtitle = "Benchmark, rank, and analyze revenue, customer volume, and efficiency across all product categories.";
 
+  // Loading States
+  salesCategoryLoading = this.salesService.salesCategoryLoading;
+  productSalesLoading = this.salesService.paginatedSalesLoading;
+
   // Filters & State
   currentFilters = signal<FilterCriteria>({
     startDate: '',
@@ -32,6 +37,9 @@ export class ProductCategories {
   salesCategoryData = this.salesService.salesCategoryData;
   productSalesData = this.salesService.paginatedSalesData;
 
+  isLoading = computed(() => {
+    return this.salesCategoryLoading() || this.productSalesLoading();
+  });
 
   loadSalesData({ startDate, endDate, storeId }: FilterCriteria): void {
     this.currentFilters.set({ startDate, endDate, storeId });

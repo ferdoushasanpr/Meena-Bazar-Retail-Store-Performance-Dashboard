@@ -4,6 +4,11 @@
         (exportReport)="exportConsolidatedReport()">
     </app-page-header>
 
+    @if (isLoading()) {
+    <div class="loading-container">
+        <app-loading message="Fetching records..." />
+    </div>
+    } @else {
     <!-- Metric Cards -->
     <section class="metrics-grid">
         <app-metric-card class="metric-item" [card]="totalCustomerCard()">
@@ -46,4 +51,5 @@
         <app-donut-chart class="donut-chart" [data]="salesCategoryData()" [salesData]="salesKpiData()">
         </app-donut-chart>
     </section>
+    }
 </div>

@@ -8,9 +8,10 @@ import { DonutChart } from '../../../shared/components/donut-chart/donut-chart';
 import { MetricCardProps } from '../../../core/models/props';
 import { SalesService } from '../../services/sales-service';
 import { ReportExporter } from '../../services/report-exporter';
+import { Loading } from '../../../shared/components/loading/loading';
 
 @Component({
-  imports: [FormsModule, PageHeader, MetricCard, TrendChart, HorizontalBarChart, DonutChart],
+  imports: [FormsModule, PageHeader, Loading, MetricCard, TrendChart, HorizontalBarChart, DonutChart],
   selector: 'app-dashboard',
   styleUrl: './dashboard.css',
   templateUrl: './dashboard.html',
@@ -23,6 +24,15 @@ export class Dashboard implements OnInit {
   pageHeaderTitle = "Sales Overview";
   pageHeaderSubtitle = "Monitor revenue, transactions, and retail performance across your stores.";
 
+  // Loading States
+  entityCountLoading = this.salesService.entityCountLoading;
+  salesKpiLoading = this.salesService.salesKpiLoading;
+  salesCategoryLoading = this.salesService.salesCategoryLoading;
+  dailySalesLoading = this.salesService.dailySalesLoading;
+  monthlySalesLoading = this.salesService.monthlySalesLoading;
+  yearlySalesLoading = this.salesService.yearlySalesLoading;
+  brandSalesLoading = this.salesService.brandSalesLoading;
+
   // Sales Data
   entityCountData = this.salesService.entityCountData;
   salesKpiData = this.salesService.salesKpiData;
@@ -31,6 +41,10 @@ export class Dashboard implements OnInit {
   monthlySalesData = this.salesService.monthlySalesData;
   yearlySalesData = this.salesService.yearlySalesData;
   brandSalesData = this.salesService.brandSalesData;
+
+  isLoading = computed(() => {
+    return this.entityCountLoading() || this.salesKpiLoading() || this.salesCategoryLoading() || this.dailySalesLoading() || this.monthlySalesLoading() || this.yearlySalesLoading() || this.brandSalesLoading();
+  });
 
   totalCustomerCard = computed((): MetricCardProps => {
     const data = this.entityCountData();

@@ -8,6 +8,9 @@ import { CustomerDataResponse } from '../../../../core/models/customer';
 export class CustomerService {
     private operationsService = inject(OperationsService);
 
+    // Loading state
+    componentDataLoading = signal<boolean>(false);
+
     // Contents
     componentData = signal<CustomerDataResponse>({
         data: [],
@@ -24,15 +27,23 @@ export class CustomerService {
     }
 
     loadSearchCustomerData(pageNumber: number, searchTerm?: string) {
+        this.componentDataLoading.set(true);
         this.operationsService.searchCustomersData(pageNumber, undefined, searchTerm).subscribe({
-            next: (response) => { this.componentData.set(response); },
+            next: (response) => {
+                this.componentData.set(response);
+                this.componentDataLoading.set(false);
+            },
             error: (error) => { console.error(error) }
         });
     }
 
     loadCustomerData(pageNumber: number, pageSize?: number) {
+        this.componentDataLoading.set(true);
         this.operationsService.getCustomersData(pageNumber, pageSize).subscribe({
-            next: (response) => { this.componentData.set(response); },
+            next: (response) => {
+                this.componentData.set(response);
+                this.componentDataLoading.set(false);
+            },
             error: (error) => { console.error(error) }
         })
     }

@@ -6,6 +6,9 @@ import { TransactionDataResponse } from '../../../../core/models/transaction';
 export class TransactionService {
     private operationsService = inject(OperationsService);
 
+    // Loading state
+    componentDataLoading = signal<boolean>(false);
+
     // Contents
     componentData = signal<TransactionDataResponse>({
         data: [],
@@ -18,15 +21,23 @@ export class TransactionService {
     });
 
     loadSearchTransactionData(pageNumber: number, searchTerm?: string) {
+        this.componentDataLoading.set(true);
         this.operationsService.searchTransactionsData(pageNumber, undefined, searchTerm).subscribe({
-            next: (response) => { this.componentData.set(response); },
+            next: (response) => {
+                this.componentData.set(response);
+                this.componentDataLoading.set(false);
+            },
             error: (error) => { console.error(error) }
         });
     }
 
     loadTransactionsData(pageNumber: number): void {
+        this.componentDataLoading.set(true);
         this.operationsService.getTransactionsData(pageNumber).subscribe({
-            next: (response) => { this.componentData.set(response); },
+            next: (response) => {
+                this.componentData.set(response);
+                this.componentDataLoading.set(false);
+            },
             error: (error) => { console.error(error) }
         });
     }

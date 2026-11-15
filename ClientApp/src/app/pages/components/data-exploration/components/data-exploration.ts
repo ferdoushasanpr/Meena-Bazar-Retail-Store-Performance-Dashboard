@@ -13,9 +13,10 @@ import { OrderService } from '../services/order-service';
 import { TransactionService } from '../services/transaction-service';
 import { UserService } from '../../../services/user-service';
 import { AuthService } from '../../../../auth/services/auth-service';
+import { Loading } from '../../../../shared/components/loading/loading';
 
 @Component({
-  imports: [PageHeader, DynamicTable, ModalForm, DialogBox],
+  imports: [PageHeader, Loading, DynamicTable, ModalForm, DialogBox],
   selector: 'app-data-exploration',
   styleUrl: './data-exploration.css',
   templateUrl: './data-exploration.html',
@@ -40,6 +41,21 @@ export class DataExploration {
   // Search Input
   searchQuery = signal<string>('');
 
+  // Loading State
+  componentDataLoading = computed(() => {
+    const title = this.pageHeaderTitle();
+
+    switch (title) {
+      case 'Users': return this.userService.componentDataLoading();
+      case 'Customers': return this.customerService.componentDataLoading();
+      case 'Products': return this.productService.componentDataLoading();
+      case 'Stores': return this.storeService.componentDataLoading();
+      case 'Orders': return this.orderService.componentDataLoading();
+      case 'Transactions': return this.transactionService.componentDataLoading();
+      default: return { data: [], pageNumber: 1, pageSize: 10, totalRecords: 0, totalPages: 0, hasPreviousPage: false, hasNextPage: false };
+    }
+  });
+
   // Contents
   componentData = computed(() => {
     const title = this.pageHeaderTitle();
@@ -53,6 +69,12 @@ export class DataExploration {
       case 'Transactions': return this.transactionService.componentData();
       default: return { data: [], pageNumber: 1, pageSize: 10, totalRecords: 0, totalPages: 0, hasPreviousPage: false, hasNextPage: false };
     }
+  });
+
+  isLoading = computed(() => {
+    const title = this.pageHeaderTitle();
+
+    return this.componentDataLoading();
   });
 
   // Table Header Configuration

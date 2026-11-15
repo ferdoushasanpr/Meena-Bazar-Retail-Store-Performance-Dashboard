@@ -8,6 +8,9 @@ import { UserData, UserDataResponse } from '../../core/models/user';
 export class UserService {
     private operationService = inject(OperationsService);
 
+    // Loading state
+    componentDataLoading = signal<boolean>(false);
+
     // Contents
     componentData = signal<UserDataResponse>({
         data: [],
@@ -29,15 +32,23 @@ export class UserService {
     });
 
     loadUserData(token: string, pageNumber: number, pageSize: number = 10) {
+        this.componentDataLoading.set(true);
         this.operationService.getUsersData(pageNumber, pageSize, token).subscribe({
-            next: (response) => { this.componentData.set(response) },
+            next: (response) => {
+                this.componentData.set(response);
+                this.componentDataLoading.set(false);
+            },
             error: (error) => { console.log(error) }
         });
     }
 
     loadSearchUserData(pageNumber: number, token: string, searchTerm?: string) {
+        this.componentDataLoading.set(true);
         this.operationService.searchUsersData(pageNumber, undefined, token, searchTerm).subscribe({
-            next: (response) => { this.componentData.set(response); },
+            next: (response) => {
+                this.componentData.set(response);
+                this.componentDataLoading.set(false);
+            },
             error: (error) => { console.error(error) }
         });
     }

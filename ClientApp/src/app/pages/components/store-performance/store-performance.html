@@ -6,6 +6,11 @@
     <!-- Filter Control Bar -->
     <app-filter (filterCriteria)="loadSalesData($event)" />
 
+    @if (isLoading()) {
+    <div class="loading-container">
+        <app-loading message="Fetching records..." />
+    </div>
+    } @else {
     <!-- Metric Cards Grid (4 Columns) -->
     <section class="metrics-grid">
         <!-- Card 1: Total Sales -->
@@ -31,4 +36,5 @@
         [pageSize]="storeCategorySalesData().pageSize" [totalRecords]="storeCategorySalesData().totalRecords"
         [totalPages]="storeCategorySalesData().totalPages" [hasPreviousPage]="storeCategorySalesData().hasPreviousPage"
         [hasNextPage]="storeCategorySalesData().hasNextPage" (pageChange)="onPageChange($event)" />
+    }
 </div>
