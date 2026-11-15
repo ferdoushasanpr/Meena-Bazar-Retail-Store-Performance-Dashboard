@@ -47,7 +47,7 @@ public class UserService : IUserService
     {
         return await _context.DemoUsers.AsNoTracking().FirstOrDefaultAsync(u => u.user_id == user_id);
     }
-    public async Task<PaginatedResponse<User>> SearchUsersAsync(string? searchTerm, int pageNumber = 1, int pageSize = 10)
+    public async Task<PaginatedResponse<UserResponse>> SearchUsersAsync(string? searchTerm, int pageNumber = 1, int pageSize = 10)
     {
         var query = _context.DemoUsers.AsNoTracking();
         var totalRecords = await query.CountAsync();
@@ -64,9 +64,16 @@ public class UserService : IUserService
             );
         }
 
-        var users = await query.OrderByDescending(u => u.user_id).Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+        var users = await query.Select(u => new UserResponse
+        {
+            user_id = u.user_id,
+            user_name = u.user_name,
+            user_email = u.user_email,
+            user_role = u.user_role,
+            user_signup = u.user_signup
+        }).OrderByDescending(u => u.user_id).Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
 
-        return new PaginatedResponse<User>
+        return new PaginatedResponse<UserResponse>
         {
             Data = users,
             PageNumber = pageNumber,
