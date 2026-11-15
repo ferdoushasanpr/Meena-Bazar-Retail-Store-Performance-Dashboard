@@ -10,7 +10,11 @@ public static class AnalyticsRoute
         var group = app.MapGroup("/analytics")
             .WithTags("Sales Analytics");
 
-        // Queries 1-3: KPI summary
+        group.MapGet("/entitycount", async (IAnalyticsService service) =>
+        {
+            return Results.Ok(await service.GetEntityCountSummaryAsync());
+        });
+
         group.MapGet("/kpis", async (IAnalyticsService service) =>
             Results.Ok(await service.GetKpiSummaryAsync()));
 
