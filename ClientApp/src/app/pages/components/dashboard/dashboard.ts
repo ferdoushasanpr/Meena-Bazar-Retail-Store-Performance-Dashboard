@@ -134,6 +134,7 @@ export class Dashboard implements OnInit {
 
   // CSV Export Methods
   exportConsolidatedReport(): void {
+    const entityCount = this.entityCountData();
     const kpis = this.salesKpiData();
     const categories = this.salesCategoryData();
     const brands = this.brandSalesData();
@@ -148,6 +149,10 @@ export class Dashboard implements OnInit {
       summary: {
         title: 'EXECUTIVE SUMMARY',
         data: [
+          ['Total Customers', entityCount.numberOfCustomer],
+          ['Total Products', entityCount.numberOfProduct],
+          ['Total Stores', entityCount.numberOfStore],
+          ['Total Orders', entityCount.numberOfOrder],
           ['Total Sales ($)', kpis.totalSales.toFixed(2)],
           ['Total Transactions', kpis.numberOfTransactions],
           ['Average Basket Value ($)', kpis.averageBasketValue.toFixed(2)],
