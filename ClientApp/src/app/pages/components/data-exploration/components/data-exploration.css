@@ -1,9 +1,9 @@
 :host {
     display: block;
     width: 100%;
+    height: 100%;
     min-width: 0;
     min-height: 100%;
-    background-color: #0b1320;
     color: #f1f5f9;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
         Helvetica, Arial, sans-serif;
