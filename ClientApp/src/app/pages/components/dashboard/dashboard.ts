@@ -8,9 +8,10 @@ import { DonutChart } from '../../../shared/components/donut-chart/donut-chart';
 import { MetricCardProps } from '../../../core/models/props';
 import { SalesService } from '../../services/sales-service';
 import { ReportExporter } from '../../services/report-exporter';
+import { Loading } from '../../../shared/components/loading/loading';
 
 @Component({
-  imports: [FormsModule, PageHeader, MetricCard, TrendChart, HorizontalBarChart, DonutChart],
+  imports: [FormsModule, PageHeader, Loading, MetricCard, TrendChart, HorizontalBarChart, DonutChart],
   selector: 'app-dashboard',
   styleUrl: './dashboard.css',
   templateUrl: './dashboard.html',
@@ -23,6 +24,15 @@ export class Dashboard implements OnInit {
   pageHeaderTitle = "Sales Overview";
   pageHeaderSubtitle = "Monitor revenue, transactions, and retail performance across your stores.";
 
+  // Loading States
+  entityCountLoading = this.salesService.entityCountLoading;
+  salesKpiLoading = this.salesService.salesKpiLoading;
+  salesCategoryLoading = this.salesService.salesCategoryLoading;
+  dailySalesLoading = this.salesService.dailySalesLoading;
+  monthlySalesLoading = this.salesService.monthlySalesLoading;
+  yearlySalesLoading = this.salesService.yearlySalesLoading;
+  brandSalesLoading = this.salesService.brandSalesLoading;
+
   // Sales Data
   entityCountData = this.salesService.entityCountData;
   salesKpiData = this.salesService.salesKpiData;
@@ -32,49 +42,6 @@ export class Dashboard implements OnInit {
   yearlySalesData = this.salesService.yearlySalesData;
   brandSalesData = this.salesService.brandSalesData;
 
-  totalCustomerCard = computed((): MetricCardProps => {
-    const data = this.entityCountData();
-
-    return {
-      title: 'TOTAL CUSTOMERS',
-      icon: 'fa-solid fa-users-line',
-      value: data.numberOfCustomer,
-      visualIcon: 'fa-solid fa-chart-column comparison-icon bars-icon'
-    };
-  });
-
-  totalProductCard = computed((): MetricCardProps => {
-    const data = this.entityCountData();
-
-    return {
-      title: 'TOTAL PRODUCTS',
-      icon: 'fa-solid fa-box-open',
-      value: data.numberOfProduct,
-      visualIcon: 'fa-solid fa-cubes comparison-icon sparkline-icon'
-    };
-  });
-
-  totalStoreCard = computed((): MetricCardProps => {
-    const data = this.entityCountData();
-
-    return {
-      title: 'TOTAL STORES',
-      icon: 'fa-solid fa-store',
-      value: data.numberOfStore,
-      visualIcon: 'fa-solid fa-gauge-high comparison-icon gauge-icon'
-    };
-  });
-
-  totalOrderCard = computed((): MetricCardProps => {
-    const data = this.entityCountData();
-
-    return {
-      title: 'TOTAL ORDERS',
-      icon: 'fa-solid fa-cart-shopping',
-      value: data.numberOfOrder,
-      visualIcon: 'fa-solid fa-chart-line comparison-icon sparkline-icon'
-    }
-  });
 
   totalSalesCard = computed((): MetricCardProps => {
     const sales = this.salesKpiData();

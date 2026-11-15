@@ -2,6 +2,11 @@
     <!-- Top Navigation Header -->
     <app-page-header [title]="pageHeaderTitle()" [subtitle]="pageHeaderSubtitle()" />
 
+    @if (isLoading()) {
+    <div class="loading-container">
+        <app-loading message="Fetching records..." />
+    </div>
+    } @else {
     <app-dynamic-table [title]="tableHeader().title" [subtitle]="tableHeader().subtitle" [data]="componentData().data"
         [pageNumber]="componentData().pageNumber" [pageSize]="componentData().pageSize"
         [totalRecords]="componentData().totalRecords" [totalPages]="componentData().totalPages"
@@ -15,4 +20,5 @@
     <app-dialog-box [isOpen]="isDeleteModalOpen()" title="Delete Item" [itemName]="itemToDelete()?.order_item_id"
         message="Are you sure you want to delete this item record?" (closeModal)="onCloseDeleteModal()"
         (confirmDelete)="onConfirmDelete()" />
+    }
 </div>

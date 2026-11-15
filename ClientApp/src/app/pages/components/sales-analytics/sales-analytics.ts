@@ -9,9 +9,10 @@ import { SalesService } from '../../services/sales-service';
 import { Filter } from '../../shared/components/filter/filter';
 import { FilterCriteria } from '../../shared/models/filter-model';
 import { ReportExporter } from '../../services/report-exporter';
+import { Loading } from '../../../shared/components/loading/loading';
 
 @Component({
-  imports: [FormsModule, PageHeader, Filter, MetricCard, TrendChart, VerticalBarChart],
+  imports: [FormsModule, PageHeader, Filter, Loading, MetricCard, TrendChart, VerticalBarChart],
   selector: 'app-sales-analytics',
   styleUrl: './sales-analytics.css',
   templateUrl: './sales-analytics.html',
@@ -31,10 +32,19 @@ export class SalesAnalytics {
     storeId: 'All Stores'
   });
 
+  // Loading States
+  salesKpiLoading = this.salesService.salesKpiLoading;
+  dailyStoreSalesLoading = this.salesService.dailyStoreSaleLoading;
+  filteredStoreCategorySalesLoading = this.salesService.filteredStoreCategorySalesLoading;
+
   // Sales Data
   salesKpiData = this.salesService.salesKpiData;
   dailyStoreSalesData = this.salesService.dailyStoreSalesData;
   filteredStoreCategorySalesData = this.salesService.filteredStoreCategorySalesData;
+
+  isLoading = computed(() => {
+    return this.salesKpiLoading() || this.dailyStoreSalesLoading() || this.filteredStoreCategorySalesLoading();
+  });
 
   totalSalesCard = computed((): MetricCardProps => {
     const sales = this.salesKpiData();

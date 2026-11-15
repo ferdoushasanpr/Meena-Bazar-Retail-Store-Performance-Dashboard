@@ -10,9 +10,10 @@ import { SalesService } from '../../services/sales-service';
 import { Filter } from '../../shared/components/filter/filter';
 import { FilterCriteria } from '../../shared/models/filter-model';
 import { ReportExporter } from '../../services/report-exporter';
+import { Loading } from '../../../shared/components/loading/loading';
 
 @Component({
-  imports: [FormsModule, PageHeader, Filter, MetricCard, HorizontalBarChart, TableChart],
+  imports: [FormsModule, PageHeader, Filter, Loading, MetricCard, HorizontalBarChart, TableChart],
   selector: 'app-store-performance',
   styleUrl: './store-performance.css',
   templateUrl: './store-performance.html',
@@ -33,10 +34,21 @@ export class StorePerformance {
     storeId: 'All Stores'
   });
 
+  // Loading States
+  salesKpiLoading = this.salesService.salesKpiLoading;
+  storeSalesLoading = this.salesService.storesSalesLoading;
+  storeCategorySalesLoading = this.salesService.paginatedSalesLoading;
+
   // Sales Data
   salesKpiData = this.salesService.salesKpiData;
   storesSalesData = this.salesService.storesSalesData;
   storeCategorySalesData = this.salesService.paginatedSalesData;
+
+  isLoading = computed(() => {
+    return this.salesKpiLoading()
+      || this.storeSalesLoading()
+      || this.storeCategorySalesLoading();
+  });
 
   totalSalesCard = computed((): MetricCardProps => {
     const sales = this.salesKpiData();

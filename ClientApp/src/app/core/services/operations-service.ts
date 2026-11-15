@@ -117,6 +117,14 @@ export class OperationsService {
         return this.http.get<UserData>(`${this.apiUrlBase}/users/${user_id}`, { headers });
     }
 
+    searchUsersData(pageNumber: number, pageSize: number = 10, token: string, searchTerm?: string): Observable<UserDataResponse> {
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        }
+
+        return this.http.get<UserDataResponse>(`${this.apiUrlBase}/users/search?searchTerm=${searchTerm}&pageNumber=${pageNumber}&pageSize=${pageSize}`, { headers });
+    }
+
     updateUserData(user_id: string, user: any, token: string): Observable<boolean> {
         const headers = {
             'Authorization': `Bearer ${token}`

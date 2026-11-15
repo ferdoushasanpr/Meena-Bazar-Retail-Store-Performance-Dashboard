@@ -6,6 +6,11 @@
     <!-- Filter Control Bar -->
     <app-filter [isStoreFilter]="false" (filterCriteria)="loadSalesData($event)" />
 
+    @if (isLoading()) {
+    <div class="loading-container">
+        <app-loading message="Fetching records..." />
+    </div>
+    } @else {
     <div class="charts-section">
         <app-category-matrix-chart [inputData]="salesCategoryData()">
         </app-category-matrix-chart>
@@ -13,4 +18,5 @@
         <app-horizontal-bar-chart [data]="productSalesData()" labelKey="product_name" salesKey="total_Sales"
             (pageChange)="onPageChange($event)" />
     </div>
+    }
 </div>

@@ -6,6 +6,11 @@
     <!-- Filter Control Bar -->
     <app-filter (filterCriteria)="loadSalesData($event)" />
 
+    @if (isLoading()) {
+    <div class="loading-container">
+        <app-loading message="Fetching records..." />
+    </div>
+    } @else {
     <!-- Metric Cards Grid (4 Columns) -->
     <section class="metrics-grid">
         <!-- Card 1: Total Sales -->
@@ -27,4 +32,5 @@
         <app-vertical-bar-chart title="Category Sales Performance"
             subtitle="Revenue and volume performance per category" [data]="filteredStoreCategorySalesData()" />
     </div>
+    }
 </div>
