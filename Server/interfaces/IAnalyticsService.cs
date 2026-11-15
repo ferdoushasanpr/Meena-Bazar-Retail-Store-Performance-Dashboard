@@ -4,6 +4,7 @@ namespace Server.Interfaces;
 
 public interface IAnalyticsService
 {
+    Task<EntityCountSummary> GetEntityCountSummaryAsync();
     Task<KpiSummary> GetKpiSummaryAsync();
     Task<PaginatedResponse<StoreCategorySales>>
     GetSalesByStoreAndCategoryAsync(

@@ -14,7 +14,26 @@ public class AnalyticsService : IAnalyticsService
         _context = context;
     }
 
-    // Completed transactions, total sales, and average basket value.
+    public async Task<EntityCountSummary> GetEntityCountSummaryAsync()
+    {
+        var customers = _context.DemoCustomers.AsNoTracking();
+        var products = _context.DemoProducts.AsNoTracking();
+        var stores = _context.DemoStores.AsNoTracking();
+        var orders = _context.DemoSales.AsNoTracking();
+
+        var countCustomer = await customers.CountAsync();
+        var countProduct = await products.CountAsync();
+        var countStore = await stores.CountAsync();
+        var countOrder = await orders.CountAsync();
+
+        return new EntityCountSummary
+        {
+            NumberOfCustomer = countCustomer,
+            NumberOfProduct = countProduct,
+            NumberOfStore = countStore,
+            NumberOfOrder = countOrder
+        };
+    }
     public async Task<KpiSummary> GetKpiSummaryAsync()
     {
         var query = _context.DemoSales
