@@ -24,9 +24,6 @@ public static class UserRoute
                 });
             }
 
-            var currentUserId = context.User.FindFirst(
-                System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
             var isAdmin = context.User.IsInRole("admin");
 
             if (!isAdmin)
@@ -74,8 +71,15 @@ public static class UserRoute
         });
 
         group.MapGet("/search", async (
-            IUserService userService, string? searchTerm, int pageNumber = 1, int pageSize = 10) =>
+            HttpContext context, IUserService userService, string? searchTerm, int pageNumber = 1, int pageSize = 10) =>
         {
+            var isAdmin = context.User.IsInRole("admin");
+
+            if (!isAdmin)
+            {
+                return Results.Json(new { message = "Access Denied." }, statusCode: StatusCodes.Status403Forbidden);
+            }
+
             if (pageNumber < 1 || pageSize < 1 || pageSize > 100)
             {
                 return Results.BadRequest(new
@@ -145,9 +149,16 @@ public static class UserRoute
         });
 
         group.MapDelete("/{user_id}", async (
+            HttpContext context,
             string user_id,
             IUserService userService) =>
         {
+            var isAdmin = context.User.IsInRole("admin");
+            if (!isAdmin)
+            {
+                return Results.Json(new { message = "Access Denied." }, statusCode: StatusCodes.Status403Forbidden);
+            }
+
             var result = await userService.DeleteUserAsync(user_id);
 
             if (!result)
