@@ -29,9 +29,16 @@ export class UserService {
     });
 
     loadUserData(token: string, pageNumber: number, pageSize: number = 10) {
-        return this.operationService.getUsersData(pageNumber, pageSize, token).subscribe({
+        this.operationService.getUsersData(pageNumber, pageSize, token).subscribe({
             next: (response) => { this.componentData.set(response) },
             error: (error) => { console.log(error) }
+        });
+    }
+
+    loadSearchUserData(pageNumber: number, token: string, searchTerm?: string) {
+        this.operationService.searchUsersData(pageNumber, undefined, token, searchTerm).subscribe({
+            next: (response) => { this.componentData.set(response); },
+            error: (error) => { console.error(error) }
         });
     }
 

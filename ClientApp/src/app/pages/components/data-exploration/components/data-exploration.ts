@@ -170,6 +170,14 @@ export class DataExploration {
       } else {
         this.transactionService.loadSearchTransactionData(1, searchTerm);
       }
+    } else if (this.pageHeaderTitle() === 'Users') {
+      if (this.token && this.userRole === 'admin') {
+        if (this.searchQuery() === '') {
+          this.userService.loadUserData(this.token, 1);
+        } else {
+          this.userService.loadSearchUserData(1, this.token, searchTerm);
+        }
+      }
     }
   }
 
@@ -203,6 +211,14 @@ export class DataExploration {
         this.transactionService.loadTransactionsData(pageNumber);
       } else {
         this.transactionService.loadSearchTransactionData(pageNumber, this.searchQuery());
+      }
+    } else if (this.pageHeaderTitle() === 'Users') {
+      if (this.token && this.userRole === 'admin') {
+        if (this.searchQuery() === '') {
+          this.userService.loadUserData(this.token, pageNumber);
+        } else {
+          this.userService.loadSearchUserData(pageNumber, this.token, this.searchQuery());
+        }
       }
     }
   }
