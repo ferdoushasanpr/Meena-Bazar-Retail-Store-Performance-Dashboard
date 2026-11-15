@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { BrandSalesData, DailySalesData, DailyStoreSalesData, MonthlySalesData, ProductSalesData, ProductSalesResponse, SalesCategoryData, SalesData, StoreCategorySalesData, StoreCategorySalesResponse, StoreSalesData, YearlySalesData } from '../models/sales';
+import { BrandSalesData, DailySalesData, DailyStoreSalesData, EntityCountData, MonthlySalesData, ProductSalesData, ProductSalesResponse, SalesCategoryData, SalesData, StoreCategorySalesData, StoreCategorySalesResponse, StoreSalesData, YearlySalesData } from '../models/sales';
 
 @Injectable({
     providedIn: 'root'
@@ -10,6 +10,10 @@ export class AnalyticsService {
     private http = inject(HttpClient);
 
     private readonly apiUrlBase = 'http://localhost:5253/analytics';
+
+    getEntityCountData(): Observable<EntityCountData> {
+        return this.http.get<EntityCountData>(`${this.apiUrlBase}/entitycount`);
+    }
 
     getSalesData(): Observable<SalesData> {
         return this.http.get<SalesData>(`${this.apiUrlBase}/kpis`);
