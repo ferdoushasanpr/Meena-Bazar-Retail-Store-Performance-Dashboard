@@ -16,6 +16,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Sale> DemoSales { get; set; }
     public DbSet<Transaction> DemoTransactions { get; set; }
     public DbSet<User> DemoUsers { get; set; }
+    public DbSet<Notification> DemoNotifications { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -38,6 +39,9 @@ public class ApplicationDbContext : DbContext
 
         modelBuilder.Entity<User>()
             .HasKey(u => u.user_id);
+
+        modelBuilder.Entity<Notification>()
+            .HasKey(n => n.notification_id);
 
         modelBuilder.Entity<Sale>()
             .HasOne<Customer>()
@@ -64,11 +68,18 @@ public class ApplicationDbContext : DbContext
             .HasForeignKey(t => t.product_id)
             .OnDelete(DeleteBehavior.NoAction);
 
+        modelBuilder.Entity<Notification>()
+            .HasOne<User>()
+            .WithMany()
+            .HasForeignKey(n => n.user_id)
+            .OnDelete(DeleteBehavior.NoAction);
+
         modelBuilder.Entity<Customer>().ToTable("DemoCustomers", "dbo");
         modelBuilder.Entity<Product>().ToTable("DemoProducts", "dbo");
         modelBuilder.Entity<Store>().ToTable("DemoStores", "dbo");
         modelBuilder.Entity<Sale>().ToTable("DemoSales", "dbo");
         modelBuilder.Entity<Transaction>().ToTable("DemoTransactions", "dbo");
         modelBuilder.Entity<User>().ToTable("DemoUsers", "dbo");
+        modelBuilder.Entity<Notification>().ToTable("DemoNotifications", "dbo");
     }
 }
