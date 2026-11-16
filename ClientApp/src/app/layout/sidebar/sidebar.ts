@@ -1,6 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { UserService } from '../../pages/services/user-service';
+import { Userprofile } from '../../pages/components/userprofile/userprofile';
 
 interface MenuItem {
   title: string;
@@ -17,7 +18,7 @@ interface MenuSection {
 }
 
 @Component({
-  imports: [RouterLink],
+  imports: [RouterLink, Userprofile],
   selector: 'app-sidebar',
   styleUrl: './sidebar.css',
   templateUrl: './sidebar.html',
@@ -30,13 +31,15 @@ export class Sidebar {
     const data = this.userData();
     if (!data.user_name) return '';
     return data.user_name.split(" ").map(item => item[0].toUpperCase()).join('');
-  })
+  });
 
   activeItem: string = 'Dashboard';
-
   isSidebarOpen = false;
   isCollapsed = false;
   isDropdownOpen = signal<boolean>(false);
+
+  // Profile Modal
+  isOpen = signal<boolean>(false);
 
   menuSections = computed<MenuSection[]>(() => {
     const isAdmin = this.userData().user_role === 'admin';
@@ -121,5 +124,14 @@ export class Sidebar {
 
   toggleCollapse(): void {
     this.isCollapsed = !this.isCollapsed;
+  }
+
+  // Profile Modal
+  handleProfileModalOpen(): void {
+    this.isOpen.set(true);
+  }
+
+  handleProfileModalClose(): void {
+    this.isOpen.set(false);
   }
 }

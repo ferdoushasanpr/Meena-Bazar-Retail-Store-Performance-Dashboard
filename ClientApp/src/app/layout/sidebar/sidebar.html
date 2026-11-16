@@ -84,7 +84,7 @@
     </nav>
 
     <!-- User Profile -->
-    <div class="user-profile">
+    <div class="user-profile" (click)="handleProfileModalOpen()">
         <div class="avatar">
             {{userInitials()}}
         </div>
@@ -93,3 +93,6 @@
         </div>
     </div>
 </aside>
+
+<!-- User Profile Modal -->
+<app-userprofile [user]="userData()" [isOpen]="isOpen()" (closeModal)="handleProfileModalClose()" />
