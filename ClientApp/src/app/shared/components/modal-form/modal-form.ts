@@ -42,8 +42,13 @@ export class ModalForm {
     city: ['', [Validators.required, Validators.maxLength(50)]]
   });
 
+  userForm: FormGroup = this.fb.group({
+    user_name: ['', [Validators.required, Validators.maxLength(50)]],
+    user_email: ['', [Validators.required, Validators.email, Validators.maxLength(50)]],
+    user_role: ['', [Validators.required]]
+  });
+
   constructor() {
-    // Populate form fields whenever new initialData is passed to modal
     effect(() => {
       const data = this.initialData();
       const type = this.entityType();
@@ -70,6 +75,12 @@ export class ModalForm {
             store_name: data.store_name || '',
             city: data.city || ''
           });
+        } else if (type === 'User') {
+          this.userForm.patchValue({
+            user_name: data.user_name || '',
+            user_email: data.user_email || '',
+            user_role: data.user_role || ''
+          });
         }
       }
     });
@@ -85,7 +96,8 @@ export class ModalForm {
 
     if (type === 'Customer') form = this.customerForm;
     else if (type === 'Product') form = this.productForm;
-    else form = this.storeForm;
+    else if (type === 'Store') form = this.storeForm;
+    else form = this.userForm;
 
     if (form.valid) {
       this.saveData.emit({

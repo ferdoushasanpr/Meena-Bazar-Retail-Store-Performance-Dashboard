@@ -63,4 +63,8 @@ export class UserService {
     updateUser(user_id: string, user: any, token: string) {
         return this.operationService.updateUserData(user_id, user, token);
     }
+
+    deleteUser(id: string, token: string) {
+        return this.operationService.deleteUserData(id, token);
+    }
 }

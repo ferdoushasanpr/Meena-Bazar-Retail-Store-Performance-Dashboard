@@ -153,6 +153,7 @@ export class DataExploration {
     } else if (this.pageHeaderTitle() === 'Transactions') {
       this.transactionService.loadTransactionsData(1);
     } else if (this.pageHeaderTitle() === 'Users') {
+      this.activeEntityType.set('User');
       if (this.token && this.userRole === 'admin') {
         this.userService.loadUserData(this.token, 1);
       }
@@ -245,19 +246,13 @@ export class DataExploration {
     }
   }
 
+  //  Update Data in any Table
   handleUpdate(row: any): void {
     console.log('Update clicked for order item:', row);
     this.selectedRowData.set(row);
     this.isModalOpen.set(true);
   }
 
-  handleDelete(row: any): void {
-    console.log('Delete clicked for item:', row);
-    this.itemToDelete.set(row);
-    this.isDeleteModalOpen.set(true);
-  }
-
-  //  Update Data in any Table
   handleSaveUpdate(payload: UpdatePayload): void {
     payload.data[`${payload.type.toLowerCase()}_id`] = payload.id;
 
@@ -288,7 +283,31 @@ export class DataExploration {
         },
         error: (error) => { console.error(error) }
       });
+    } else if (payload.type === "User") {
+      if (this.token) {
+        this.userService.updateUser(payload.id, payload.data, this.token).subscribe({
+          next: (response) => {
+            console.log('User updated successfully:', response);
+            this.isModalOpen.set(false);
+            if (this.token) {
+              this.userService.loadUserData(this.token, this.componentData().pageNumber);
+            }
+          },
+          error: (error) => { console.error(error) }
+        });
+      }
     }
+  }
+
+  handleCloseModal(): void {
+    this.isModalOpen.set(false);
+  }
+
+  // Delete Data in any Table
+  handleDelete(row: any): void {
+    console.log('Delete clicked for item:', row);
+    this.itemToDelete.set(row);
+    this.isDeleteModalOpen.set(true);
   }
 
   onConfirmDelete(): void {
@@ -298,7 +317,6 @@ export class DataExploration {
     if (this.pageHeaderTitle() === 'Customers') {
       this.customerService.deleteCustomer(record.customer_id).subscribe({
         next: (response) => {
-          console.log('Customer deleted successfully:', response);
           this.customerService.loadCustomerData(this.componentData().pageNumber);
         },
         error: (error) => { console.error(error) }
@@ -306,7 +324,6 @@ export class DataExploration {
     } else if (this.pageHeaderTitle() === 'Products') {
       this.productService.deleteProduct(record.product_id).subscribe({
         next: (response) => {
-          console.log('Product deleted successfully:', response);
           this.productService.loadProductData(this.componentData().pageNumber);
         },
         error: (error) => { console.error(error) }
@@ -314,21 +331,27 @@ export class DataExploration {
     } else if (this.pageHeaderTitle() === 'Stores') {
       this.storeService.deleteStore(record.store_id).subscribe({
         next: (response) => {
-          console.log('Store deleted successfully:', response);
           this.storeService.loadStoreData(this.componentData().pageNumber);
         },
         error: (error) => { console.error(error) }
       });
+    } else if (this.pageHeaderTitle() === 'Users') {
+      if (this.userRole === 'admin' && this.token) {
+        this.userService.deleteUser(record.user_id, this.token).subscribe({
+          next: (response) => {
+            if (this.token) {
+              this.userService.loadUserData(this.token, this.componentData().pageNumber);
+            }
+          },
+          error: (error) => { console.error(error) }
+        });
+      }
     }
 
     this.isDeleteModalOpen.set(false);
     this.itemToDelete.set(null);
   }
 
-  // Close Modal
-  handleCloseModal(): void {
-    this.isModalOpen.set(false);
-  }
 
   onCloseDeleteModal(): void {
     this.isDeleteModalOpen.set(false);

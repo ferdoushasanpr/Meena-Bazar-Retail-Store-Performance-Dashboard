@@ -132,4 +132,12 @@ export class OperationsService {
 
         return this.http.put<boolean>(`${this.apiUrlBase}/users/${user_id}`, user, { headers });
     }
+
+    deleteUserData(id: string, token: string): Observable<Product> {
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        }
+
+        return this.http.delete<Product>(`${this.apiUrlBase}/users/${id}`, { headers });
+    }
 }
