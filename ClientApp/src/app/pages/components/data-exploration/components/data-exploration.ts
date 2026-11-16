@@ -291,6 +291,7 @@ export class DataExploration {
     }
   }
 
+  // Delete Data in any Table
   onConfirmDelete(): void {
     const record = this.itemToDelete();
     console.log('Deleting record from backend:', record);
@@ -298,7 +299,6 @@ export class DataExploration {
     if (this.pageHeaderTitle() === 'Customers') {
       this.customerService.deleteCustomer(record.customer_id).subscribe({
         next: (response) => {
-          console.log('Customer deleted successfully:', response);
           this.customerService.loadCustomerData(this.componentData().pageNumber);
         },
         error: (error) => { console.error(error) }
@@ -306,7 +306,6 @@ export class DataExploration {
     } else if (this.pageHeaderTitle() === 'Products') {
       this.productService.deleteProduct(record.product_id).subscribe({
         next: (response) => {
-          console.log('Product deleted successfully:', response);
           this.productService.loadProductData(this.componentData().pageNumber);
         },
         error: (error) => { console.error(error) }
@@ -314,11 +313,21 @@ export class DataExploration {
     } else if (this.pageHeaderTitle() === 'Stores') {
       this.storeService.deleteStore(record.store_id).subscribe({
         next: (response) => {
-          console.log('Store deleted successfully:', response);
           this.storeService.loadStoreData(this.componentData().pageNumber);
         },
         error: (error) => { console.error(error) }
       });
+    } else if (this.pageHeaderTitle() === 'Users') {
+      if (this.userRole === 'admin' && this.token) {
+        this.userService.deleteUser(record.user_id, this.token).subscribe({
+          next: (response) => {
+            if (this.token) {
+              this.userService.loadUserData(this.token, this.componentData().pageNumber);
+            }
+          },
+          error: (error) => { console.error(error) }
+        });
+      }
     }
 
     this.isDeleteModalOpen.set(false);
