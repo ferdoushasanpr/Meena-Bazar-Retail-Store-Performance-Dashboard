@@ -1,0 +1,63 @@
+@if (isOpen()) {
+<div class="modal-backdrop" (click)="onClose()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+
+        <!-- Top Close Button -->
+        <button type="button" class="close-btn" (click)="onClose()" title="Close">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <!-- Top Middle Initials Avatar & Headline -->
+        <div class="profile-hero">
+            <div class="avatar-circle">
+                <span>{{ initials() }}</span>
+            </div>
+            <h3 class="profile-name">{{ user()?.user_name || 'Unknown User' }}</h3>
+            <span class="role-badge">{{ user()?.user_role || 'User' }}</span>
+        </div>
+
+        <!-- Profile Details List -->
+        <div class="profile-details">
+            <div class="detail-row">
+                <div class="detail-label">
+                    <i class="fa-solid fa-user"></i>
+                    <span>Full Name</span>
+                </div>
+                <span class="detail-value">{{ user()?.user_name || '-' }}</span>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-label">
+                    <i class="fa-solid fa-envelope"></i>
+                    <span>Email</span>
+                </div>
+                <span class="detail-value">{{ user()?.user_email || '-' }}</span>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-label">
+                    <i class="fa-solid fa-user-shield"></i>
+                    <span>Role</span>
+                </div>
+                <span class="detail-value">{{ user()?.user_role || '-' }}</span>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-label">
+                    <i class="fa-solid fa-calendar-days"></i>
+                    <span>Signup Date</span>
+                </div>
+                <span class="detail-value">
+                    {{ user()?.user_signup ? (user()?.user_signup | date:'mediumDate') : '-' }}
+                </span>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="modal-footer">
+            <button type="button" class="btn btn-ghost" (click)="onClose()">Close</button>
+        </div>
+
+    </div>
+</div>
+}

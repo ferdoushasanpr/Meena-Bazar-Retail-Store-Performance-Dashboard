@@ -247,12 +247,11 @@
     display: flex;
     align-items: center;
     gap: 12px;
-
     padding: 12px 8px 0;
     border-top: 1px solid #111a28;
     margin-top: auto;
-
     flex-shrink: 0;
+    cursor: pointer;
 }
 
 .avatar {
@@ -308,6 +307,7 @@
     justify-content: center;
     padding-left: 0;
     padding-right: 0;
+    cursor: pointer;
 }
 
 .sidebar-collapsed .collapse-btn {
@@ -356,6 +356,7 @@
         justify-content: center;
         padding-left: 0;
         padding-right: 0;
+        cursor: pointer;
     }
 
     .sidebar .collapse-btn {
