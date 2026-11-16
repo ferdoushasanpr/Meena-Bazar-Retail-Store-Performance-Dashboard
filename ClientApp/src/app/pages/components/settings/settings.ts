@@ -10,6 +10,7 @@ import {
 import { PageHeader } from '../../../layout/page-header/page-header';
 import { UserService } from '../../services/user-service';
 import { AuthService } from '../../../auth/services/auth-service';
+import { ToastService } from '../../services/toast-service';
 
 @Component({
   imports: [ReactiveFormsModule, PageHeader],
@@ -21,6 +22,7 @@ export class Settings {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private userService = inject(UserService);
+  private toastService = inject(ToastService);
 
   // Auth Data
   authData = this.authService.authData;
@@ -34,15 +36,12 @@ export class Settings {
     'Update your profile details and security credentials in one place.';
 
   // Feedback State & Loading
-  saveSuccess = signal<string | null>(null);
   isSubmitting = signal<boolean>(false);
-
-  // Password Visibility Toggles
   showCurrentPassword = signal<boolean>(false);
   showNewPassword = signal<boolean>(false);
   showConfirmPassword = signal<boolean>(false);
 
-  // Unified Single Form
+  // Settings Form
   settingsForm: FormGroup = this.fb.group(
     {
       user_name: ['', [Validators.required, Validators.maxLength(50)]],
@@ -67,7 +66,7 @@ export class Settings {
     });
   }
 
-  // Custom Validator: Validates password requirements when changing password
+  // Custom Validator
   private passwordValidationHandler(group: AbstractControl): ValidationErrors | null {
     const currentPass = group.get('currentPassword')?.value;
     const newPass = group.get('newPassword')?.value;
@@ -114,14 +113,12 @@ export class Settings {
       this.userService.updateUser(auth.userId, user, auth.token).subscribe({
         next: (response) => {
           this.isSubmitting.set(false);
-          this.saveSuccess.set('Account settings updated successfully.');
+          this.toastService.showSuccess("Update", "Account settings updated successfully!");
           this.settingsForm.patchValue({ currentPassword: '', newPassword: '', confirmPassword: '' });
           this.settingsForm.markAsPristine();
-
           this.userService.getUserById(auth.userId, auth.token);
-          setTimeout(() => this.saveSuccess.set(null), 4000);
         },
-        error: (error) => { console.log(error) }
+        error: (error) => { this.toastService.showError("Something Went Wrong!", "Error") }
       });
     } else {
       this.settingsForm.markAllAsTouched();

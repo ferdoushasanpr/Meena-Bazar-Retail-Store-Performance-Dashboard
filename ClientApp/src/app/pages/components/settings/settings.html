@@ -4,14 +4,6 @@
 
     <!-- Main Unified Form Card -->
     <div class="settings-card">
-
-        @if (saveSuccess()) {
-        <div class="alert alert-success">
-            <i class="fa-solid fa-circle-check"></i>
-            <span>{{ saveSuccess() }}</span>
-        </div>
-        }
-
         <form [formGroup]="settingsForm" (ngSubmit)="onSubmit()" class="unified-form">
             <div class="form-section">
                 <div class="section-title">

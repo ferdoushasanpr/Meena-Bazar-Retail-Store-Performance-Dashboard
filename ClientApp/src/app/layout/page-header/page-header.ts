@@ -1,4 +1,5 @@
-import { Component, input, output } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
+import { ToastService } from '../../pages/services/toast-service';
 
 @Component({
   imports: [],
@@ -7,11 +8,13 @@ import { Component, input, output } from '@angular/core';
   templateUrl: './page-header.html',
 })
 export class PageHeader {
+  private toastService = inject(ToastService);
   title = input.required<string>();
   subtitle = input.required<string>();
   exportReport = output<void>();
 
   onExportReport(): void {
+    this.toastService.showSuccess("Delete", "User Deleted Successfully!");
     this.exportReport.emit();
   }
 }
