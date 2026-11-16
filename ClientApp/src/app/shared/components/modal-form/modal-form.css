@@ -48,11 +48,9 @@
 
 .modal-header {
     flex-shrink: 0;
-
     padding: 20px 24px;
     background: #0f172a;
     border-bottom: 1px solid #1e293b;
-
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
@@ -65,16 +63,13 @@
 
 .header-title h3 {
     margin: 0;
-
     font-size: 16px;
     font-weight: 600;
     color: #f8fafc;
-
     display: flex;
     align-items: center;
     flex-wrap: wrap;
     gap: 8px;
-
     overflow-wrap: anywhere;
 }
 
@@ -85,7 +80,6 @@
 
 .header-title p {
     margin: 5px 0 0;
-
     font-size: 12px;
     line-height: 1.5;
     color: #94a3b8;
@@ -95,18 +89,14 @@
     background: transparent;
     border: none;
     color: #64748b;
-
     font-size: 18px;
     cursor: pointer;
-
     padding: 4px;
     min-width: 32px;
     min-height: 32px;
-
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     flex-shrink: 0;
     transition: color 0.2s;
 }
@@ -117,19 +107,14 @@
 
 .modal-body {
     padding: 24px;
-
     width: 100%;
     min-width: 0;
-
     flex: 1 1 auto;
     min-height: 0;
-
     overflow-y: auto;
     overflow-x: hidden;
-
     overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
-
     scrollbar-width: thin;
     scrollbar-color: #475569 #131e32;
 }
@@ -154,9 +139,7 @@
 
 .form-grid {
     display: grid;
-
     grid-template-columns: repeat(2, minmax(0, 1fr));
-
     gap: 18px;
     width: 100%;
 }
@@ -164,7 +147,6 @@
 .form-group {
     display: flex;
     flex-direction: column;
-
     gap: 7px;
     min-width: 0;
 }
@@ -172,9 +154,7 @@
 .form-group label {
     font-size: 11px;
     font-weight: 600;
-
     color: #94a3b8;
-
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
@@ -183,18 +163,13 @@
     width: 100%;
     min-width: 0;
     min-height: 42px;
-
     background: #0f172a;
     border: 1px solid #334155;
     border-radius: 8px;
-
     padding: 10px 12px;
-
     font-size: 14px;
     color: #f8fafc;
-
     outline: none;
-
     transition: all 0.2s ease;
 }
 
@@ -207,6 +182,36 @@
     box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
 }
 
+.form-group select {
+    width: 100%;
+    min-width: 0;
+    min-height: 42px;
+    background-color: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 14px;
+    font-family: inherit;
+    color: #f8fafc;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.form-group select:hover {
+    border-color: #64748b;
+}
+
+.form-group select:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+
+.form-group select option {
+    background-color: #0f172a;
+    color: #f8fafc;
+}
+
 .error-msg {
     font-size: 11px;
     color: #f87171;
@@ -216,39 +221,28 @@
 
 .modal-footer {
     flex-shrink: 0;
-
     padding: 16px 24px;
-
     background: #0f172a;
     border-top: 1px solid #1e293b;
-
     display: flex;
     justify-content: flex-end;
     align-items: center;
-
     gap: 12px;
 }
 
 .btn {
     min-height: 40px;
-
     padding: 9px 18px;
-
     border-radius: 8px;
     font-size: 13px;
     font-weight: 600;
-
     cursor: pointer;
-
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     gap: 7px;
-
     white-space: nowrap;
     border: none;
-
     transition: all 0.2s ease;
 }
 
@@ -294,7 +288,6 @@
 
     .modal-card {
         max-width: 560px;
-
         max-height: calc(100vh - 32px);
         max-height: calc(100dvh - 32px);
     }
@@ -317,6 +310,12 @@
 }
 
 @media (max-width: 576px) {
+    .form-group select {
+        min-height: 46px;
+        font-size: 16px;
+        padding: 11px 12px;
+    }
+
     .modal-backdrop {
         padding: 12px;
         align-items: center;
@@ -325,10 +324,8 @@
     .modal-card {
         width: 100%;
         max-width: 100%;
-
         max-height: calc(100vh - 24px);
         max-height: calc(100dvh - 24px);
-
         border-radius: 10px;
     }
 
@@ -370,11 +367,9 @@
 
     .modal-footer {
         padding: 14px 16px;
-
         display: flex;
         flex-direction: column-reverse;
         align-items: stretch;
-
         gap: 10px;
     }
 
@@ -468,6 +463,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+    .form-group select {
+        transition: none;
+    }
 
     .modal-backdrop,
     .modal-card {
