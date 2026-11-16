@@ -14,6 +14,7 @@ import { TransactionService } from '../services/transaction-service';
 import { UserService } from '../../../services/user-service';
 import { AuthService } from '../../../../auth/services/auth-service';
 import { Loading } from '../../../../shared/components/loading/loading';
+import { ToastService } from '../../../services/toast-service';
 
 @Component({
   imports: [PageHeader, Loading, DynamicTable, ModalForm, DialogBox],
@@ -30,6 +31,7 @@ export class DataExploration {
   private storeService = inject(StoreService);
   private orderService = inject(OrderService);
   private transactionService = inject(TransactionService);
+  private toastService = inject(ToastService);
 
   // Header Info
   pageHeaderTitle = signal<string>('');
@@ -73,7 +75,6 @@ export class DataExploration {
 
   isLoading = computed(() => {
     const title = this.pageHeaderTitle();
-
     return this.componentDataLoading();
   });
 
@@ -261,27 +262,30 @@ export class DataExploration {
         next: (response) => {
           console.log('Customer updated successfully:', response);
           this.isModalOpen.set(false);
+          this.toastService.showSuccess("Update", "Customer Updated Successfully!");
           this.customerService.loadCustomerData(this.componentData().pageNumber);
         },
-        error: (error) => { console.error(error) }
+        error: (error) => { this.toastService.showError("Something Went Wrong!", "Error") }
       });
     } else if (payload.type === "Product") {
       this.productService.updateProduct(payload.id, payload.data).subscribe({
         next: (response) => {
           console.log('Product updated successfully:', response);
           this.isModalOpen.set(false);
+          this.toastService.showSuccess("Update", "Product Updated Successfully!");
           this.productService.loadProductData(this.componentData().pageNumber);
         },
-        error: (error) => { console.error(error) }
+        error: (error) => { this.toastService.showError("Something Went Wrong!", "Error") }
       });
     } else if (payload.type === "Store") {
       this.storeService.updateStore(payload.id, payload.data).subscribe({
         next: (response) => {
           console.log('Store updated successfully:', response);
           this.isModalOpen.set(false);
+          this.toastService.showSuccess("Update", "Store Updated Successfully!");
           this.storeService.loadStoreData(this.componentData().pageNumber);
         },
-        error: (error) => { console.error(error) }
+        error: (error) => { this.toastService.showError("Something Went Wrong!", "Error") }
       });
     } else if (payload.type === "User") {
       if (this.token) {
@@ -289,11 +293,12 @@ export class DataExploration {
           next: (response) => {
             console.log('User updated successfully:', response);
             this.isModalOpen.set(false);
+            this.toastService.showSuccess("Update", "User Updated Successfully!");
             if (this.token) {
               this.userService.loadUserData(this.token, this.componentData().pageNumber);
             }
           },
-          error: (error) => { console.error(error) }
+          error: (error) => { this.toastService.showError("Something Went Wrong!", "Error") }
         });
       }
     }
@@ -317,33 +322,37 @@ export class DataExploration {
     if (this.pageHeaderTitle() === 'Customers') {
       this.customerService.deleteCustomer(record.customer_id).subscribe({
         next: (response) => {
+          this.toastService.showSuccess("Delete", "Customer Deleted Successfully!");
           this.customerService.loadCustomerData(this.componentData().pageNumber);
         },
-        error: (error) => { console.error(error) }
+        error: (error) => { this.toastService.showError("Something Went Wrong!", "Error") }
       });
     } else if (this.pageHeaderTitle() === 'Products') {
       this.productService.deleteProduct(record.product_id).subscribe({
         next: (response) => {
+          this.toastService.showSuccess("Delete", "Product Deleted Successfully!");
           this.productService.loadProductData(this.componentData().pageNumber);
         },
-        error: (error) => { console.error(error) }
+        error: (error) => { this.toastService.showError("Something Went Wrong!", "Error") }
       });
     } else if (this.pageHeaderTitle() === 'Stores') {
       this.storeService.deleteStore(record.store_id).subscribe({
         next: (response) => {
+          this.toastService.showSuccess("Delete", "Store Deleted Successfully!");
           this.storeService.loadStoreData(this.componentData().pageNumber);
         },
-        error: (error) => { console.error(error) }
+        error: (error) => { this.toastService.showError("Something Went Wrong!", "Error") }
       });
     } else if (this.pageHeaderTitle() === 'Users') {
       if (this.userRole === 'admin' && this.token) {
         this.userService.deleteUser(record.user_id, this.token).subscribe({
           next: (response) => {
+            this.toastService.showSuccess("Delete", "User Deleted Successfully!");
             if (this.token) {
               this.userService.loadUserData(this.token, this.componentData().pageNumber);
             }
           },
-          error: (error) => { console.error(error) }
+          error: (error) => { this.toastService.showError("Something Went Wrong!", "Error") }
         });
       }
     }

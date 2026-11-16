@@ -5,6 +5,7 @@ import { PageHeader } from '../../../layout/page-header/page-header';
 import { CustomerService } from '../data-exploration/services/customer-service';
 import { ProductService } from '../data-exploration/services/product-service';
 import { StoreService } from '../data-exploration/services/store-service';
+import { ToastService } from '../../services/toast-service';
 
 export type DataTab = 'Customer' | 'Product' | 'Store';
 
@@ -20,6 +21,7 @@ export class AddData {
   private customerService = inject(CustomerService);
   private productService = inject(ProductService);
   private storeService = inject(StoreService);
+  private toastService = inject(ToastService);
 
   // Page Header Info
   pageHeaderTitle = 'Add Data';
@@ -59,12 +61,12 @@ export class AddData {
   // Form Submissions
   onCustomerSubmit(): void {
     if (this.customerForm.valid) {
-      //console.log('Customer Data:', this.customerForm.value);
       this.customerService.addCustomer(this.customerForm.value).subscribe({
         next: (response) => {
+          this.toastService.showSuccess("Added", "Customer Added Successfully!");
           this.router.navigate(['data-explorer/customers']);
         },
-        error: (error) => { console.error(error) }
+        error: (error) => { this.toastService.showError("Something Went Wrong!", "Error") }
       });
 
       this.customerForm.reset();
@@ -75,12 +77,12 @@ export class AddData {
 
   onProductSubmit(): void {
     if (this.productForm.valid) {
-      //console.log('Product Data:', this.productForm.value);
       this.productService.addProduct(this.productForm.value).subscribe({
         next: (response) => {
+          this.toastService.showSuccess("Added", "Product Added Successfully!");
           this.router.navigate(['data-explorer/products']);
         },
-        error: (error) => { console.error(error) }
+        error: (error) => { this.toastService.showError("Something Went Wrong!", "Error") }
       });
 
       this.productForm.reset();
@@ -91,12 +93,12 @@ export class AddData {
 
   onStoreSubmit(): void {
     if (this.storeForm.valid) {
-      //console.log('Store Data:', this.storeForm.value);
       this.storeService.addStore(this.storeForm.value).subscribe({
         next: (response) => {
+          this.toastService.showSuccess("Added", "Store Added Successfully!");
           this.router.navigate(['data-explorer/stores']);
         },
-        error: (error) => { console.error(error) }
+        error: (error) => { this.toastService.showError("Something Went Wrong!", "Error") }
       });
 
       this.storeForm.reset();
