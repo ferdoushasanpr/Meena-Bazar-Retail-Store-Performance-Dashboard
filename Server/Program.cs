@@ -53,6 +53,7 @@ builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddOpenApi();
 
 builder.Services.AddCors(options =>
@@ -91,6 +92,7 @@ app.MapTransactionEndpoints();
 app.MapAnalyticsEndpoints();
 app.MapAuthEndpoints();
 app.MapUserEndpoints();
+app.MapNotificationsEndpoints();
 
 
 app.Run();
