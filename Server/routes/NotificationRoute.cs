@@ -11,7 +11,7 @@ public static class NotificationRoute
 
         group.MapGet("/", async (INotificationService service) =>
         {
-            var results = await service.GetNotificatonsAsync();
+            var results = await service.GetNotificationsAsync();
             return Results.Ok(results);
         });
 

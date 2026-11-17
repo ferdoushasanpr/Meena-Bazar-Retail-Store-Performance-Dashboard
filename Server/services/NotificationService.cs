@@ -1,19 +1,23 @@
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Server.Data;
 using Server.DTOs;
+using Server.Hubs;
 using Server.Interfaces;
 using Server.Models;
 
 class NotificationService : INotificationService
 {
     private readonly ApplicationDbContext _context;
+    private readonly IHubContext<NotificationHub> _hubContext;
 
-    public NotificationService(ApplicationDbContext context)
+    public NotificationService(IHubContext<NotificationHub> hubContext, ApplicationDbContext context)
     {
+        _hubContext = hubContext;
         _context = context;
     }
 
-    public async Task<IEnumerable<NotificationResponse>> GetNotificatonsAsync()
+    public async Task<IEnumerable<NotificationResponse>> GetNotificationsAsync()
     {
         var query = from n in _context.DemoNotifications.AsNoTracking()
                     join u in _context.DemoUsers.AsNoTracking()
@@ -43,7 +47,37 @@ class NotificationService : INotificationService
         notification.createdAt = DateTime.UtcNow;
 
         await _context.DemoNotifications.AddAsync(notification);
-        return await _context.SaveChangesAsync() > 0;
+
+        var result = await _context.SaveChangesAsync() > 0;
+
+        if (!result)
+        {
+            return false;
+        }
+
+        var notificationResponse = await (
+        from n in _context.DemoNotifications.AsNoTracking()
+        join u in _context.DemoUsers.AsNoTracking()
+            on n.user_id equals u.user_id
+        where n.notification_id == notification.notification_id
+        select new NotificationResponse
+        {
+            notification_id = n.notification_id,
+            user_name = u.user_name,
+            message = n.message,
+            isRead = n.isRead,
+            createdAt = n.createdAt
+        }).FirstOrDefaultAsync();
+
+        if (notificationResponse != null)
+        {
+            await _hubContext.Clients.All.SendAsync(
+                "ReceiveNotification",
+                notificationResponse
+            );
+        }
+
+        return true;
     }
 
     public async Task<bool> ReadNotificationAsync(NotificationResponse notification)
