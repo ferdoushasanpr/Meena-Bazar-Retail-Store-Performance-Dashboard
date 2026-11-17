@@ -3,20 +3,35 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { filter } from 'rxjs';
 import { AuthService } from '../../auth/services/auth-service';
+import { NotificationPanel } from '../../shared/components/notification-panel/notification-panel';
+import { NotificationService } from '../../pages/services/notification-service';
+
+export interface NotificationItem {
+  id: string | number;
+  title: string;
+  message: string;
+  time: string;
+  type?: 'info' | 'success' | 'warning' | 'error';
+  read: boolean;
+}
 
 @Component({
-  imports: [RouterLink, TitleCasePipe],
+  imports: [RouterLink, TitleCasePipe, NotificationPanel],
   selector: 'app-topbar',
   styleUrl: './topbar.css',
   templateUrl: './topbar.html',
 })
-export class Topbar {
+export class Topbar implements OnInit {
   private authService = inject(AuthService);
+  private notificationService = inject(NotificationService);
+
   lastUpdatedTime: string = '10:42 AM';
 
   private router = inject(Router);
-
   pathSegments = signal<string[]>([]);
+
+  isNotificationsOpen = signal<boolean>(false);
+  notifications = this.notificationService.notifications;
 
   constructor() {
     this.updatePath();
@@ -26,6 +41,10 @@ export class Topbar {
       .subscribe(() => this.updatePath());
   }
 
+  ngOnInit(): void {
+    this.notificationService.getNotifications();
+  }
+
   updatePath() {
     const segments = this.router.url
       .split('?')[0]
@@ -33,6 +52,10 @@ export class Topbar {
       .filter(Boolean);
 
     this.pathSegments.set(segments);
+  }
+
+  toggleNotifications(): void {
+    this.isNotificationsOpen.update((open) => !open);
   }
 
   onLogout(): void {

@@ -1,0 +1,51 @@
+@if (isOpen()) {
+<div class="click-outside-backdrop" (click)="onClose()"></div>
+
+<div class="notification-panel" (click)="$event.stopPropagation()">
+
+    <div class="panel-header">
+        <div class="header-left">
+            <h3>Notifications</h3>
+            @if (unreadCount() > 0) {
+            <span class="unread-badge">{{ unreadCount() }} new</span>
+            }
+        </div>
+    </div>
+
+    <div class="notification-list">
+        @for (item of notifications(); track item.notification_id) {
+        <div class="notification-item" [class.unread]="!item.isRead" (click)="onItemClick(item)">
+            <div class="item-icon"
+                [ngClass]="item.message.charAt(0) === 'c' || item.message.charAt(0) === 'u' ? 'success' : item.message.charAt(0) === 'd' ? 'error' : 'info'">
+                @switch (item.message.charAt(0)) {
+                @case ('c') { <i class="fa-solid fa-circle-check"></i> }
+                @case ('u') { <i class="fa-solid fa-circle-check"></i> }
+                @case ('d') { <i class="fa-solid fa-circle-exclamation"></i> }
+                @default { <i class="fa-solid fa-bell"></i> }
+                }
+            </div>
+
+            <div class="item-content">
+                <div class="item-top">
+                    <span class="item-time">{{ item.createdAt | date:'medium' }}</span>
+                </div>
+                <p class="item-message"><span style="font-weight: bold;">{{item.user_name}}</span> {{ item.message }}
+                </p>
+            </div>
+
+            @if (!item.isRead) {
+            <span class="unread-dot" title="Unread"></span>
+            }
+        </div>
+        } @empty {
+        <div class="empty-state">
+            <div class="empty-icon">
+                <i class="fa-regular fa-bell-slash"></i>
+            </div>
+            <p>No notifications yet</p>
+            <span>You're all caught up!</span>
+        </div>
+        }
+    </div>
+</div>
+}

@@ -7,7 +7,7 @@ import { Customer, CustomerDataResponse } from '../models/customer';
 import { Product, ProductDataResponse } from '../models/product';
 import { OrderDataResponse } from '../models/order';
 import { UserData, UserDataResponse } from '../models/user';
-import { NotificationData } from '../models/notification';
+import { NotificationData, NotificationResponse } from '../models/notification';
 
 @Injectable({
     providedIn: "root"
@@ -145,5 +145,9 @@ export class OperationsService {
     // Notification Operations
     addNotificationData(notification: NotificationData): Observable<NotificationData> {
         return this.http.post<NotificationData>(`${this.apiUrlBase}/notifications`, notification);
+    }
+
+    getNotificationsData(): Observable<NotificationResponse[]> {
+        return this.http.get<NotificationResponse[]>(`${this.apiUrlBase}/notifications`);
     }
 }
