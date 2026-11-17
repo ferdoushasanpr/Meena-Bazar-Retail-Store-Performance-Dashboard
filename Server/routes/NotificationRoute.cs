@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Server.DTOs;
 using Server.Interfaces;
 using Server.Models;
 
@@ -20,9 +21,14 @@ public static class NotificationRoute
             return result ? Results.Ok("Successfully Created Notification.") : Results.BadRequest();
         });
 
-        group.MapPut("/{notification_id}", async (INotificationService service, string notification_id) =>
+        group.MapPut("/{notification_id}", async (INotificationService service, string notification_id, NotificationResponse notification) =>
         {
-            var result = await service.ReadNotificationAsync(notification_id);
+            if (notification.notification_id != notification_id)
+            {
+                return Results.BadRequest("Notification ID Mismatched!");
+            }
+
+            var result = await service.ReadNotificationAsync(notification);
             return result ? Results.Ok("Successfully Read Notification.") : Results.NotFound();
         });
 

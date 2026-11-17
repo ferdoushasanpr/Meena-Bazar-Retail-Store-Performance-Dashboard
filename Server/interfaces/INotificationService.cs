@@ -6,5 +6,5 @@ public interface INotificationService
 {
     Task<IEnumerable<NotificationResponse>> GetNotificatonsAsync();
     Task<bool> AddNotificationAsync(Notification notification);
-    Task<bool> ReadNotificationAsync(string notification_id);
+    Task<bool> ReadNotificationAsync(NotificationResponse notification);
 }
