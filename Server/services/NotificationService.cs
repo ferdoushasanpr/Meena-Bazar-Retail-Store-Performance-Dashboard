@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Server.Data;
+using Server.DTOs;
 using Server.Interfaces;
 using Server.Models;
 
@@ -12,9 +13,19 @@ class NotificationService : INotificationService
         _context = context;
     }
 
-    public async Task<IEnumerable<Notification>> GetNotificatonsAsync()
+    public async Task<IEnumerable<NotificationResponse>> GetNotificatonsAsync()
     {
-        var query = _context.DemoNotifications.AsNoTracking();
+        var query = from n in _context.DemoNotifications.AsNoTracking()
+                    join u in _context.DemoUsers.AsNoTracking()
+                    on n.user_id equals u.user_id
+                    select new NotificationResponse
+                    {
+                        notification_id = n.notification_id,
+                        user_name = u.user_name,
+                        message = n.message,
+                        isRead = n.isRead,
+                        createdAt = n.createdAt
+                    };
         return await query.OrderByDescending(n => n.notification_id).Take(20).ToListAsync();
     }
 
