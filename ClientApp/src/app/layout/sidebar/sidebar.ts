@@ -2,6 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { UserService } from '../../pages/services/user-service';
 import { Userprofile } from '../../pages/components/userprofile/userprofile';
+import { getNameInitials } from '../../shared/utilities/name-initials';
 
 interface MenuItem {
   title: string;
@@ -28,9 +29,7 @@ export class Sidebar {
   userData = this.userService.userData;
 
   userInitials = computed(() => {
-    const data = this.userData();
-    if (!data.user_name) return '';
-    return data.user_name.split(" ").map(item => item[0].toUpperCase()).join('');
+    return getNameInitials(this.userData()?.user_name);
   });
 
   activeItem: string = 'Dashboard';
