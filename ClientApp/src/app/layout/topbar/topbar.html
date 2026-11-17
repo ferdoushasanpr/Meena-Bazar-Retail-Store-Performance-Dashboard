@@ -29,7 +29,7 @@
                 </button>
 
                 <app-notification-panel [isOpen]="isNotificationsOpen()" [notifications]="notifications()"
-                    (closePanel)="isNotificationsOpen.set(false)">
+                    (markAsRead)="updateMarkAsRead($event)" (closePanel)="isNotificationsOpen.set(false)">
                 </app-notification-panel>
 
             </div>
@@ -40,6 +40,3 @@
         </div>
     </div>
 </header>
-
-<app-notification-panel [isOpen]="isNotificationsOpen()" [notifications]="notifications()"
-    (closePanel)="toggleNotifications()" />

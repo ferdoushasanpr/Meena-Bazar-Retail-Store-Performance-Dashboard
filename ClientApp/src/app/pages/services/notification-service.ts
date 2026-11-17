@@ -26,4 +26,8 @@ export class NotificationService {
             error: (error) => { console.error(error) }
         });
     }
+
+    markAsReadNotification(notification_id: string, notification: NotificationResponse) {
+        return this.operationService.updateNotificationData(notification_id, notification);
+    }
 }

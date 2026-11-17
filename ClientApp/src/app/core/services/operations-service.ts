@@ -150,4 +150,8 @@ export class OperationsService {
     getNotificationsData(): Observable<NotificationResponse[]> {
         return this.http.get<NotificationResponse[]>(`${this.apiUrlBase}/notifications`);
     }
+
+    updateNotificationData(notification_id: string, notification: NotificationResponse): Observable<boolean> {
+        return this.http.put<boolean>(`${this.apiUrlBase}/notifications/${notification_id}`, notification);
+    }
 }

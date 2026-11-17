@@ -13,7 +13,7 @@ export class NotificationPanel {
   notifications = input<NotificationResponse[]>([]);
 
   closePanel = output<void>();
-  markAsRead = output<string | number>();
+  markAsRead = output<string>();
 
   unreadCount = computed(() =>
     this.notifications().filter((item) => !item.isRead).length

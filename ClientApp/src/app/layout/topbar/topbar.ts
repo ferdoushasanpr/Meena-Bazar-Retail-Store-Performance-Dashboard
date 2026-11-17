@@ -58,6 +58,19 @@ export class Topbar implements OnInit {
     this.isNotificationsOpen.update((open) => !open);
   }
 
+  updateMarkAsRead(id: string): void {
+    const data = this.notifications().find(item => item.notification_id === id);
+    if (data) {
+      data.isRead = 1;
+      this.notificationService.markAsReadNotification(id, data).subscribe({
+        next: (response) => { console.log("The Notifications is Read.") },
+        error: (error) => {
+          console.error(error);
+        }
+      })
+    }
+  }
+
   onLogout(): void {
     this.authService.logout();
   }
