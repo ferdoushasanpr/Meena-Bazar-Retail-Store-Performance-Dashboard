@@ -15,6 +15,7 @@ import { UserService } from '../../../services/user-service';
 import { AuthService } from '../../../../auth/services/auth-service';
 import { Loading } from '../../../../shared/components/loading/loading';
 import { ToastService } from '../../../services/toast-service';
+import { NotificationService } from '../../../services/notification-service';
 
 @Component({
   imports: [PageHeader, Loading, DynamicTable, ModalForm, DialogBox],
@@ -32,6 +33,7 @@ export class DataExploration {
   private orderService = inject(OrderService);
   private transactionService = inject(TransactionService);
   private toastService = inject(ToastService);
+  private notificationService = inject(NotificationService);
 
   // Header Info
   pageHeaderTitle = signal<string>('');
@@ -40,6 +42,7 @@ export class DataExploration {
   authData = this.authService.authData();
   userRole = this.authData?.role;
   token = this.authData?.token;
+  userData = this.userService.userData;
   // Search Input
   searchQuery = signal<string>('');
 
@@ -260,7 +263,17 @@ export class DataExploration {
     if (payload.type === "Customer") {
       this.customerService.updateCustomer(payload.id, payload.data).subscribe({
         next: (response) => {
-          console.log('Customer updated successfully:', response);
+          const data = this.userData();
+          if (data.user_id) {
+            this.notificationService.addNotification({
+              user_id: data.user_id,
+              message: `updated customer of customer id ${payload.id}.`,
+              isRead: 0
+            }).subscribe({
+              next: () => { console.log("Customer Updated Successfully!") },
+              error: (error) => { console.error(error) }
+            });
+          }
           this.isModalOpen.set(false);
           this.toastService.showSuccess("Update", "Customer Updated Successfully!");
           this.customerService.loadCustomerData(this.componentData().pageNumber);
@@ -270,7 +283,17 @@ export class DataExploration {
     } else if (payload.type === "Product") {
       this.productService.updateProduct(payload.id, payload.data).subscribe({
         next: (response) => {
-          console.log('Product updated successfully:', response);
+          const data = this.userData();
+          if (data.user_id) {
+            this.notificationService.addNotification({
+              user_id: data.user_id,
+              message: `updated product of product id ${payload.id}.`,
+              isRead: 0
+            }).subscribe({
+              next: () => { console.log("Product Updated Successfully!") },
+              error: (error) => { console.error(error) }
+            });
+          }
           this.isModalOpen.set(false);
           this.toastService.showSuccess("Update", "Product Updated Successfully!");
           this.productService.loadProductData(this.componentData().pageNumber);
@@ -280,7 +303,17 @@ export class DataExploration {
     } else if (payload.type === "Store") {
       this.storeService.updateStore(payload.id, payload.data).subscribe({
         next: (response) => {
-          console.log('Store updated successfully:', response);
+          const data = this.userData();
+          if (data.user_id) {
+            this.notificationService.addNotification({
+              user_id: data.user_id,
+              message: `updated store of store id ${payload.id}.`,
+              isRead: 0
+            }).subscribe({
+              next: () => { console.log("Store Updated Successfully!") },
+              error: (error) => { console.error(error) }
+            });
+          }
           this.isModalOpen.set(false);
           this.toastService.showSuccess("Update", "Store Updated Successfully!");
           this.storeService.loadStoreData(this.componentData().pageNumber);
@@ -291,7 +324,17 @@ export class DataExploration {
       if (this.token) {
         this.userService.updateUser(payload.id, payload.data, this.token).subscribe({
           next: (response) => {
-            console.log('User updated successfully:', response);
+            const data = this.userData();
+            if (data.user_id) {
+              this.notificationService.addNotification({
+                user_id: data.user_id,
+                message: `updated user of user id ${payload.id}.`,
+                isRead: 0
+              }).subscribe({
+                next: () => { console.log("User Updated Successfully!") },
+                error: (error) => { console.error(error) }
+              });
+            }
             this.isModalOpen.set(false);
             this.toastService.showSuccess("Update", "User Updated Successfully!");
             if (this.token) {
@@ -322,6 +365,17 @@ export class DataExploration {
     if (this.pageHeaderTitle() === 'Customers') {
       this.customerService.deleteCustomer(record.customer_id).subscribe({
         next: (response) => {
+          const data = this.userData();
+          if (data.user_id) {
+            this.notificationService.addNotification({
+              user_id: data.user_id,
+              message: `deleted customer of customer id ${record.customer_id}.`,
+              isRead: 0
+            }).subscribe({
+              next: () => { console.log("Customer Deleted Successfully!") },
+              error: (error) => { console.error(error) }
+            });
+          }
           this.toastService.showSuccess("Delete", "Customer Deleted Successfully!");
           this.customerService.loadCustomerData(this.componentData().pageNumber);
         },
@@ -330,6 +384,17 @@ export class DataExploration {
     } else if (this.pageHeaderTitle() === 'Products') {
       this.productService.deleteProduct(record.product_id).subscribe({
         next: (response) => {
+          const data = this.userData();
+          if (data.user_id) {
+            this.notificationService.addNotification({
+              user_id: data.user_id,
+              message: `deleted product of product id ${record.product_id}.`,
+              isRead: 0
+            }).subscribe({
+              next: () => { console.log("Product Deleted Successfully!") },
+              error: (error) => { console.error(error) }
+            });
+          }
           this.toastService.showSuccess("Delete", "Product Deleted Successfully!");
           this.productService.loadProductData(this.componentData().pageNumber);
         },
@@ -338,6 +403,17 @@ export class DataExploration {
     } else if (this.pageHeaderTitle() === 'Stores') {
       this.storeService.deleteStore(record.store_id).subscribe({
         next: (response) => {
+          const data = this.userData();
+          if (data.user_id) {
+            this.notificationService.addNotification({
+              user_id: data.user_id,
+              message: `deleted store of store id ${record.store_id}.`,
+              isRead: 0
+            }).subscribe({
+              next: () => { console.log("Store Deleted Successfully!") },
+              error: (error) => { console.error(error) }
+            });
+          }
           this.toastService.showSuccess("Delete", "Store Deleted Successfully!");
           this.storeService.loadStoreData(this.componentData().pageNumber);
         },
@@ -347,6 +423,17 @@ export class DataExploration {
       if (this.userRole === 'admin' && this.token) {
         this.userService.deleteUser(record.user_id, this.token).subscribe({
           next: (response) => {
+            const data = this.userData();
+            if (data.user_id) {
+              this.notificationService.addNotification({
+                user_id: data.user_id,
+                message: `deleted user of user id ${record.user_id}.`,
+                isRead: 0
+              }).subscribe({
+                next: () => { console.log("User Deleted Successfully!") },
+                error: (error) => { console.error(error) }
+              });
+            }
             this.toastService.showSuccess("Delete", "User Deleted Successfully!");
             if (this.token) {
               this.userService.loadUserData(this.token, this.componentData().pageNumber);
