@@ -43,6 +43,7 @@ export class Topbar implements OnInit {
 
   ngOnInit(): void {
     this.notificationService.getNotifications();
+    this.notificationService.startNotificationConnection();
   }
 
   updatePath() {

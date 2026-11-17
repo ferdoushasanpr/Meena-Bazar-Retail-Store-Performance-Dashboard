@@ -25,13 +25,14 @@
             <div class="notification-wrapper" style="position: relative;">
                 <button class="icon-btn" type="button" aria-label="Notifications" (click)="toggleNotifications()">
                     <i class="fa-regular fa-bell"></i>
+                    @if (notifications().filter((item) => !item.isRead).length > 0) {
                     <span class="bell-dot"></span>
+                    }
                 </button>
 
                 <app-notification-panel [isOpen]="isNotificationsOpen()" [notifications]="notifications()"
                     (markAsRead)="updateMarkAsRead($event)" (closePanel)="isNotificationsOpen.set(false)">
                 </app-notification-panel>
-
             </div>
             <!-- Export -->
             <button class="btn-action" type="button" (click)="onLogout()">
