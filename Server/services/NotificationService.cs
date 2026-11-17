@@ -46,15 +46,16 @@ class NotificationService : INotificationService
         return await _context.SaveChangesAsync() > 0;
     }
 
-    public async Task<bool> ReadNotificationAsync(string notification_id)
+    public async Task<bool> ReadNotificationAsync(NotificationResponse notification)
     {
-        var notification = await _context.DemoNotifications.FirstOrDefaultAsync(n => n.notification_id == notification_id);
+        var existingNotification = await _context.DemoNotifications.FirstOrDefaultAsync(n => n.notification_id == notification.notification_id);
 
-        if (notification == null)
+        if (existingNotification == null)
         {
             return false;
         }
-        notification.isRead = 1;
+
+        existingNotification.isRead = 1;
 
         return await _context.SaveChangesAsync() > 0;
     }
