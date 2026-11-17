@@ -6,6 +6,8 @@ import { CustomerService } from '../data-exploration/services/customer-service';
 import { ProductService } from '../data-exploration/services/product-service';
 import { StoreService } from '../data-exploration/services/store-service';
 import { ToastService } from '../../services/toast-service';
+import { NotificationService } from '../../services/notification-service';
+import { UserService } from '../../services/user-service';
 
 export type DataTab = 'Customer' | 'Product' | 'Store';
 
@@ -22,11 +24,16 @@ export class AddData {
   private productService = inject(ProductService);
   private storeService = inject(StoreService);
   private toastService = inject(ToastService);
+  private notificationService = inject(NotificationService);
+  private userService = inject(UserService);
 
   // Page Header Info
   pageHeaderTitle = 'Add Data';
   pageHeaderSubtitle =
     'Upload and manage your data sources to power insightful analytics, accurate reporting, and meaningful business insights.';
+
+  // User Data
+  userData = this.userService.userData;
 
   // Active Tab State
   activeTab = signal<DataTab>('Customer');
@@ -63,6 +70,17 @@ export class AddData {
     if (this.customerForm.valid) {
       this.customerService.addCustomer(this.customerForm.value).subscribe({
         next: (response) => {
+          const data = this.userData();
+          if (data.user_id) {
+            this.notificationService.addNotification({
+              user_id: data.user_id,
+              message: "created new customer.",
+              isRead: 0
+            }).subscribe({
+              next: () => { console.log("Customer Added Successfully!") },
+              error: (error) => { console.error(error) }
+            });
+          }
           this.toastService.showSuccess("Added", "Customer Added Successfully!");
           this.router.navigate(['data-explorer/customers']);
         },
@@ -79,6 +97,17 @@ export class AddData {
     if (this.productForm.valid) {
       this.productService.addProduct(this.productForm.value).subscribe({
         next: (response) => {
+          const data = this.userData();
+          if (data.user_id) {
+            this.notificationService.addNotification({
+              user_id: data.user_id,
+              message: "created new product.",
+              isRead: 0
+            }).subscribe({
+              next: () => { console.log("Product Added Successfully!") },
+              error: (error) => { console.error(error) }
+            });
+          }
           this.toastService.showSuccess("Added", "Product Added Successfully!");
           this.router.navigate(['data-explorer/products']);
         },
@@ -95,6 +124,17 @@ export class AddData {
     if (this.storeForm.valid) {
       this.storeService.addStore(this.storeForm.value).subscribe({
         next: (response) => {
+          const data = this.userData();
+          if (data.user_id) {
+            this.notificationService.addNotification({
+              user_id: data.user_id,
+              message: "created new store.",
+              isRead: 0
+            }).subscribe({
+              next: () => { console.log("Store Added Successfully!") },
+              error: (error) => { console.error(error) }
+            });
+          }
           this.toastService.showSuccess("Added", "Store Added Successfully!");
           this.router.navigate(['data-explorer/stores']);
         },

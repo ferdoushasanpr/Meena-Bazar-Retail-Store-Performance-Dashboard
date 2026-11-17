@@ -22,10 +22,17 @@
         <!-- Right: Actions -->
         <div class="right-group">
             <!-- Notifications -->
-            <button class="icon-btn" type="button" aria-label="Notifications">
-                <i class="fa-regular fa-bell"></i>
-                <span class="bell-dot"></span>
-            </button>
+            <div class="notification-wrapper" style="position: relative;">
+                <button class="icon-btn" type="button" aria-label="Notifications" (click)="toggleNotifications()">
+                    <i class="fa-regular fa-bell"></i>
+                    <span class="bell-dot"></span>
+                </button>
+
+                <app-notification-panel [isOpen]="isNotificationsOpen()" [notifications]="notifications()"
+                    (markAsRead)="updateMarkAsRead($event)" (closePanel)="isNotificationsOpen.set(false)">
+                </app-notification-panel>
+
+            </div>
             <!-- Export -->
             <button class="btn-action" type="button" (click)="onLogout()">
                 <i class="fa-solid fa-right-from-bracket"></i> Logout

@@ -7,6 +7,7 @@ import { Customer, CustomerDataResponse } from '../models/customer';
 import { Product, ProductDataResponse } from '../models/product';
 import { OrderDataResponse } from '../models/order';
 import { UserData, UserDataResponse } from '../models/user';
+import { NotificationData, NotificationResponse } from '../models/notification';
 
 @Injectable({
     providedIn: "root"
@@ -139,5 +140,18 @@ export class OperationsService {
         }
 
         return this.http.delete<Product>(`${this.apiUrlBase}/users/${id}`, { headers });
+    }
+
+    // Notification Operations
+    addNotificationData(notification: NotificationData): Observable<NotificationData> {
+        return this.http.post<NotificationData>(`${this.apiUrlBase}/notifications`, notification);
+    }
+
+    getNotificationsData(): Observable<NotificationResponse[]> {
+        return this.http.get<NotificationResponse[]>(`${this.apiUrlBase}/notifications`);
+    }
+
+    updateNotificationData(notification_id: string, notification: NotificationResponse): Observable<boolean> {
+        return this.http.put<boolean>(`${this.apiUrlBase}/notifications/${notification_id}`, notification);
     }
 }
