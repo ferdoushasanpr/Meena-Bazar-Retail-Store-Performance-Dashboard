@@ -1,4 +1,4 @@
-import { Component, input, output, signal, computed } from '@angular/core';
+import { Component, input, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { StoreCategorySalesData } from '../../../core/models/sales';
 
