@@ -13,6 +13,7 @@ public interface IAnalyticsService
         string? storeId,
         DateTime? startDate,
         DateTime? endDate);
+    Task<PaginatedResponse<StoreProductSales>> GetSalesByStoreAndProductAsync(int pageNumber, int pageSize, string? storeId, DateTime? startDate, DateTime? endDate);
     Task<IEnumerable<StoreSalesPerformance>> GetStorePerformanceAsync(DateTime? startDate, DateTime? endDate);
     Task<PaginatedResponse<ProductSalesPerformance>>
     GetProductPerformanceAsync(

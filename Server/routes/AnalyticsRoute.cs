@@ -34,11 +34,32 @@ public static class AnalyticsRoute
             pageNumber,
             pageSize,
             storeId,
-        startDate,
-        endDate);
+            startDate,
+            endDate);
 
         return Results.Ok(result);
     });
+
+        group.MapGet("/store-product", async (
+            int pageNumber,
+            int pageSize,
+            string? storeId,
+            DateTime? startDate,
+            DateTime? endDate,
+            IAnalyticsService service) =>
+        {
+            pageNumber = Math.Max(1, pageNumber);
+            pageSize = Math.Clamp(pageSize, 1, 100);
+
+            var result = await service.GetSalesByStoreAndProductAsync(
+                pageNumber,
+                pageSize,
+                storeId,
+                startDate,
+                endDate);
+
+            return Results.Ok(result);
+        });
 
         // Query 5
         group.MapGet("/stores", async (DateTime? startDate, DateTime? endDate, IAnalyticsService service) =>

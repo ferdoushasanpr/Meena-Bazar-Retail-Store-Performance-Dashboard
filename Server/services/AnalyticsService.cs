@@ -157,6 +157,94 @@ public class AnalyticsService : IAnalyticsService
         };
     }
 
+    public async Task<PaginatedResponse<StoreProductSales>> GetSalesByStoreAndProductAsync(int pageNumber, int pageSize, string? storeId = null, DateTime? startDate = null, DateTime? endDate = null)
+    {
+        var salesQuery = _context.DemoSales
+            .AsNoTracking()
+            .Where(s => s.order_status == "Completed");
+
+        if (!string.IsNullOrWhiteSpace(storeId))
+        {
+            salesQuery = salesQuery
+                .Where(s => s.store_id == storeId);
+        }
+
+        if (startDate.HasValue)
+        {
+            salesQuery = salesQuery
+                .Where(s => s.order_datetime >= startDate.Value);
+        }
+
+        if (endDate.HasValue)
+        {
+            var exclusiveEndDate = endDate.Value.Date.AddDays(1);
+
+            salesQuery = salesQuery
+                .Where(s => s.order_datetime < exclusiveEndDate);
+        }
+
+        var query = from s in salesQuery
+                    join st in _context.DemoStores.AsNoTracking()
+                        on s.store_id equals st.store_id
+                    join t in _context.DemoTransactions.AsNoTracking()
+                        on s.order_id equals t.order_id
+                    join p in _context.DemoProducts.AsNoTracking()
+                        on t.product_id equals p.product_id
+                    group new
+                    {
+                        s.order_id,
+                        st.store_id,
+                        st.store_name,
+                        p.product_id,
+                        p.product_name,
+                        t.quantity,
+                        t.line_net_amount,
+                        t.line_vat_amount
+                    } by new
+                    {
+                        st.store_id,
+                        st.store_name,
+                        p.product_id,
+                        p.product_name,
+                    } into g
+                    select new StoreProductSales
+                    {
+                        store_id = g.Key.store_id,
+                        store_name = g.Key.store_name,
+                        product_name = g.Key.product_name,
+
+                        TotalSales = g.Sum(x =>
+                            x.line_net_amount + x.line_vat_amount),
+
+                        UnitsSold = g.Sum(x => (int)x.quantity),
+
+                        NumberOfTransactions = g
+                            .Select(x => x.order_id)
+                            .Distinct()
+                            .Count()
+                    };
+
+        var totalRecords = await query.CountAsync();
+
+        var data = await query
+            .OrderBy(x => x.store_name)
+            .ThenByDescending(x => x.TotalSales)
+            .ThenBy(x => x.product_name)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return new PaginatedResponse<StoreProductSales>
+        {
+            Data = data,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalRecords = totalRecords,
+            TotalPages = (int)Math.Ceiling(
+                (double)totalRecords / pageSize)
+        };
+    }
+
     // Sales performance by store.
     public async Task<IEnumerable<StoreSalesPerformance>>
     GetStorePerformanceAsync(DateTime? startDate, DateTime? endDate)

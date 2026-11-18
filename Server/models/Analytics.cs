@@ -25,6 +25,16 @@ public class StoreCategorySales
     public int NumberOfTransactions { get; set; }
 }
 
+public class StoreProductSales
+{
+    public string store_id { get; set; } = null!;
+    public string store_name { get; set; } = null!;
+    public string product_name { get; set; } = null!;
+    public double TotalSales { get; set; }
+    public int UnitsSold { get; set; }
+    public int NumberOfTransactions { get; set; }
+}
+
 public class StoreSalesPerformance
 {
     public string store_id { get; set; } = null!;
