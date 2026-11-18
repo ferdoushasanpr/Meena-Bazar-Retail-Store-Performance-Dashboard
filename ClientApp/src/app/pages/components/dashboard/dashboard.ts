@@ -9,9 +9,10 @@ import { MetricCardProps } from '../../../core/models/props';
 import { SalesService } from '../../services/sales-service';
 import { ReportExporter } from '../../services/report-exporter';
 import { Loading } from '../../../shared/components/loading/loading';
+import { ErrorDisplay } from '../../../shared/components/error-display/error-display';
 
 @Component({
-  imports: [FormsModule, PageHeader, Loading, MetricCard, TrendChart, HorizontalBarChart, DonutChart],
+  imports: [FormsModule, PageHeader, Loading, ErrorDisplay, MetricCard, TrendChart, HorizontalBarChart, DonutChart],
   selector: 'app-dashboard',
   styleUrl: './dashboard.css',
   templateUrl: './dashboard.html',
@@ -33,6 +34,15 @@ export class Dashboard implements OnInit {
   yearlySalesLoading = this.salesService.yearlySalesLoading;
   brandSalesLoading = this.salesService.brandSalesLoading;
 
+  // Error States
+  entityCountError = this.salesService.entityCountError;
+  salesKpiError = this.salesService.salesKpiError;
+  salesCategoryError = this.salesService.salesCategoryError;
+  dailySalesError = this.salesService.dailySalesError;
+  monthlySalesError = this.salesService.monthlySalesError;
+  yearlySalesError = this.salesService.yearlySalesError;
+  brandSalesError = this.salesService.brandSalesError;
+
   // Sales Data
   entityCountData = this.salesService.entityCountData;
   salesKpiData = this.salesService.salesKpiData;
@@ -44,6 +54,30 @@ export class Dashboard implements OnInit {
 
   isLoading = computed(() => {
     return this.entityCountLoading() || this.salesKpiLoading() || this.salesCategoryLoading() || this.dailySalesLoading() || this.monthlySalesLoading() || this.yearlySalesLoading() || this.brandSalesLoading();
+  });
+
+  hasError = computed(() => {
+    return !!(
+      this.entityCountError() ||
+      this.salesKpiError() ||
+      this.salesCategoryError() ||
+      this.dailySalesError() ||
+      this.monthlySalesError() ||
+      this.yearlySalesError() ||
+      this.brandSalesError()
+    );
+  });
+
+  dashboardErrorMessage = computed(() => {
+    return (
+      this.entityCountError() ||
+      this.salesKpiError() ||
+      this.salesCategoryError() ||
+      this.dailySalesError() ||
+      this.monthlySalesError() ||
+      this.yearlySalesError() ||
+      this.brandSalesError()
+    );
   });
 
   totalCustomerCard = computed((): MetricCardProps => {
@@ -135,6 +169,10 @@ export class Dashboard implements OnInit {
   });
 
   ngOnInit(): void {
+    this.onLoadComponent();
+  }
+
+  onLoadComponent(): void {
     this.salesService.loadEntityCountData();
     this.salesService.loadSalesKpiData();
     this.salesService.loadSalesCategoryData();
@@ -143,8 +181,6 @@ export class Dashboard implements OnInit {
     this.salesService.loadYearlySalesData();
     this.salesService.loadBrandSalesData();
   }
-
-
 
   // CSV Export Methods
   exportConsolidatedReport(): void {

@@ -16,9 +16,10 @@ import { AuthService } from '../../../../auth/services/auth-service';
 import { Loading } from '../../../../shared/components/loading/loading';
 import { ToastService } from '../../../services/toast-service';
 import { NotificationService } from '../../../services/notification-service';
+import { ErrorDisplay } from '../../../../shared/components/error-display/error-display';
 
 @Component({
-  imports: [PageHeader, Loading, DynamicTable, ModalForm, DialogBox],
+  imports: [PageHeader, Loading, ErrorDisplay, DynamicTable, ModalForm, DialogBox],
   selector: 'app-data-exploration',
   styleUrl: './data-exploration.css',
   templateUrl: './data-exploration.html',
@@ -46,7 +47,7 @@ export class DataExploration {
   // Search Input
   searchQuery = signal<string>('');
 
-  // Loading State
+  // State
   componentDataLoading = computed(() => {
     const title = this.pageHeaderTitle();
 
@@ -58,6 +59,20 @@ export class DataExploration {
       case 'Orders': return this.orderService.componentDataLoading();
       case 'Transactions': return this.transactionService.componentDataLoading();
       default: return { data: [], pageNumber: 1, pageSize: 10, totalRecords: 0, totalPages: 0, hasPreviousPage: false, hasNextPage: false };
+    }
+  });
+
+  componentDataError = computed(() => {
+    const title = this.pageHeaderTitle();
+
+    switch (title) {
+      case 'Customers': return this.customerService.componentDataError();
+      case 'Products': return this.productService.componentDataError();
+      case 'Stores': return this.storeService.componentDataError();
+      case 'Orders': return this.orderService.componentDataError();
+      case 'Transactions': return this.transactionService.componentDataError();
+      case 'Users': return this.userService.componentDataError();
+      default: return null;
     }
   });
 

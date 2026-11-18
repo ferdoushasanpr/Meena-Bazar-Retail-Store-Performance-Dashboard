@@ -6,8 +6,9 @@ import { TransactionDataResponse } from '../../../../core/models/transaction';
 export class TransactionService {
     private operationsService = inject(OperationsService);
 
-    // Loading state
+    // state
     componentDataLoading = signal<boolean>(false);
+    componentDataError = signal<string | null>(null);
 
     // Contents
     componentData = signal<TransactionDataResponse>({
@@ -22,23 +23,35 @@ export class TransactionService {
 
     loadSearchTransactionData(pageNumber: number, searchTerm?: string) {
         this.componentDataLoading.set(true);
+        this.componentDataError.set(null);
         this.operationsService.searchTransactionsData(pageNumber, undefined, searchTerm).subscribe({
             next: (response) => {
                 this.componentData.set(response);
                 this.componentDataLoading.set(false);
             },
-            error: (error) => { console.error(error) }
+            error: (error) => {
+                this.componentDataError.set(
+                    'Unable to search transactions. Please try again.'
+                );
+                this.componentDataLoading.set(false);
+            }
         });
     }
 
     loadTransactionsData(pageNumber: number): void {
         this.componentDataLoading.set(true);
+        this.componentDataError.set(null);
         this.operationsService.getTransactionsData(pageNumber).subscribe({
             next: (response) => {
                 this.componentData.set(response);
                 this.componentDataLoading.set(false);
             },
-            error: (error) => { console.error(error) }
+            error: (error) => {
+                this.componentDataError.set(
+                    'Unable to load transactions. Please try again.'
+                );
+                this.componentDataLoading.set(false);
+            }
         });
     }
 }

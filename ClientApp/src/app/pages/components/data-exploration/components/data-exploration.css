@@ -26,18 +26,12 @@
     flex-direction: column;
 }
 
-.loading-container {
+.loading-error-container {
     flex: 1;
     min-height: 0;
     width: 100%;
     display: grid;
     place-items: center;
-}
-
-.loading-container app-loading {
-    display: block;
-    width: 100%;
-    height: 100%;
 }
 
 app-page-header,

@@ -2,6 +2,16 @@
     <!-- Top Page Header -->
     <app-page-header [title]="pageHeaderTitle" [subtitle]="pageHeaderSubtitle" />
 
+    @if (userDataLoading()) {
+    <div class="loading-error-container">
+        <app-loading message="Fetching records..." />
+    </div>
+    } @else if (hasError()) {
+    <div class="loading-error-container">
+        <app-error-display [message]="settingsErrorMessage() ?? 'Unable to Load Data. Please Try Again.'"
+            (onLoad)="loadComponentData()" />
+    </div>
+    } @else {
     <!-- Main Unified Form Card -->
     <div class="settings-card">
         <form [formGroup]="settingsForm" (ngSubmit)="onSubmit()" class="unified-form">
@@ -100,4 +110,5 @@
             </div>
         </form>
     </div>
+    }
 </div>

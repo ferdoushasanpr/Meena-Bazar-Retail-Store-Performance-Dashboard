@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { PageHeader } from '../../../layout/page-header/page-header';
 import { MetricCard } from '../../../shared/components/metric-card/metric-card';
@@ -10,9 +10,10 @@ import { Filter } from '../../shared/components/filter/filter';
 import { FilterCriteria } from '../../shared/models/filter-model';
 import { ReportExporter } from '../../services/report-exporter';
 import { Loading } from '../../../shared/components/loading/loading';
+import { ErrorDisplay } from '../../../shared/components/error-display/error-display';
 
 @Component({
-  imports: [FormsModule, PageHeader, Filter, Loading, MetricCard, TrendChart, VerticalBarChart],
+  imports: [FormsModule, PageHeader, Filter, Loading, ErrorDisplay, MetricCard, TrendChart, VerticalBarChart],
   selector: 'app-sales-analytics',
   styleUrl: './sales-analytics.css',
   templateUrl: './sales-analytics.html',
@@ -37,6 +38,11 @@ export class SalesAnalytics {
   dailyStoreSalesLoading = this.salesService.dailyStoreSaleLoading;
   filteredStoreCategorySalesLoading = this.salesService.filteredStoreCategorySalesLoading;
 
+  // Error States
+  salesKpiError = this.salesService.salesKpiError;
+  dailyStoreSaleError = this.salesService.dailyStoreSaleError;
+  filteredStoreCategorySalesError = this.salesService.filteredStoreCategorySalesError;
+
   // Sales Data
   salesKpiData = this.salesService.salesKpiData;
   dailyStoreSalesData = this.salesService.dailyStoreSalesData;
@@ -44,6 +50,22 @@ export class SalesAnalytics {
 
   isLoading = computed(() => {
     return this.salesKpiLoading() || this.dailyStoreSalesLoading() || this.filteredStoreCategorySalesLoading();
+  });
+
+  hasError = computed(() => {
+    return !!(
+      this.salesKpiError() ||
+      this.dailyStoreSaleError() ||
+      this.filteredStoreCategorySalesError()
+    );
+  });
+
+  salesAnalyticsErrorMessage = computed(() => {
+    return (
+      this.salesKpiError() ||
+      this.dailyStoreSaleError() ||
+      this.filteredStoreCategorySalesError()
+    );
   });
 
   totalSalesCard = computed((): MetricCardProps => {
@@ -90,22 +112,30 @@ export class SalesAnalytics {
     }
   });
 
-  loadSalesData({ startDate, endDate, storeId }: FilterCriteria): void {
+  constructor() {
+    effect(() => {
+      const filters = this.currentFilters();
+
+      if (filters.startDate && filters.endDate) {
+        this.loadSalesData();
+      }
+    });
+  }
+
+  loadCurrentFilter({ startDate, endDate, storeId }: FilterCriteria): void {
     this.currentFilters.set({ startDate, endDate, storeId });
+  }
 
-    const selectedStore = storeId === 'All Stores'
-      ? undefined
-      : storeId;
+  loadSalesData(): void {
+    const currentFilter = this.currentFilters();
 
-    this.salesService.loadFilteredSalesData(startDate, endDate, selectedStore);
+    const selectedStore = currentFilter.storeId === 'All Stores'
+      ? 'ST001'
+      : currentFilter.storeId;
 
-    if (selectedStore == undefined) {
-      this.salesService.loadDailyStoreSalesData(startDate, endDate, 'ST001');
-      this.salesService.loadFilteredStoreCategorySalesData(startDate, endDate, 'ST001');
-    } else {
-      this.salesService.loadDailyStoreSalesData(startDate, endDate, selectedStore);
-      this.salesService.loadFilteredStoreCategorySalesData(startDate, endDate, selectedStore);
-    }
+    this.salesService.loadFilteredSalesData(currentFilter.startDate, currentFilter.endDate, selectedStore);
+    this.salesService.loadDailyStoreSalesData(currentFilter.startDate, currentFilter.endDate, selectedStore);
+    this.salesService.loadFilteredStoreCategorySalesData(currentFilter.startDate, currentFilter.endDate, selectedStore);
   }
 
   // CSV Export Methods

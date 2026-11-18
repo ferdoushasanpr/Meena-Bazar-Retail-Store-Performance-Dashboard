@@ -8,8 +8,9 @@ import { StoreDataResponse } from '../../../../core/models/store';
 export class StoreService {
     private operationsService = inject(OperationsService);
 
-    // Loading state
+    // state
     componentDataLoading = signal<boolean>(false);
+    componentDataError = signal<string | null>(null);
 
     // Contents
     componentData = signal<StoreDataResponse>({
@@ -28,23 +29,35 @@ export class StoreService {
 
     loadSearchStoreData(pageNumber: number, searchTerm?: string) {
         this.componentDataLoading.set(true);
+        this.componentDataError.set(null);
         this.operationsService.searchStoresData(pageNumber, undefined, searchTerm).subscribe({
             next: (response) => {
                 this.componentData.set(response);
                 this.componentDataLoading.set(false);
             },
-            error: (error) => { console.error(error) }
+            error: (error) => {
+                this.componentDataError.set(
+                    'Unable to search stores. Please try again.'
+                );
+                this.componentDataLoading.set(false);
+            }
         });
     }
 
     loadStoreData(pageNumber: number, pageSize?: number) {
         this.componentDataLoading.set(true);
+        this.componentDataError.set(null);
         this.operationsService.getStoresPaginatedData(pageNumber, pageSize).subscribe({
             next: (response) => {
                 this.componentData.set(response);
                 this.componentDataLoading.set(false);
             },
-            error: (error) => { console.error(error) }
+            error: (error) => {
+                this.componentDataError.set(
+                    'Unable to load stores. Please try again.'
+                );
+                this.componentDataLoading.set(false);
+            }
         })
     }
 
