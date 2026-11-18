@@ -8,8 +8,9 @@ import { ProductDataResponse } from '../../../../core/models/product';
 export class ProductService {
     private operationsService = inject(OperationsService);
 
-    // Loading state
+    // state
     componentDataLoading = signal<boolean>(false);
+    componentDataError = signal<string | null>(null);
 
     // Contents
     componentData = signal<ProductDataResponse>({
@@ -28,23 +29,35 @@ export class ProductService {
 
     loadSearchProductData(pageNumber: number, searchTerm?: string) {
         this.componentDataLoading.set(true);
+        this.componentDataError.set(null);
         this.operationsService.searchProductsData(pageNumber, undefined, searchTerm).subscribe({
             next: (response) => {
                 this.componentData.set(response);
                 this.componentDataLoading.set(false);
             },
-            error: (error) => { console.error(error) }
+            error: (error) => {
+                this.componentDataError.set(
+                    'Unable to search products. Please try again.'
+                );
+                this.componentDataLoading.set(false);
+            }
         });
     }
 
     loadProductData(pageNumber: number, pageSize?: number) {
         this.componentDataLoading.set(true);
+        this.componentDataError.set(null);
         this.operationsService.getProductsData(pageNumber, pageSize).subscribe({
             next: (response) => {
                 this.componentData.set(response);
                 this.componentDataLoading.set(false);
             },
-            error: (error) => { console.error(error) }
+            error: (error) => {
+                this.componentDataError.set(
+                    'Unable to load products. Please try again.'
+                );
+                this.componentDataLoading.set(false);
+            }
         })
     }
 

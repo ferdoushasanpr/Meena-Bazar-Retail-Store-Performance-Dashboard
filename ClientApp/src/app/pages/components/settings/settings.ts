@@ -1,4 +1,4 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -11,9 +11,11 @@ import { PageHeader } from '../../../layout/page-header/page-header';
 import { UserService } from '../../services/user-service';
 import { AuthService } from '../../../auth/services/auth-service';
 import { ToastService } from '../../services/toast-service';
+import { Loading } from '../../../shared/components/loading/loading';
+import { ErrorDisplay } from '../../../shared/components/error-display/error-display';
 
 @Component({
-  imports: [ReactiveFormsModule, PageHeader],
+  imports: [ReactiveFormsModule, PageHeader, Loading, ErrorDisplay],
   selector: 'app-settings',
   styleUrl: './settings.css',
   templateUrl: './settings.html',
@@ -28,6 +30,8 @@ export class Settings {
   authData = this.authService.authData;
 
   // User Data
+  userDataLoading = this.userService.userDataLoading;
+  userDataError = this.userService.userDataError;
   userData = this.userService.userData;
 
   // Page Header Metadata
@@ -37,9 +41,18 @@ export class Settings {
 
   // Feedback State & Loading
   isSubmitting = signal<boolean>(false);
+  errorMessage = signal<boolean>(false);
   showCurrentPassword = signal<boolean>(false);
   showNewPassword = signal<boolean>(false);
   showConfirmPassword = signal<boolean>(false);
+
+  hasError = computed(() => {
+    return !!(this.userDataError());
+  });
+
+  settingsErrorMessage = computed(() => {
+    return (this.userDataError());
+  });
 
   // Settings Form
   settingsForm: FormGroup = this.fb.group(
@@ -64,6 +77,10 @@ export class Settings {
         });
       }
     });
+  }
+
+  loadComponentData(): void {
+    this.authService.isAuth();
   }
 
   // Custom Validator

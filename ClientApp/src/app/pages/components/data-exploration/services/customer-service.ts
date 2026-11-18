@@ -8,8 +8,9 @@ import { CustomerDataResponse } from '../../../../core/models/customer';
 export class CustomerService {
     private operationsService = inject(OperationsService);
 
-    // Loading state
+    // state
     componentDataLoading = signal<boolean>(false);
+    componentDataError = signal<string | null>(null);
 
     // Contents
     componentData = signal<CustomerDataResponse>({
@@ -28,23 +29,35 @@ export class CustomerService {
 
     loadSearchCustomerData(pageNumber: number, searchTerm?: string) {
         this.componentDataLoading.set(true);
+        this.componentDataError.set(null);
         this.operationsService.searchCustomersData(pageNumber, undefined, searchTerm).subscribe({
             next: (response) => {
                 this.componentData.set(response);
                 this.componentDataLoading.set(false);
             },
-            error: (error) => { console.error(error) }
+            error: (error) => {
+                this.componentDataError.set(
+                    'Unable to search customers. Please try again.'
+                );
+                this.componentDataLoading.set(false);
+            }
         });
     }
 
     loadCustomerData(pageNumber: number, pageSize?: number) {
         this.componentDataLoading.set(true);
+        this.componentDataError.set(null);
         this.operationsService.getCustomersData(pageNumber, pageSize).subscribe({
             next: (response) => {
                 this.componentData.set(response);
                 this.componentDataLoading.set(false);
             },
-            error: (error) => { console.error(error) }
+            error: (error) => {
+                this.componentDataError.set(
+                    'Unable to load customers. Please try again.'
+                );
+                this.componentDataLoading.set(false);
+            }
         })
     }
 

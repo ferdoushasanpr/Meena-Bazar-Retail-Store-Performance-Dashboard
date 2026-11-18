@@ -4,11 +4,16 @@
         (exportReport)="exportConsolidatedReport()" />
 
     <!-- Filter Control Bar -->
-    <app-filter [isStoreFilter]="false" (filterCriteria)="loadSalesData($event)" />
+    <app-filter [isStoreFilter]="false" (filterCriteria)="loadCurrentFilter($event)" />
 
     @if (isLoading()) {
-    <div class="loading-container">
+    <div class="loading-error-container">
         <app-loading message="Fetching records..." />
+    </div>
+    } @else if (hasError()) {
+    <div class="loading-error-container">
+        <app-error-display [message]="productCategoriesErrorMessage() ?? 'Unable to Load Data. Please Try Again.'"
+            (onLoad)="loadSalesData()" />
     </div>
     } @else {
     <div class="charts-section">

@@ -8,8 +8,9 @@ import { OperationsService } from '../../../../core/services/operations-service'
 export class OrderService {
     private operationsService = inject(OperationsService);
 
-    // Loading state
+    // state
     componentDataLoading = signal<boolean>(false);
+    componentDataError = signal<string | null>(null);
 
     // Contents
     componentData = signal<OrderDataResponse>({
@@ -24,23 +25,35 @@ export class OrderService {
 
     loadSearchOrderData(pageNumber: number, searchTerm?: string) {
         this.componentDataLoading.set(true);
+        this.componentDataError.set(null);
         this.operationsService.searchOrdersData(pageNumber, undefined, searchTerm).subscribe({
             next: (response) => {
                 this.componentData.set(response);
                 this.componentDataLoading.set(false);
             },
-            error: (error) => { console.error(error) }
+            error: (error) => {
+                this.componentDataError.set(
+                    'Unable to search orders. Please try again.'
+                );
+                this.componentDataLoading.set(false);
+            }
         });
     }
 
     loadOrderData(pageNumber: number, pageSize?: number) {
         this.componentDataLoading.set(true);
+        this.componentDataError.set(null);
         this.operationsService.getOrdersData(pageNumber, pageSize).subscribe({
             next: (response) => {
                 this.componentData.set(response);
                 this.componentDataLoading.set(false);
             },
-            error: (error) => { console.error(error) }
+            error: (error) => {
+                this.componentDataError.set(
+                    'Unable to load orders. Please try again.'
+                );
+                this.componentDataLoading.set(false);
+            }
         })
     }
 }

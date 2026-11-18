@@ -13,9 +13,8 @@ export class Login {
   private fb = inject(FormBuilder);
 
   isLoginMode = signal<boolean>(true);
-
-  authError = signal<string | null>(null);
-  isSubmitting = signal<boolean>(false);
+  isSubmitting = this.authService.isSubmitting;
+  authError = this.authService.authError;
 
   showLoginPassword = signal<boolean>(false);
   showSignupPassword = signal<boolean>(false);
@@ -57,10 +56,7 @@ export class Login {
 
   onLoginSubmit(): void {
     if (this.loginForm.valid) {
-      this.isSubmitting.set(true);
-      this.authError.set(null);
       this.authService.login(this.loginForm.value);
-      setTimeout(() => { this.isSubmitting.set(false); }, 2000);
     } else {
       this.loginForm.markAllAsTouched();
     }
@@ -68,8 +64,6 @@ export class Login {
 
   onSignupSubmit(): void {
     if (this.signupForm.valid) {
-      this.isSubmitting.set(true);
-      this.authError.set(null);
       this.authService.signup(this.signupForm.value);
     } else {
       this.signupForm.markAllAsTouched();

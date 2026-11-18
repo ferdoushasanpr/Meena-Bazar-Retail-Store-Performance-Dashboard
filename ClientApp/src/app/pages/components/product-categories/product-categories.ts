@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { PageHeader } from '../../../layout/page-header/page-header';
 import { CategoryMatrixChart } from '../../../shared/components/category-matrix-chart/category-matrix-chart';
@@ -8,9 +8,10 @@ import { Filter } from '../../shared/components/filter/filter';
 import { FilterCriteria } from '../../shared/models/filter-model';
 import { ReportExporter } from '../../services/report-exporter';
 import { Loading } from '../../../shared/components/loading/loading';
+import { ErrorDisplay } from '../../../shared/components/error-display/error-display';
 
 @Component({
-  imports: [FormsModule, PageHeader, Filter, Loading, CategoryMatrixChart, HorizontalBarChart],
+  imports: [FormsModule, PageHeader, Filter, Loading, ErrorDisplay, CategoryMatrixChart, HorizontalBarChart],
   selector: 'app-product-categories',
   styleUrl: './product-categories.css',
   templateUrl: './product-categories.html',
@@ -27,6 +28,10 @@ export class ProductCategories {
   salesCategoryLoading = this.salesService.salesCategoryLoading;
   productSalesLoading = this.salesService.paginatedSalesLoading;
 
+  // Error States
+  salesCategoryError = this.salesService.salesCategoryError;
+  paginatedSalesError = this.salesService.paginatedSalesError;
+
   // Filters & State
   currentFilters = signal<FilterCriteria>({
     startDate: '',
@@ -41,11 +46,39 @@ export class ProductCategories {
     return this.salesCategoryLoading() || this.productSalesLoading();
   });
 
-  loadSalesData({ startDate, endDate, storeId }: FilterCriteria): void {
-    this.currentFilters.set({ startDate, endDate, storeId });
+  hasError = computed(() => {
+    return !!(
+      this.salesCategoryError() ||
+      this.paginatedSalesError()
+    );
+  });
 
-    this.salesService.loadSalesCategoryData(startDate, endDate);
-    this.salesService.loadProductSalesData(1, startDate, endDate);
+  productCategoriesErrorMessage = computed(() => {
+    return (
+      this.salesCategoryError() ||
+      this.paginatedSalesError()
+    );
+  });
+
+  constructor() {
+    effect(() => {
+      const filters = this.currentFilters();
+
+      if (filters.startDate && filters.endDate) {
+        this.loadSalesData();
+      }
+    });
+  }
+
+  loadCurrentFilter({ startDate, endDate, storeId }: FilterCriteria): void {
+    this.currentFilters.set({ startDate, endDate, storeId });
+  }
+
+  loadSalesData(): void {
+    const currentFilter = this.currentFilters();
+
+    this.salesService.loadSalesCategoryData(currentFilter.startDate, currentFilter.endDate);
+    this.salesService.loadProductSalesData(1, currentFilter.startDate, currentFilter.endDate);
   }
 
   onPageChange(pageNumber: number): void {
@@ -56,10 +89,7 @@ export class ProductCategories {
     this.salesService.loadProductSalesData(pageNumber, startDate, endDate);
   }
 
-
-
   // CSV Export Methods
-
   exportConsolidatedReport(): void {
     const categorySales = this.salesCategoryData();
     const productSales = this.productSalesData().data;

@@ -4,11 +4,16 @@
         (exportReport)="exportConsolidatedReport()" />
 
     <!-- Filter Control Bar -->
-    <app-filter (filterCriteria)="loadSalesData($event)" />
+    <app-filter (filterCriteria)="loadCurrentFilter($event)" />
 
     @if (isLoading()) {
-    <div class="loading-container">
+    <div class="loading-error-container">
         <app-loading message="Fetching records..." />
+    </div>
+    } @else if (hasError()) {
+    <div class="loading-error-container">
+        <app-error-display [message]="salesAnalyticsErrorMessage() ?? 'Unable to Load Data. Please Try Again.'"
+            (onLoad)="loadSalesData()" />
     </div>
     } @else {
     <!-- Metric Cards Grid (4 Columns) -->

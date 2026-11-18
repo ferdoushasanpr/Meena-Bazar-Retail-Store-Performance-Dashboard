@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { PageHeader } from '../../../layout/page-header/page-header';
 import { MetricCard } from '../../../shared/components/metric-card/metric-card';
@@ -11,9 +11,10 @@ import { Filter } from '../../shared/components/filter/filter';
 import { FilterCriteria } from '../../shared/models/filter-model';
 import { ReportExporter } from '../../services/report-exporter';
 import { Loading } from '../../../shared/components/loading/loading';
+import { ErrorDisplay } from '../../../shared/components/error-display/error-display';
 
 @Component({
-  imports: [FormsModule, PageHeader, Filter, Loading, MetricCard, HorizontalBarChart, TableChart],
+  imports: [FormsModule, PageHeader, Filter, Loading, ErrorDisplay, MetricCard, HorizontalBarChart, TableChart],
   selector: 'app-store-performance',
   styleUrl: './store-performance.css',
   templateUrl: './store-performance.html',
@@ -39,6 +40,12 @@ export class StorePerformance {
   storeSalesLoading = this.salesService.storesSalesLoading;
   storeCategorySalesLoading = this.salesService.paginatedSalesLoading;
 
+  // Error States
+  salesKpiError = this.salesService.salesKpiError;
+  storesSalesError = this.salesService.storesSalesError;
+  paginatedSalesError = this.salesService.paginatedSalesError;
+
+
   // Sales Data
   salesKpiData = this.salesService.salesKpiData;
   storesSalesData = this.salesService.storesSalesData;
@@ -48,6 +55,22 @@ export class StorePerformance {
     return this.salesKpiLoading()
       || this.storeSalesLoading()
       || this.storeCategorySalesLoading();
+  });
+
+  hasError = computed(() => {
+    return !!(
+      this.salesKpiError() ||
+      this.storesSalesError() ||
+      this.paginatedSalesError()
+    );
+  });
+
+  storePerformanceErrorMessage = computed(() => {
+    return (
+      this.salesKpiError() ||
+      this.storesSalesError() ||
+      this.paginatedSalesError()
+    );
   });
 
   totalSalesCard = computed((): MetricCardProps => {
@@ -94,16 +117,30 @@ export class StorePerformance {
     }
   });
 
-  loadSalesData({ startDate, endDate, storeId }: FilterCriteria): void {
+  constructor() {
+    effect(() => {
+      const filters = this.currentFilters();
+
+      if (filters.startDate && filters.endDate) {
+        this.loadSalesData();
+      }
+    });
+  }
+
+  loadCurrentFilter({ startDate, endDate, storeId }: FilterCriteria): void {
     this.currentFilters.set({ startDate, endDate, storeId });
+  }
 
-    const selectedStore = storeId === 'All Stores'
+  loadSalesData(): void {
+    const currentFilter = this.currentFilters();
+
+    const selectedStore = currentFilter.storeId === 'All Stores'
       ? undefined
-      : storeId;
+      : currentFilter.storeId;
 
-    this.salesService.loadFilteredSalesData(startDate, endDate, selectedStore);
-    this.salesService.loadStoresSalesData(startDate, endDate);
-    this.salesService.loadStoreCategorySalesData(1, selectedStore, startDate, endDate);
+    this.salesService.loadFilteredSalesData(currentFilter.startDate, currentFilter.endDate, selectedStore);
+    this.salesService.loadStoresSalesData(currentFilter.startDate, currentFilter.endDate);
+    this.salesService.loadStoreCategorySalesData(1, selectedStore, currentFilter.startDate, currentFilter.endDate);
   }
 
   onPageChange(pageNumber: number): void {
