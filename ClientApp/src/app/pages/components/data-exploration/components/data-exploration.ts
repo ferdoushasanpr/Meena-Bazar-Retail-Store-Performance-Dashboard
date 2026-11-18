@@ -47,6 +47,13 @@ export class DataExploration {
   // Search Input
   searchQuery = signal<string>('');
 
+  // Modal State Signals
+  isModalOpen = signal<boolean>(false);
+  selectedRowData = signal<any>(null);
+  activeEntityType = signal<EntityType>('Customer');
+  isDeleteModalOpen = signal<boolean>(false);
+  itemToDelete = signal<any>(null);
+
   // State
   componentDataLoading = computed(() => {
     const title = this.pageHeaderTitle();
@@ -124,12 +131,12 @@ export class DataExploration {
     }
   };
 
-  // Modal State Signals
-  isModalOpen = signal<boolean>(false);
-  selectedRowData = signal<any>(null);
-  activeEntityType = signal<EntityType>('Customer');
-  isDeleteModalOpen = signal<boolean>(false);
-  itemToDelete = signal<any>(null);
+  tableHeader = computed(() => {
+    return this.tableConfig[this.pageHeaderTitle()] ?? {
+      title: 'Data',
+      subtitle: 'Explore and analyze your data.'
+    };
+  });
 
   constructor() {
     this.updatePath();
@@ -138,13 +145,6 @@ export class DataExploration {
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe(() => this.updatePath());
   }
-
-  tableHeader = computed(() => {
-    return this.tableConfig[this.pageHeaderTitle()] ?? {
-      title: 'Data',
-      subtitle: 'Explore and analyze your data.'
-    };
-  });
 
   updatePath() {
     const lastSegment = this.router.url

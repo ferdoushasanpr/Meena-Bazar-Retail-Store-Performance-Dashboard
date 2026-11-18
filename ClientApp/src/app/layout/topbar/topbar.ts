@@ -6,15 +6,6 @@ import { AuthService } from '../../auth/services/auth-service';
 import { NotificationPanel } from '../../shared/components/notification-panel/notification-panel';
 import { NotificationService } from '../../pages/services/notification-service';
 
-export interface NotificationItem {
-  id: string | number;
-  title: string;
-  message: string;
-  time: string;
-  type?: 'info' | 'success' | 'warning' | 'error';
-  read: boolean;
-}
-
 @Component({
   imports: [RouterLink, TitleCasePipe, NotificationPanel],
   selector: 'app-topbar',
@@ -22,14 +13,13 @@ export interface NotificationItem {
   templateUrl: './topbar.html',
 })
 export class Topbar implements OnInit {
+  private router = inject(Router);
   private authService = inject(AuthService);
   private notificationService = inject(NotificationService);
 
   lastUpdatedTime: string = '10:42 AM';
 
-  private router = inject(Router);
   pathSegments = signal<string[]>([]);
-
   isNotificationsOpen = signal<boolean>(false);
   notifications = this.notificationService.notifications;
 

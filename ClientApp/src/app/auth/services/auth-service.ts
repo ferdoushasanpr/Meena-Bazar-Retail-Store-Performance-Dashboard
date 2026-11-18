@@ -14,6 +14,9 @@ export class AuthService {
     private userService = inject(UserService);
     private readonly apiUrlBase = 'http://localhost:5253/auth';
 
+    isSubmitting = signal<boolean>(false);
+    authError = signal<string | null>(null);
+
     authData = signal<AuthData | null>({
         token: "",
         expiresAt: "",
@@ -36,26 +39,38 @@ export class AuthService {
     }
 
     login(request: LoginRequest): void {
+        this.isSubmitting.set(true);
+        this.authError.set(null);
         this.http.post<AuthResponse>(`${this.apiUrlBase}/login`, request).subscribe({
             next: (response) => {
                 this.authData.set(response.data);
                 localStorage.setItem('data', JSON.stringify(response.data));
                 this.userService.getUserById(response.data.userId, response.data.token);
                 this.router.navigate(['/']);
+                this.isSubmitting.set(false);
             },
-            error: (error) => { console.error(error) }
+            error: (error) => {
+                this.authError.set("Incorrect Email or Password.");
+                this.isSubmitting.set(false);
+            }
         });
     }
 
     signup(request: RegisterRequest): void {
+        this.isSubmitting.set(true);
+        this.authError.set(null);
         this.http.post<AuthResponse>(`${this.apiUrlBase}/register`, request).subscribe({
             next: (response) => {
                 this.authData.set(response.data);
                 localStorage.setItem('data', JSON.stringify(response.data));
                 this.userService.getUserById(response.data.userId, response.data.token);
                 this.router.navigate(['/']);
+                this.isSubmitting.set(false);
             },
-            error: (error) => { console.error(error) }
+            error: (error) => {
+                this.authError.set(error.error.message);
+                this.isSubmitting.set(false);
+            }
         });
     }
 
