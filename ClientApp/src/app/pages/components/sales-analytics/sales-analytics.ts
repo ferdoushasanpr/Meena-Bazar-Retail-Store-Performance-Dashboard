@@ -14,9 +14,10 @@ import { ErrorDisplay } from '../../../shared/components/error-display/error-dis
 import { DonutChart } from '../../../shared/components/donut-chart/donut-chart';
 import { TableChart } from '../../../shared/components/table-chart/table-chart';
 import { formatDate } from '../../../shared/utilities/date';
+import { HorizontalBarChart } from '../../../shared/components/horizontal-bar-chart/horizontal-bar-chart';
 
 @Component({
-  imports: [FormsModule, PageHeader, Filter, Loading, ErrorDisplay, MetricCard, TrendChart, DonutChart, TableChart],
+  imports: [FormsModule, PageHeader, Filter, Loading, ErrorDisplay, MetricCard, TrendChart, DonutChart, HorizontalBarChart],
   selector: 'app-sales-analytics',
   styleUrl: './sales-analytics.css',
   templateUrl: './sales-analytics.html',
