@@ -9,28 +9,33 @@ import { ReportExporter } from '../../services/report-exporter';
 import { Loading } from '../../../shared/components/loading/loading';
 import { ErrorDisplay } from '../../../shared/components/error-display/error-display';
 import { VerticalBarChart } from '../../../shared/components/vertical-bar-chart/vertical-bar-chart';
+import { TableChart } from '../../../shared/components/table-chart/table-chart';
 
 @Component({
-  imports: [FormsModule, PageHeader, Filter, Loading, ErrorDisplay, VerticalBarChart, HorizontalBarChart],
-  selector: 'app-product-categories',
-  styleUrl: './product-categories.css',
-  templateUrl: './product-categories.html',
+  imports: [FormsModule, PageHeader, Filter, Loading, ErrorDisplay, VerticalBarChart, HorizontalBarChart, TableChart],
+  selector: 'app-sales-breakdown',
+  styleUrl: './sales-breakdown.css',
+  templateUrl: './sales-breakdown.html',
 })
-export class ProductCategories {
+export class SalesBreakdown {
   private salesService = inject(SalesService);
   private reportExportService = inject(ReportExporter);
 
   //Page Header Component Info
-  pageHeaderTitle = "Product Categories";
-  pageHeaderSubtitle = "Benchmark, rank, and analyze revenue, customer volume, and efficiency across all product categories.";
+  pageHeaderTitle = "Sales Breakdown";
+  pageHeaderSubtitle = "Benchmark, rank, and analyze revenue, customer volume, and efficiency across all product, categories and stores.";
 
   // Loading States
   salesCategoryLoading = this.salesService.salesCategoryLoading;
-  productSalesLoading = this.salesService.paginatedSalesLoading;
+  storeSalesLoading = this.salesService.storesSalesLoading;
+  productSalesLoading = this.salesService.productSalesLoading;
+  storeCategorySalesLoading = this.salesService.storeCategorySalesLoading;
 
   // Error States
   salesCategoryError = this.salesService.salesCategoryError;
-  paginatedSalesError = this.salesService.paginatedSalesError;
+  storesSalesError = this.salesService.storesSalesError;
+  productSalesError = this.salesService.productSalesError;
+  storeCategorySalesError = this.salesService.storeCategorySalesError;
 
   // Filters & State
   currentFilters = signal<FilterCriteria>({
@@ -40,23 +45,29 @@ export class ProductCategories {
   });
 
   salesCategoryData = this.salesService.salesCategoryData;
-  productSalesData = this.salesService.paginatedSalesData;
+  storesSalesData = this.salesService.storesSalesData;
+  productSalesData = this.salesService.productSalesData;
+  storeCategorySalesData = this.salesService.storeCategorySalesData;
 
   isLoading = computed(() => {
-    return this.salesCategoryLoading() || this.productSalesLoading();
+    return this.salesCategoryLoading() || this.storeSalesLoading() || this.productSalesLoading() || this.storeCategorySalesLoading();;
   });
 
   hasError = computed(() => {
     return !!(
       this.salesCategoryError() ||
-      this.paginatedSalesError()
+      this.storesSalesError() ||
+      this.storeCategorySalesError() ||
+      this.productSalesError()
     );
   });
 
   productCategoriesErrorMessage = computed(() => {
     return (
       this.salesCategoryError() ||
-      this.paginatedSalesError()
+      this.storesSalesError() ||
+      this.storeCategorySalesError() ||
+      this.productSalesError()
     );
   });
 
@@ -78,15 +89,25 @@ export class ProductCategories {
     const currentFilter = this.currentFilters();
 
     this.salesService.loadSalesCategoryData(currentFilter.startDate, currentFilter.endDate);
+    this.salesService.loadStoresSalesData(currentFilter.startDate, currentFilter.endDate);
     this.salesService.loadProductSalesData(1, currentFilter.startDate, currentFilter.endDate);
+    this.salesService.loadStoreCategorySalesData(1, undefined, currentFilter.startDate, currentFilter.endDate);
   }
 
-  onPageChange(pageNumber: number): void {
+  onHorizontalBarChartPageChange(pageNumber: number): void {
     const filters = this.currentFilters();
     const endDate = filters.endDate;
     const startDate = filters.startDate;
 
     this.salesService.loadProductSalesData(pageNumber, startDate, endDate);
+  }
+
+  onTableChartPageChange(pageNumber: number): void {
+    const filters = this.currentFilters();
+    const endDate = filters.endDate;
+    const startDate = filters.startDate;
+
+    this.salesService.loadStoreCategorySalesData(pageNumber, undefined, startDate, endDate);
   }
 
   // CSV Export Methods

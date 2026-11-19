@@ -28,7 +28,9 @@ export class SalesService {
     yearlySalesLoading = signal<boolean>(false);
     brandSalesLoading = signal<boolean>(false);
     dailyStoreSaleLoading = signal<boolean>(false);
+    storeCategorySalesLoading = signal<boolean>(false);
     filteredStoreCategorySalesLoading = signal<boolean>(false);
+    productSalesLoading = signal<boolean>(false);
     storesSalesLoading = signal<boolean>(false);
     paginatedSalesLoading = signal<boolean>(false);
 
@@ -41,7 +43,9 @@ export class SalesService {
     yearlySalesError = signal<string | null>(null);
     brandSalesError = signal<string | null>(null);
     dailyStoreSaleError = signal<string | null>(null);
+    storeCategorySalesError = signal<string | null>(null);
     filteredStoreCategorySalesError = signal<string | null>(null);
+    productSalesError = signal<string | null>(null);
     storesSalesError = signal<string | null>(null);
     paginatedSalesError = signal<string | null>(null);
 
@@ -60,7 +64,27 @@ export class SalesService {
         averageDailySales: 0.0
     });
 
-    paginatedSalesData = signal<StoreCategorySalesResponse | StoreProductSalesResponse | ProductSalesResponse>({
+    storeCategorySalesData = signal<StoreCategorySalesResponse>({
+        data: [],
+        pageNumber: 1,
+        pageSize: 10,
+        totalRecords: 0,
+        totalPages: 0,
+        hasPreviousPage: false,
+        hasNextPage: false,
+    });
+
+    productSalesData = signal<ProductSalesResponse>({
+        data: [],
+        pageNumber: 1,
+        pageSize: 10,
+        totalRecords: 0,
+        totalPages: 0,
+        hasPreviousPage: false,
+        hasNextPage: false,
+    });
+
+    paginatedSalesData = signal<StoreProductSalesResponse>({
         data: [],
         pageNumber: 1,
         pageSize: 10,
@@ -273,7 +297,6 @@ export class SalesService {
         this.paginatedSalesError.set(null);
         this.businessKpiService.getStoreProductSalesData(pageNumber, 10, storeId, startDate, endDate).subscribe({
             next: (response) => {
-                console.log(response);
                 this.paginatedSalesData.set(response);
                 this.paginatedSalesLoading.set(false);
             },
@@ -287,35 +310,35 @@ export class SalesService {
     }
 
     loadStoreCategorySalesData(pageNumber: number = 1, storeId?: string, startDate?: string, endDate?: string): void {
-        this.paginatedSalesLoading.set(true);
-        this.paginatedSalesError.set(null);
+        this.storeCategorySalesLoading.set(true);
+        this.storeCategorySalesError.set(null);
         this.businessKpiService.getStoreCategorySalesData(pageNumber, 10, storeId, startDate, endDate).subscribe({
             next: (response) => {
-                this.paginatedSalesData.set(response);
-                this.paginatedSalesLoading.set(false);
+                this.storeCategorySalesData.set(response);
+                this.storeCategorySalesLoading.set(false);
             },
             error: (error) => {
-                this.paginatedSalesError.set(
+                this.storeCategorySalesError.set(
                     'Unable to load data. Please try again.'
                 );
-                this.paginatedSalesLoading.set(false);
+                this.storeCategorySalesLoading.set(false);
             }
         });
     }
 
     loadProductSalesData(pageNumber: number = 1, startDate?: string, endDate?: string): void {
-        this.paginatedSalesLoading.set(true);
-        this.paginatedSalesError.set(null);
+        this.productSalesLoading.set(true);
+        this.productSalesError.set(null);
         this.businessKpiService.getProductSalesData(pageNumber, 10, startDate, endDate).subscribe({
             next: (response) => {
-                this.paginatedSalesData.set(response);
-                this.paginatedSalesLoading.set(false);
+                this.productSalesData.set(response);
+                this.productSalesLoading.set(false);
             },
             error: (error) => {
-                this.paginatedSalesError.set(
+                this.productSalesError.set(
                     'Unable to load data. Please try again.'
                 );
-                this.paginatedSalesLoading.set(false);
+                this.productSalesLoading.set(false);
             }
         });
     }

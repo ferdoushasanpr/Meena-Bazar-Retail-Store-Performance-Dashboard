@@ -24,13 +24,13 @@
             </div>
 
             <div class="bars-container">
-                @for (item of data(); track item.category) {
+                @for (item of data(); track $index) {
                 <div class="bar-group">
 
                     <!-- Tooltip -->
                     <div class="tooltip">
                         <span class="tooltip-title">
-                            {{ item.category }}
+                            {{ getLabel(item) }}
                         </span>
 
                         <span class="tooltip-sales">
@@ -52,8 +52,8 @@
                     </div>
 
                     <!-- Category Label -->
-                    <div class="x-label" [title]="item.category">
-                        {{ item.category }}
+                    <div class="x-label" [title]="getLabel(item)">
+                        {{ getLabel(item) }}
                     </div>
 
                 </div>

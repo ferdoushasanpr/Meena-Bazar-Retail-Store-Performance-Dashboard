@@ -49,8 +49,7 @@ export class Sidebar {
         items: [
           { title: 'Dashboard', route: '/dashboard', icon: 'fa-solid fa-border-all', active: true },
           { title: 'Sales Analytics', route: '/sales-analytics', icon: 'fa-solid fa-chart-line' },
-          { title: 'Store Performance', route: '/store-performance', icon: 'fa-solid fa-store' },
-          { title: 'Product Categories', route: '/categories', icon: 'fa-solid fa-layer-group' }
+          { title: 'Sales Breakdown', route: '/sales-breakdown', icon: 'fa-solid fa-chart-pie' }
         ]
       },
       {
