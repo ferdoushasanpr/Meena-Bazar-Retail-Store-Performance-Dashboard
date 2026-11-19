@@ -33,6 +33,7 @@ export class Dashboard implements OnInit {
   monthlySalesLoading = this.salesService.monthlySalesLoading;
   yearlySalesLoading = this.salesService.yearlySalesLoading;
   brandSalesLoading = this.salesService.brandSalesLoading;
+  productSalesLoading = this.salesService.productSalesLoading;
 
   // Error States
   entityCountError = this.salesService.entityCountError;
@@ -42,6 +43,7 @@ export class Dashboard implements OnInit {
   monthlySalesError = this.salesService.monthlySalesError;
   yearlySalesError = this.salesService.yearlySalesError;
   brandSalesError = this.salesService.brandSalesError;
+  productSalesError = this.salesService.productSalesError;
 
   // Sales Data
   entityCountData = this.salesService.entityCountData;
@@ -50,11 +52,11 @@ export class Dashboard implements OnInit {
   dailySalesData = this.salesService.dailySalesData;
   monthlySalesData = this.salesService.monthlySalesData;
   yearlySalesData = this.salesService.yearlySalesData;
-  productSalesData = this.salesService.paginatedSalesData;
+  productSalesData = this.salesService.productSalesData;
   brandSalesData = this.salesService.brandSalesData;
 
   isLoading = computed(() => {
-    return this.entityCountLoading() || this.salesKpiLoading() || this.salesCategoryLoading() || this.dailySalesLoading() || this.monthlySalesLoading() || this.yearlySalesLoading() || this.brandSalesLoading();
+    return this.entityCountLoading() || this.salesKpiLoading() || this.salesCategoryLoading() || this.dailySalesLoading() || this.monthlySalesLoading() || this.yearlySalesLoading() || this.brandSalesLoading() || this.productSalesLoading();
   });
 
   hasError = computed(() => {
@@ -65,7 +67,8 @@ export class Dashboard implements OnInit {
       this.dailySalesError() ||
       this.monthlySalesError() ||
       this.yearlySalesError() ||
-      this.brandSalesError()
+      this.brandSalesError() ||
+      this.productSalesError()
     );
   });
 
@@ -77,7 +80,8 @@ export class Dashboard implements OnInit {
       this.dailySalesError() ||
       this.monthlySalesError() ||
       this.yearlySalesError() ||
-      this.brandSalesError()
+      this.brandSalesError() ||
+      this.productSalesError()
     );
   });
 

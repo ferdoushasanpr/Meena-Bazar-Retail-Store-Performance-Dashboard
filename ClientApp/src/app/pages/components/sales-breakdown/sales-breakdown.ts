@@ -13,17 +13,17 @@ import { TableChart } from '../../../shared/components/table-chart/table-chart';
 
 @Component({
   imports: [FormsModule, PageHeader, Filter, Loading, ErrorDisplay, VerticalBarChart, HorizontalBarChart, TableChart],
-  selector: 'app-product-categories',
-  styleUrl: './product-categories.css',
-  templateUrl: './product-categories.html',
+  selector: 'app-sales-breakdown',
+  styleUrl: './sales-breakdown.css',
+  templateUrl: './sales-breakdown.html',
 })
-export class ProductCategories {
+export class SalesBreakdown {
   private salesService = inject(SalesService);
   private reportExportService = inject(ReportExporter);
 
   //Page Header Component Info
-  pageHeaderTitle = "Product Categories";
-  pageHeaderSubtitle = "Benchmark, rank, and analyze revenue, customer volume, and efficiency across all product categories.";
+  pageHeaderTitle = "Sales Breakdown";
+  pageHeaderSubtitle = "Benchmark, rank, and analyze revenue, customer volume, and efficiency across all product, categories and stores.";
 
   // Loading States
   salesCategoryLoading = this.salesService.salesCategoryLoading;
