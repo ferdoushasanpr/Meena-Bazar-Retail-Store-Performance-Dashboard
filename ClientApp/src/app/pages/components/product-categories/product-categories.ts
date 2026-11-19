@@ -9,9 +9,10 @@ import { ReportExporter } from '../../services/report-exporter';
 import { Loading } from '../../../shared/components/loading/loading';
 import { ErrorDisplay } from '../../../shared/components/error-display/error-display';
 import { VerticalBarChart } from '../../../shared/components/vertical-bar-chart/vertical-bar-chart';
+import { TableChart } from '../../../shared/components/table-chart/table-chart';
 
 @Component({
-  imports: [FormsModule, PageHeader, Filter, Loading, ErrorDisplay, VerticalBarChart, HorizontalBarChart],
+  imports: [FormsModule, PageHeader, Filter, Loading, ErrorDisplay, VerticalBarChart, HorizontalBarChart, TableChart],
   selector: 'app-product-categories',
   styleUrl: './product-categories.css',
   templateUrl: './product-categories.html',
@@ -27,12 +28,14 @@ export class ProductCategories {
   // Loading States
   salesCategoryLoading = this.salesService.salesCategoryLoading;
   storeSalesLoading = this.salesService.storesSalesLoading;
-  productSalesLoading = this.salesService.paginatedSalesLoading;
+  productSalesLoading = this.salesService.productSalesLoading;
+  storeCategorySalesLoading = this.salesService.storeCategorySalesLoading;
 
   // Error States
   salesCategoryError = this.salesService.salesCategoryError;
   storesSalesError = this.salesService.storesSalesError;
-  paginatedSalesError = this.salesService.paginatedSalesError;
+  productSalesError = this.salesService.productSalesError;
+  storeCategorySalesError = this.salesService.storeCategorySalesError;
 
   // Filters & State
   currentFilters = signal<FilterCriteria>({
@@ -43,17 +46,19 @@ export class ProductCategories {
 
   salesCategoryData = this.salesService.salesCategoryData;
   storesSalesData = this.salesService.storesSalesData;
-  productSalesData = this.salesService.paginatedSalesData;
+  productSalesData = this.salesService.productSalesData;
+  storeCategorySalesData = this.salesService.storeCategorySalesData;
 
   isLoading = computed(() => {
-    return this.salesCategoryLoading() || this.storeSalesLoading() || this.productSalesLoading();
+    return this.salesCategoryLoading() || this.storeSalesLoading() || this.productSalesLoading() || this.storeCategorySalesLoading();;
   });
 
   hasError = computed(() => {
     return !!(
       this.salesCategoryError() ||
       this.storesSalesError() ||
-      this.paginatedSalesError()
+      this.storeCategorySalesError() ||
+      this.productSalesError()
     );
   });
 
@@ -61,7 +66,8 @@ export class ProductCategories {
     return (
       this.salesCategoryError() ||
       this.storesSalesError() ||
-      this.paginatedSalesError()
+      this.storeCategorySalesError() ||
+      this.productSalesError()
     );
   });
 
@@ -85,14 +91,23 @@ export class ProductCategories {
     this.salesService.loadSalesCategoryData(currentFilter.startDate, currentFilter.endDate);
     this.salesService.loadStoresSalesData(currentFilter.startDate, currentFilter.endDate);
     this.salesService.loadProductSalesData(1, currentFilter.startDate, currentFilter.endDate);
+    this.salesService.loadStoreCategorySalesData(1, undefined, currentFilter.startDate, currentFilter.endDate);
   }
 
-  onPageChange(pageNumber: number): void {
+  onHorizontalBarChartPageChange(pageNumber: number): void {
     const filters = this.currentFilters();
     const endDate = filters.endDate;
     const startDate = filters.startDate;
 
     this.salesService.loadProductSalesData(pageNumber, startDate, endDate);
+  }
+
+  onTableChartPageChange(pageNumber: number): void {
+    const filters = this.currentFilters();
+    const endDate = filters.endDate;
+    const startDate = filters.startDate;
+
+    this.salesService.loadStoreCategorySalesData(pageNumber, undefined, startDate, endDate);
   }
 
   // CSV Export Methods

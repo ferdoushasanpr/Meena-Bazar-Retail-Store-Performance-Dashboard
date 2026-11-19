@@ -25,7 +25,13 @@
             [data]="storesSalesData()" labelKey="store_name" />
         <!-- Reused for Products Data -->
         <app-horizontal-bar-chart [data]="productSalesData()" labelKey="product_name" salesKey="total_Sales"
-            (pageChange)="onPageChange($event)" />
+            (pageChange)="onHorizontalBarChartPageChange($event)" />
     </div>
+    <app-table-chart title="Store Category Performance"
+        subtitle="Breakdown by store, category, sales volume, and transaction count"
+        [data]="storeCategorySalesData().data" [pageNumber]="storeCategorySalesData().pageNumber"
+        [pageSize]="storeCategorySalesData().pageSize" [totalRecords]="storeCategorySalesData().totalRecords"
+        [totalPages]="storeCategorySalesData().totalPages" [hasPreviousPage]="storeCategorySalesData().hasPreviousPage"
+        [hasNextPage]="storeCategorySalesData().hasNextPage" (pageChange)="onTableChartPageChange($event)" />
     }
 </div>
