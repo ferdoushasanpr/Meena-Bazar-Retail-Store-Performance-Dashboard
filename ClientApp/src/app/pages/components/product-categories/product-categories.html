@@ -19,7 +19,10 @@
     <div class="charts-section">
         <!-- Vertical Bar Chart with Store Selector -->
         <app-vertical-bar-chart title="Category Sales Performance"
-            subtitle="Revenue and volume performance per category" [data]="salesCategoryData()" />
+            subtitle="Revenue and volume performance per category" [data]="salesCategoryData()" labelKey="category" />
+        <!-- Vertical Bar Chart with Store Selector -->
+        <app-vertical-bar-chart title="Store Sales Breakdown" subtitle="Sales revenue by store"
+            [data]="storesSalesData()" labelKey="store_name" />
         <!-- Reused for Products Data -->
         <app-horizontal-bar-chart [data]="productSalesData()" labelKey="product_name" salesKey="total_Sales"
             (pageChange)="onPageChange($event)" />

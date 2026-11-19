@@ -26,10 +26,12 @@ export class ProductCategories {
 
   // Loading States
   salesCategoryLoading = this.salesService.salesCategoryLoading;
+  storeSalesLoading = this.salesService.storesSalesLoading;
   productSalesLoading = this.salesService.paginatedSalesLoading;
 
   // Error States
   salesCategoryError = this.salesService.salesCategoryError;
+  storesSalesError = this.salesService.storesSalesError;
   paginatedSalesError = this.salesService.paginatedSalesError;
 
   // Filters & State
@@ -40,15 +42,17 @@ export class ProductCategories {
   });
 
   salesCategoryData = this.salesService.salesCategoryData;
+  storesSalesData = this.salesService.storesSalesData;
   productSalesData = this.salesService.paginatedSalesData;
 
   isLoading = computed(() => {
-    return this.salesCategoryLoading() || this.productSalesLoading();
+    return this.salesCategoryLoading() || this.storeSalesLoading() || this.productSalesLoading();
   });
 
   hasError = computed(() => {
     return !!(
       this.salesCategoryError() ||
+      this.storesSalesError() ||
       this.paginatedSalesError()
     );
   });
@@ -56,6 +60,7 @@ export class ProductCategories {
   productCategoriesErrorMessage = computed(() => {
     return (
       this.salesCategoryError() ||
+      this.storesSalesError() ||
       this.paginatedSalesError()
     );
   });
@@ -78,6 +83,7 @@ export class ProductCategories {
     const currentFilter = this.currentFilters();
 
     this.salesService.loadSalesCategoryData(currentFilter.startDate, currentFilter.endDate);
+    this.salesService.loadStoresSalesData(currentFilter.startDate, currentFilter.endDate);
     this.salesService.loadProductSalesData(1, currentFilter.startDate, currentFilter.endDate);
   }
 

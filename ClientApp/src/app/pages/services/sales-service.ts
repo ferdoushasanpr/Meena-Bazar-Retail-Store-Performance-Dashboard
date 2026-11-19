@@ -272,7 +272,6 @@ export class SalesService {
         this.paginatedSalesError.set(null);
         this.businessKpiService.getStoreProductSalesData(pageNumber, 10, storeId, startDate, endDate).subscribe({
             next: (response) => {
-                console.log(response);
                 this.paginatedSalesData.set(response);
                 this.paginatedSalesLoading.set(false);
             },

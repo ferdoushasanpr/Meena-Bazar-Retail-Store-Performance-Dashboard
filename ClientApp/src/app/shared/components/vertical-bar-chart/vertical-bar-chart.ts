@@ -1,6 +1,6 @@
 import { Component, input, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { SalesCategoryData } from '../../../core/models/sales';
+import { SalesCategoryData, StoreSalesData } from '../../../core/models/sales';
 
 @Component({
   imports: [FormsModule],
@@ -11,8 +11,8 @@ import { SalesCategoryData } from '../../../core/models/sales';
 export class VerticalBarChart {
   title = input<string>('Category Sales Breakdown');
   subtitle = input<string>('Sales revenue by category');
-
-  data = input<SalesCategoryData[]>([]);
+  data = input<(SalesCategoryData | StoreSalesData)[]>([]);
+  labelKey = input<'category' | 'store_name'>('category');
 
   maxSales = computed(() => {
     const list = this.data();
@@ -43,9 +43,12 @@ export class VerticalBarChart {
 
     if (!max) return 0;
 
-    return Math.min(
-      100,
-      Math.max(0, (value / max) * 100)
-    );
+    return Math.min(100, Math.max(0, (value / max) * 100));
+  }
+
+  getLabel(item: SalesCategoryData | StoreSalesData): string {
+    return this.labelKey() === 'category'
+      ? (item as SalesCategoryData).category
+      : (item as StoreSalesData).store_name;
   }
 }
