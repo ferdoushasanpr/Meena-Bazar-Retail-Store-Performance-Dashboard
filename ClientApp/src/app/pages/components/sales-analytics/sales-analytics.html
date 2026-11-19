@@ -32,10 +32,14 @@
     </section>
 
     <div class="charts-section">
-        <app-trend-chart [dailyStoreData]="dailyStoreSalesData()" [showControls]="false" />
-        <!-- Vertical Bar Chart with Store Selector -->
-        <app-vertical-bar-chart title="Category Sales Performance"
-            subtitle="Revenue and volume performance per category" [data]="filteredStoreCategorySalesData()" />
+        <app-trend-chart class="trend-chart" [dailyStoreData]="dailyStoreSalesData()" [showControls]="false" />
+
+        <!-- Horizontal Bar Chart -->
+        <app-horizontal-bar-chart class="product-chart" [data]="paginatedSalesData()" labelKey="product_name"
+            salesKey="totalSales" (pageChange)="onPageChange($event)" />
+
+        <!-- Category Donut Chart -->
+        <app-donut-chart class="donut-chart" [data]="filteredStoreCategorySalesData()" [salesData]="salesKpiData()" />
     </div>
     }
 </div>

@@ -1,7 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { AnalyticsService } from '../../core/services/analytics-service';
 import { OperationsService } from '../../core/services/operations-service';
-import { BrandSalesData, DailySalesData, DailyStoreSalesData, EntityCountData, MonthlySalesData, ProductSalesResponse, SalesCategoryData, SalesData, StoreCategorySalesData, StoreCategorySalesResponse, StoreSalesData, YearlySalesData } from '../../core/models/sales';
+import { BrandSalesData, DailySalesData, DailyStoreSalesData, EntityCountData, MonthlySalesData, ProductSalesResponse, SalesCategoryData, SalesData, StoreCategorySalesData, StoreCategorySalesResponse, StoreProductSalesResponse, StoreSalesData, YearlySalesData } from '../../core/models/sales';
 import { StoreData } from '../../core/models/store';
 
 @Injectable({
@@ -60,7 +60,7 @@ export class SalesService {
         averageDailySales: 0.0
     });
 
-    paginatedSalesData = signal<StoreCategorySalesResponse | ProductSalesResponse>({
+    paginatedSalesData = signal<StoreCategorySalesResponse | StoreProductSalesResponse | ProductSalesResponse>({
         data: [],
         pageNumber: 1,
         pageSize: 10,
@@ -268,6 +268,24 @@ export class SalesService {
         });
     }
 
+    loadStoreProductSalesData(pageNumber: number = 1, startDate?: string, endDate?: string, storeId?: string): void {
+        this.paginatedSalesLoading.set(true);
+        this.paginatedSalesError.set(null);
+        this.businessKpiService.getStoreProductSalesData(pageNumber, 10, storeId, startDate, endDate).subscribe({
+            next: (response) => {
+                console.log(response);
+                this.paginatedSalesData.set(response);
+                this.paginatedSalesLoading.set(false);
+            },
+            error: (error) => {
+                this.paginatedSalesError.set(
+                    'Unable to load data. Please try again.'
+                );
+                this.paginatedSalesLoading.set(false);
+            }
+        });
+    }
+
     loadStoreCategorySalesData(pageNumber: number = 1, storeId?: string, startDate?: string, endDate?: string): void {
         this.paginatedSalesLoading.set(true);
         this.paginatedSalesError.set(null);
@@ -285,7 +303,7 @@ export class SalesService {
         });
     }
 
-    loadProductSalesData(pageNumber: number = 1, startDate: string, endDate: string): void {
+    loadProductSalesData(pageNumber: number = 1, startDate?: string, endDate?: string): void {
         this.paginatedSalesLoading.set(true);
         this.paginatedSalesError.set(null);
         this.businessKpiService.getProductSalesData(pageNumber, 10, startDate, endDate).subscribe({

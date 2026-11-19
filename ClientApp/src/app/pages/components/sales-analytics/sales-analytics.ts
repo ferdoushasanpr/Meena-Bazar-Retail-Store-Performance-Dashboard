@@ -11,9 +11,13 @@ import { FilterCriteria } from '../../shared/models/filter-model';
 import { ReportExporter } from '../../services/report-exporter';
 import { Loading } from '../../../shared/components/loading/loading';
 import { ErrorDisplay } from '../../../shared/components/error-display/error-display';
+import { DonutChart } from '../../../shared/components/donut-chart/donut-chart';
+import { TableChart } from '../../../shared/components/table-chart/table-chart';
+import { formatDate } from '../../../shared/utilities/date';
+import { HorizontalBarChart } from '../../../shared/components/horizontal-bar-chart/horizontal-bar-chart';
 
 @Component({
-  imports: [FormsModule, PageHeader, Filter, Loading, ErrorDisplay, MetricCard, TrendChart, VerticalBarChart],
+  imports: [FormsModule, PageHeader, Filter, Loading, ErrorDisplay, MetricCard, TrendChart, DonutChart, HorizontalBarChart],
   selector: 'app-sales-analytics',
   styleUrl: './sales-analytics.css',
   templateUrl: './sales-analytics.html',
@@ -37,26 +41,30 @@ export class SalesAnalytics {
   salesKpiLoading = this.salesService.salesKpiLoading;
   dailyStoreSalesLoading = this.salesService.dailyStoreSaleLoading;
   filteredStoreCategorySalesLoading = this.salesService.filteredStoreCategorySalesLoading;
+  paginatedSalesLoading = this.salesService.paginatedSalesLoading;
 
   // Error States
   salesKpiError = this.salesService.salesKpiError;
   dailyStoreSaleError = this.salesService.dailyStoreSaleError;
   filteredStoreCategorySalesError = this.salesService.filteredStoreCategorySalesError;
+  paginatedSalesError = this.salesService.paginatedSalesError;
 
   // Sales Data
   salesKpiData = this.salesService.salesKpiData;
   dailyStoreSalesData = this.salesService.dailyStoreSalesData;
   filteredStoreCategorySalesData = this.salesService.filteredStoreCategorySalesData;
+  paginatedSalesData = this.salesService.paginatedSalesData;
 
   isLoading = computed(() => {
-    return this.salesKpiLoading() || this.dailyStoreSalesLoading() || this.filteredStoreCategorySalesLoading();
+    return this.salesKpiLoading() || this.dailyStoreSalesLoading() || this.filteredStoreCategorySalesLoading() || this.paginatedSalesLoading();
   });
 
   hasError = computed(() => {
     return !!(
       this.salesKpiError() ||
       this.dailyStoreSaleError() ||
-      this.filteredStoreCategorySalesError()
+      this.filteredStoreCategorySalesError() ||
+      this.paginatedSalesError()
     );
   });
 
@@ -64,7 +72,8 @@ export class SalesAnalytics {
     return (
       this.salesKpiError() ||
       this.dailyStoreSaleError() ||
-      this.filteredStoreCategorySalesError()
+      this.filteredStoreCategorySalesError() ||
+      this.paginatedSalesError()
     );
   });
 
@@ -136,6 +145,19 @@ export class SalesAnalytics {
     this.salesService.loadFilteredSalesData(currentFilter.startDate, currentFilter.endDate, selectedStore);
     this.salesService.loadDailyStoreSalesData(currentFilter.startDate, currentFilter.endDate, selectedStore);
     this.salesService.loadFilteredStoreCategorySalesData(currentFilter.startDate, currentFilter.endDate, selectedStore);
+    this.salesService.loadStoreProductSalesData(1, currentFilter.startDate, currentFilter.endDate, selectedStore);
+  }
+
+  onPageChange(pageNumber: number): void {
+    const filters = this.currentFilters();
+    const endDate = new Date(filters.endDate);
+    const startDate = new Date(filters.startDate);
+
+    const storeId = filters.storeId === 'All Stores'
+      ? 'ST001'
+      : filters.storeId;
+
+    this.salesService.loadStoreProductSalesData(pageNumber, formatDate(startDate), formatDate(endDate), storeId);
   }
 
   // CSV Export Methods

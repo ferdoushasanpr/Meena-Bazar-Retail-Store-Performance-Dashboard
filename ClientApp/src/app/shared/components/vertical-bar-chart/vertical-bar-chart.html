@@ -1,81 +1,71 @@
 <div class="chart-card">
-    <!-- Chart Header -->
     <div class="chart-header">
         <div class="title-group">
             <h3 class="chart-title">{{ title() }}</h3>
-            @if (subtitle()) {
             <p class="chart-subtitle">{{ subtitle() }}</p>
-            }
         </div>
     </div>
 
-    <!-- Main Chart -->
-    <div class="chart-container" role="img" aria-label="Sales performance bar chart">
-        <!-- Y Axis -->
+    @if (data().length > 0) {
+    <div class="chart-container">
         <div class="y-axis">
             @for (tick of yAxisTicks(); track $index) {
-            <span class="y-tick">${{ tick }}</span>
+            <span class="y-tick">
+                {{ tick }}
+            </span>
             }
         </div>
 
-        <!-- Chart Body -->
         <div class="chart-body">
-            <!-- Grid Lines -->
             <div class="grid-lines">
                 @for (tick of yAxisTicks(); track $index) {
                 <div class="grid-line"></div>
                 }
             </div>
 
-            <!-- Bars -->
             <div class="bars-container">
-                @for (item of data(); track item.category + item.store_id) {
+                @for (item of data(); track item.category) {
                 <div class="bar-group">
+
+                    <!-- Tooltip -->
+                    <div class="tooltip">
+                        <span class="tooltip-title">
+                            {{ item.category }}
+                        </span>
+
+                        <span class="tooltip-sales">
+                            Sales: {{ item.total_Sales }}
+                        </span>
+
+                        <span class="tooltip-detail">
+                            Transactions: {{ item.total_Transactions }}
+                        </span>
+                    </div>
+
+                    <!-- Bar -->
                     <div class="bar-wrapper">
-                        <!-- Tooltip -->
-                        <div class="tooltip">
-                            <span class="tooltip-title">
-                                {{ item.category }}
-                            </span>
-
-                            <span class="tooltip-sales">
-                                ${{ item.totalSales }}
-                            </span>
-
-                            <span class="tooltip-detail">
-                                {{ item.unitsSold }} units
-                                ({{ item.numberOfTransactions }} txns)
-                            </span>
-                        </div>
-
-                        <!-- Bar -->
-                        <div class="bar" [style.height.%]="getBarHeightPercentage(item.totalSales)">
-
+                        <div class="bar" [style.height.%]="getBarHeightPercentage(item.total_Sales)">
                             <span class="bar-value">
-                                ${{ item.totalSales }}
+                                {{ item.total_Sales }}
                             </span>
-
                         </div>
                     </div>
 
-                    <!-- X Axis -->
-                    <span class="x-label" [title]="item.category">
+                    <!-- Category Label -->
+                    <div class="x-label" [title]="item.category">
                         {{ item.category }}
-                    </span>
-                </div>
-                } @empty {
-                <div class="empty-chart">
-                    No category data available.
+                    </div>
+
                 </div>
                 }
             </div>
         </div>
     </div>
-
-    <!-- Store Name -->
-    @if (data().length) {
-    <div class="chart-store-name">
-        {{ data()[0].store_name }}
+    } @else {
+    <div class="chart-container">
+        <div class="empty-chart">
+            No category sales data available.
+        </div>
     </div>
     }
 </div>

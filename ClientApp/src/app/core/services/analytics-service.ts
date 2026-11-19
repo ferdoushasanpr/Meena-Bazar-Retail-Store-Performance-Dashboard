@@ -59,8 +59,20 @@ export class AnalyticsService {
         }
     }
 
-    getProductSalesData(pageNumber: number = 1, pageSize: number = 10, startDate: string, endDate: string): Observable<ProductSalesResponse> {
-        return this.http.get<ProductSalesResponse>(`${this.apiUrlBase}/products?pageNumber=${pageNumber}&pageSize=${pageSize}&startDate=${startDate}&endDate=${endDate}`);
+    getProductSalesData(pageNumber: number = 1, pageSize: number = 10, startDate?: string, endDate?: string): Observable<ProductSalesResponse> {
+        if (!startDate && !endDate) {
+            return this.http.get<ProductSalesResponse>(`${this.apiUrlBase}/products?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+        } else {
+            return this.http.get<ProductSalesResponse>(`${this.apiUrlBase}/products?pageNumber=${pageNumber}&pageSize=${pageSize}&startDate=${startDate}&endDate=${endDate}`);
+        }
+    }
+
+    getStoreProductSalesData(pageNumber: number = 1, pageSize: number = 10, storeId?: string, startDate?: string, endDate?: string): Observable<any> {
+        if (storeId) {
+            return this.http.get<any>(`${this.apiUrlBase}/store-product?pageNumber=${pageNumber}&pageSize=${pageSize}&storeId=${storeId}&startDate=${startDate}&endDate=${endDate}`);
+        } else {
+            return this.http.get<any>(`${this.apiUrlBase}/store-product?pageNumber=${pageNumber}&pageSize=${pageSize}&startDate=${startDate}&endDate=${endDate}`);
+        }
     }
 
     getStoreCategorySalesData(pageNumber: number = 1, pageSize: number = 10, storeId?: string, startDate?: string, endDate?: string): Observable<StoreCategorySalesResponse> {

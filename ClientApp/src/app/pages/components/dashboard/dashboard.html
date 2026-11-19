@@ -43,18 +43,22 @@
 
     <!-- Charts Section -->
     <section class="charts-section">
-        <!-- Trend Chart -->
+        <!-- Trend Chart: Full Width -->
         <app-trend-chart class="trend-chart" [dailyData]="dailySalesData()" [monthlyData]="monthlySalesData()"
             [yearlyData]="yearlySalesData()">
         </app-trend-chart>
 
-        <!-- Brand Sales Chart -->
-        <app-horizontal-bar-chart class="bar-chart" [data]="brandSalesData()" labelKey="brand" salesKey="total_Sales">
-        </app-horizontal-bar-chart>
+        <!-- Product Sales Chart -->
+        <app-horizontal-bar-chart class="product-chart" [data]="productSalesData()" labelKey="product_name"
+            salesKey="total_Sales" (pageChange)="onPageChange($event)" />
 
         <!-- Category Donut Chart -->
         <app-donut-chart class="donut-chart" [data]="salesCategoryData()" [salesData]="salesKpiData()">
         </app-donut-chart>
+
+        <!-- Brand Sales Chart: Full Width -->
+        <app-horizontal-bar-chart class="bar-chart" [data]="brandSalesData()" labelKey="brand" salesKey="total_Sales">
+        </app-horizontal-bar-chart>
     </section>
     }
 </div>

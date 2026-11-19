@@ -17,8 +17,9 @@
     </div>
     } @else {
     <div class="charts-section">
-        <app-category-matrix-chart [inputData]="salesCategoryData()">
-        </app-category-matrix-chart>
+        <!-- Vertical Bar Chart with Store Selector -->
+        <app-vertical-bar-chart title="Category Sales Performance"
+            subtitle="Revenue and volume performance per category" [data]="salesCategoryData()" />
         <!-- Reused for Products Data -->
         <app-horizontal-bar-chart [data]="productSalesData()" labelKey="product_name" salesKey="total_Sales"
             (pageChange)="onPageChange($event)" />

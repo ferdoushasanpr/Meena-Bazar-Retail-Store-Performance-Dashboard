@@ -54,8 +54,10 @@
 
 .charts-section {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-areas: "trend bars";
+    grid-template-columns: minmax(0, 1.85fr) minmax(0, 1fr);
+    grid-template-areas:
+        "trend trend"
+        "bars  donut";
     gap: 16px;
     width: 100%;
     min-width: 0;
@@ -64,10 +66,25 @@
 
 .trend-chart {
     grid-area: trend;
+    width: 100%;
+    min-width: 0;
+}
+
+.product-chart {
+    grid-area: bars;
+    width: 100%;
+    min-width: 0;
+}
+
+.donut-chart {
+    grid-area: donut;
+    width: 100%;
+    min-width: 0;
 }
 
 app-trend-chart,
-app-vertical-bar-chart {
+app-horizontal-bar-chart,
+app-donut-chart {
     display: block;
     width: 100%;
     min-width: 0;
@@ -98,12 +115,12 @@ app-vertical-bar-chart {
 
     .metrics-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+        margin-bottom: 20px;
     }
 
     .charts-section {
         grid-template-columns:
             minmax(0, 1.5fr) minmax(0, 1fr);
-
         grid-template-areas:
             "trend donut"
             "bars  donut";
@@ -111,7 +128,6 @@ app-vertical-bar-chart {
 }
 
 @media (max-width: 1023px) {
-
     .container {
         padding: 20px;
     }
@@ -126,13 +142,13 @@ app-vertical-bar-chart {
         grid-template-columns: minmax(0, 1fr);
         grid-template-areas:
             "trend"
-            "bars";
+            "bars"
+            "donut";
         gap: 14px;
     }
 }
 
 @media (max-width: 767px) {
-
     .container {
         padding: 16px;
     }
@@ -145,6 +161,11 @@ app-vertical-bar-chart {
     }
 
     .charts-section {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-areas:
+            "trend"
+            "bars"
+            "donut";
         gap: 12px;
     }
 
