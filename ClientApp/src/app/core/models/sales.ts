@@ -76,6 +76,25 @@ export interface ProductSalesResponse {
     hasNextPage: boolean
 }
 
+export interface StoreProductSalesData {
+    store_id: string,
+    store_name: string,
+    product_name: string,
+    totalSales: number,
+    unitsSold: number,
+    numberOfTransactions: number
+}
+
+export interface StoreProductSalesResponse {
+    data: StoreCategorySalesData[],
+    pageNumber: number,
+    pageSize: number,
+    totalRecords: number,
+    totalPages: number,
+    hasPreviousPage: boolean,
+    hasNextPage: boolean
+}
+
 export interface StoreCategorySalesData {
     store_id: string,
     store_name: string,

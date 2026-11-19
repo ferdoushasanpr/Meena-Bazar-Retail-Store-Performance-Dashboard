@@ -40,5 +40,11 @@
         <app-donut-chart class="donut-chart" [data]="filteredStoreCategorySalesData()" [salesData]="salesKpiData()">
         </app-donut-chart>
     </div>
+    <app-table-chart title="Store Product Performance"
+        subtitle="Breakdown by store, product, sales volume, and transaction count" [data]="paginatedSalesData().data"
+        [pageNumber]="paginatedSalesData().pageNumber" [pageSize]="paginatedSalesData().pageSize"
+        [totalRecords]="paginatedSalesData().totalRecords" [totalPages]="paginatedSalesData().totalPages"
+        [hasPreviousPage]="paginatedSalesData().hasPreviousPage" [hasNextPage]="paginatedSalesData().hasNextPage"
+        (pageChange)="onPageChange($event)" />
     }
 </div>

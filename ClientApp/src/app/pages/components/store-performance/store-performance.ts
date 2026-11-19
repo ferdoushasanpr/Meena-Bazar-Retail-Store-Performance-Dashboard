@@ -152,11 +152,7 @@ export class StorePerformance {
       ? undefined
       : filters.storeId;
 
-    if (storeId === 'All Stores') {
-      this.salesService.loadStoreCategorySalesData(pageNumber, undefined, formatDate(startDate), formatDate(endDate));
-    } else {
-      this.salesService.loadStoreCategorySalesData(pageNumber, storeId, formatDate(startDate), formatDate(endDate));
-    }
+    this.salesService.loadStoreCategorySalesData(pageNumber, storeId, formatDate(startDate), formatDate(endDate));
   }
 
 
