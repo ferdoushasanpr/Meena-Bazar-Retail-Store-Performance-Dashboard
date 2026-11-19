@@ -1,7 +1,6 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { PageHeader } from '../../../layout/page-header/page-header';
-import { CategoryMatrixChart } from '../../../shared/components/category-matrix-chart/category-matrix-chart';
 import { HorizontalBarChart } from '../../../shared/components/horizontal-bar-chart/horizontal-bar-chart';
 import { SalesService } from '../../services/sales-service';
 import { Filter } from '../../shared/components/filter/filter';
@@ -9,9 +8,10 @@ import { FilterCriteria } from '../../shared/models/filter-model';
 import { ReportExporter } from '../../services/report-exporter';
 import { Loading } from '../../../shared/components/loading/loading';
 import { ErrorDisplay } from '../../../shared/components/error-display/error-display';
+import { VerticalBarChart } from '../../../shared/components/vertical-bar-chart/vertical-bar-chart';
 
 @Component({
-  imports: [FormsModule, PageHeader, Filter, Loading, ErrorDisplay, CategoryMatrixChart, HorizontalBarChart],
+  imports: [FormsModule, PageHeader, Filter, Loading, ErrorDisplay, VerticalBarChart, HorizontalBarChart],
   selector: 'app-product-categories',
   styleUrl: './product-categories.css',
   templateUrl: './product-categories.html',

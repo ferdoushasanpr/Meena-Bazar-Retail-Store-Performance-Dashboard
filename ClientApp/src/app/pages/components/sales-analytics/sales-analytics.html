@@ -32,10 +32,8 @@
     </section>
 
     <div class="charts-section">
+        <!-- Sales Trend Chart -->
         <app-trend-chart [dailyStoreData]="dailyStoreSalesData()" [showControls]="false" />
-        <!-- Vertical Bar Chart with Store Selector -->
-        <!-- <app-vertical-bar-chart title="Category Sales Performance"
-            subtitle="Revenue and volume performance per category" [data]="filteredStoreCategorySalesData()" /> -->
         <!-- Category Donut Chart -->
         <app-donut-chart class="donut-chart" [data]="filteredStoreCategorySalesData()" [salesData]="salesKpiData()">
         </app-donut-chart>

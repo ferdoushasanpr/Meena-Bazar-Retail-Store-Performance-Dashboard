@@ -86,7 +86,7 @@ export interface StoreProductSalesData {
 }
 
 export interface StoreProductSalesResponse {
-    data: StoreCategorySalesData[],
+    data: StoreProductSalesData[],
     pageNumber: number,
     pageSize: number,
     totalRecords: number,
