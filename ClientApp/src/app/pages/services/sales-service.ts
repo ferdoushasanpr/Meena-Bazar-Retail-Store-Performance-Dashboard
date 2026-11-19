@@ -302,7 +302,7 @@ export class SalesService {
         });
     }
 
-    loadProductSalesData(pageNumber: number = 1, startDate: string, endDate: string): void {
+    loadProductSalesData(pageNumber: number = 1, startDate?: string, endDate?: string): void {
         this.paginatedSalesLoading.set(true);
         this.paginatedSalesError.set(null);
         this.businessKpiService.getProductSalesData(pageNumber, 10, startDate, endDate).subscribe({

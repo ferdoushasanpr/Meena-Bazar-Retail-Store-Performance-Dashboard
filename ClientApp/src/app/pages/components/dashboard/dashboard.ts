@@ -50,6 +50,7 @@ export class Dashboard implements OnInit {
   dailySalesData = this.salesService.dailySalesData;
   monthlySalesData = this.salesService.monthlySalesData;
   yearlySalesData = this.salesService.yearlySalesData;
+  productSalesData = this.salesService.paginatedSalesData;
   brandSalesData = this.salesService.brandSalesData;
 
   isLoading = computed(() => {
@@ -179,7 +180,12 @@ export class Dashboard implements OnInit {
     this.salesService.loadDailySalesData();
     this.salesService.loadMonthlySalesData();
     this.salesService.loadYearlySalesData();
+    this.salesService.loadProductSalesData();
     this.salesService.loadBrandSalesData();
+  }
+
+  onPageChange(pageNumber: number): void {
+    this.salesService.loadProductSalesData(pageNumber);
   }
 
   // CSV Export Methods
