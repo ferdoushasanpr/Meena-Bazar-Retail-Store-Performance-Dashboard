@@ -11,6 +11,7 @@ export class PageHeader {
   private toastService = inject(ToastService);
   title = input.required<string>();
   subtitle = input.required<string>();
+  isReport = input<boolean>(false);
   exportReport = output<void>();
 
   onExportReport(): void {
