@@ -18,11 +18,13 @@ public class AnalyticsService : IAnalyticsService
     {
         var customers = _context.DemoCustomers.AsNoTracking();
         var products = _context.DemoProducts.AsNoTracking();
+        var catagories = _context.DemoProducts.Select(c => c.category).Distinct().AsNoTracking();
         var stores = _context.DemoStores.AsNoTracking();
         var orders = _context.DemoSales.AsNoTracking();
 
         var countCustomer = await customers.CountAsync();
         var countProduct = await products.CountAsync();
+        var countCatagory = await catagories.CountAsync();
         var countStore = await stores.CountAsync();
         var countOrder = await orders.CountAsync();
 
@@ -30,6 +32,7 @@ public class AnalyticsService : IAnalyticsService
         {
             NumberOfCustomer = countCustomer,
             NumberOfProduct = countProduct,
+            NumberOfCategory = countCatagory,
             NumberOfStore = countStore,
             NumberOfOrder = countOrder
         };

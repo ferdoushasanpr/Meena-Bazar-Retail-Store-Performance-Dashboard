@@ -4,6 +4,7 @@ public class EntityCountSummary
 {
     public int NumberOfCustomer { get; set; }
     public int NumberOfProduct { get; set; }
+    public int NumberOfCategory { get; set; }
     public int NumberOfStore { get; set; }
     public int NumberOfOrder { get; set; }
 }
