@@ -14,7 +14,7 @@ export class PageHeader {
   exportReport = output<void>();
 
   onExportReport(): void {
-    this.toastService.showSuccess("Delete", "User Deleted Successfully!");
+    this.toastService.showSuccess("Download", "Report Downloaded Successfully!");
     this.exportReport.emit();
   }
 }

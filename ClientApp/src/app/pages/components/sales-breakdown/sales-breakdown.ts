@@ -115,12 +115,13 @@ export class SalesBreakdown {
   // CSV Export Methods
   exportConsolidatedReport(): void {
     const categorySales = this.salesCategoryData();
+    const storeSales = this.storesSalesData();
     const productSales = this.productSalesData().data;
     const filters = this.currentFilters();
 
     this.reportExportService.export({
-      reportTitle: 'PRODUCT CATEGORIES REPORT',
-      fileName: 'product_categories',
+      reportTitle: 'SALES BREAKDOWN REPORT',
+      fileName: 'sales_breakdown',
 
       filters: {
         'Time Range': `${filters.startDate} to ${filters.endDate}`
@@ -131,6 +132,11 @@ export class SalesBreakdown {
           title: 'CATEGORY PERFORMANCE BREAKDOWN',
           data: categorySales,
           emptyMessage: 'No category sales data available'
+        },
+        {
+          title: 'STORE SALES BREAKDOWN',
+          data: storeSales,
+          emptyMessage: 'No store sales data available'
         },
         {
           title: 'PRODUCT SALES BREAKDOWN',

@@ -201,6 +201,7 @@ export class Dashboard implements OnInit {
     const daily = this.dailySalesData();
     const monthly = this.monthlySalesData();
     const yearly = this.yearlySalesData();
+    const products = this.productSalesData();
 
     this.reportExportService.export({
       reportTitle: 'SALES OVERVIEW DASHBOARD REPORT',
@@ -245,6 +246,11 @@ export class Dashboard implements OnInit {
           title: 'YEARLY SALES BREAKDOWN',
           data: yearly,
           emptyMessage: 'No yearly sales data available'
+        },
+        {
+          title: 'PRODUCT SALES BREAKDOWN',
+          data: products.data,
+          emptyMessage: 'No product sales data available'
         }
       ]
     });

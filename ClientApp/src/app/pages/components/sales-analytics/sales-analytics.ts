@@ -163,8 +163,9 @@ export class SalesAnalytics {
   // CSV Export Methods
   exportConsolidatedReport(): void {
     const kpis = this.salesKpiData();
-    const storeData = this.salesService.dailyStoreSalesData();
-    const categoryData = this.salesService.filteredStoreCategorySalesData();
+    const storeData = this.dailyStoreSalesData();
+    const categoryData = this.filteredStoreCategorySalesData();
+    const itemData = this.paginatedSalesData();
     const filters = this.currentFilters();
 
     this.reportExportService.export({
@@ -211,6 +212,19 @@ export class SalesAnalytics {
             'totalSales'
           ],
           emptyMessage: 'No category sales data available'
+        },
+        {
+          title: 'PRODUCT BREAKDOWN',
+          data: itemData.data,
+          headers: [
+            'store_id',
+            'store_name',
+            'product_name',
+            'unitsSold',
+            'numberOfTransactions',
+            'totalSales'
+          ],
+          emptyMessage: 'No product sales data available'
         }
       ]
     });
