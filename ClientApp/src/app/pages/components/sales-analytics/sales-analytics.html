@@ -1,6 +1,6 @@
 <div class="container">
     <!-- Top Navigation Header -->
-    <app-page-header [title]="pageHeaderTitle" [subtitle]="pageHeaderSubtitle"
+    <app-page-header [title]="pageHeaderTitle" [subtitle]="pageHeaderSubtitle" [isReport]="true"
         (exportReport)="exportConsolidatedReport()" />
 
     <!-- Filter Control Bar -->
@@ -39,7 +39,7 @@
             salesKey="totalSales" (pageChange)="onPageChange($event)" />
 
         <!-- Category Donut Chart -->
-        <app-donut-chart class="donut-chart" [data]="filteredStoreCategorySalesData()" [salesData]="salesKpiData()" />
+        <app-donut-chart class="donut-chart" [data]="filteredStoreCategorySalesData()" />
     </div>
     }
 </div>

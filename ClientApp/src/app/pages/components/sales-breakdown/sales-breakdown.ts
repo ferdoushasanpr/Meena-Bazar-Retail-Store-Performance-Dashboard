@@ -10,9 +10,10 @@ import { Loading } from '../../../shared/components/loading/loading';
 import { ErrorDisplay } from '../../../shared/components/error-display/error-display';
 import { VerticalBarChart } from '../../../shared/components/vertical-bar-chart/vertical-bar-chart';
 import { TableChart } from '../../../shared/components/table-chart/table-chart';
+import { DonutChart } from '../../../shared/components/donut-chart/donut-chart';
 
 @Component({
-  imports: [FormsModule, PageHeader, Filter, Loading, ErrorDisplay, VerticalBarChart, HorizontalBarChart, TableChart],
+  imports: [FormsModule, PageHeader, Filter, Loading, ErrorDisplay, VerticalBarChart, DonutChart, HorizontalBarChart, TableChart],
   selector: 'app-sales-breakdown',
   styleUrl: './sales-breakdown.css',
   templateUrl: './sales-breakdown.html',
@@ -44,6 +45,7 @@ export class SalesBreakdown {
     storeId: 'All Stores'
   });
 
+  // Data
   salesCategoryData = this.salesService.salesCategoryData;
   storesSalesData = this.salesService.storesSalesData;
   productSalesData = this.salesService.productSalesData;
@@ -113,12 +115,13 @@ export class SalesBreakdown {
   // CSV Export Methods
   exportConsolidatedReport(): void {
     const categorySales = this.salesCategoryData();
+    const storeSales = this.storesSalesData();
     const productSales = this.productSalesData().data;
     const filters = this.currentFilters();
 
     this.reportExportService.export({
-      reportTitle: 'PRODUCT CATEGORIES REPORT',
-      fileName: 'product_categories',
+      reportTitle: 'SALES BREAKDOWN REPORT',
+      fileName: 'sales_breakdown',
 
       filters: {
         'Time Range': `${filters.startDate} to ${filters.endDate}`
@@ -129,6 +132,11 @@ export class SalesBreakdown {
           title: 'CATEGORY PERFORMANCE BREAKDOWN',
           data: categorySales,
           emptyMessage: 'No category sales data available'
+        },
+        {
+          title: 'STORE SALES BREAKDOWN',
+          data: storeSales,
+          emptyMessage: 'No store sales data available'
         },
         {
           title: 'PRODUCT SALES BREAKDOWN',

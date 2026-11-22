@@ -1,6 +1,6 @@
 <div class="container">
     <!-- Top Navigation Header -->
-    <app-page-header [title]="pageHeaderTitle" [subtitle]="pageHeaderSubtitle"
+    <app-page-header [title]="pageHeaderTitle" [subtitle]="pageHeaderSubtitle" [isReport]="true"
         (exportReport)="exportConsolidatedReport()" />
 
     <!-- Filter Control Bar -->
@@ -20,18 +20,24 @@
         <!-- Vertical Bar Chart with Store Selector -->
         <app-vertical-bar-chart title="Category Sales Performance"
             subtitle="Revenue and volume performance per category" [data]="salesCategoryData()" labelKey="category" />
-        <!-- Vertical Bar Chart with Store Selector -->
-        <app-vertical-bar-chart title="Store Sales Breakdown" subtitle="Sales revenue by store"
-            [data]="storesSalesData()" labelKey="store_name" />
-        <!-- Reused for Products Data -->
-        <app-horizontal-bar-chart [data]="productSalesData()" labelKey="product_name" salesKey="total_Sales"
-            (pageChange)="onHorizontalBarChartPageChange($event)" />
+
+        <div class="charts-row">
+            <!-- Store Sales Breakdown -->
+            <app-donut-chart class="donut-chart" [data]="storesSalesData()">
+            </app-donut-chart>
+
+            <!-- Product Sales -->
+            <app-horizontal-bar-chart [data]="productSalesData()" labelKey="product_name" salesKey="total_Sales"
+                (pageChange)="onHorizontalBarChartPageChange($event)" />
+        </div>
+
+        <app-table-chart title="Store Category Performance"
+            subtitle="Breakdown by store, category, sales volume, and transaction count"
+            [data]="storeCategorySalesData().data" [pageNumber]="storeCategorySalesData().pageNumber"
+            [pageSize]="storeCategorySalesData().pageSize" [totalRecords]="storeCategorySalesData().totalRecords"
+            [totalPages]="storeCategorySalesData().totalPages"
+            [hasPreviousPage]="storeCategorySalesData().hasPreviousPage"
+            [hasNextPage]="storeCategorySalesData().hasNextPage" (pageChange)="onTableChartPageChange($event)" />
     </div>
-    <app-table-chart title="Store Category Performance"
-        subtitle="Breakdown by store, category, sales volume, and transaction count"
-        [data]="storeCategorySalesData().data" [pageNumber]="storeCategorySalesData().pageNumber"
-        [pageSize]="storeCategorySalesData().pageSize" [totalRecords]="storeCategorySalesData().totalRecords"
-        [totalPages]="storeCategorySalesData().totalPages" [hasPreviousPage]="storeCategorySalesData().hasPreviousPage"
-        [hasNextPage]="storeCategorySalesData().hasNextPage" (pageChange)="onTableChartPageChange($event)" />
     }
 </div>

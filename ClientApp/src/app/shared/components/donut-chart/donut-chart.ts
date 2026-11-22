@@ -5,19 +5,20 @@ import {
   effect,
   input,
   ViewChild,
-  OnDestroy
+  OnDestroy,
+  computed
 } from '@angular/core';
 
 import { Chart } from 'chart.js';
 
 import {
   SalesCategoryData,
-  SalesData,
-  StoreCategorySalesData
+  StoreCategorySalesData,
+  StoreSalesData
 } from '../../../core/models/sales';
 
-type CategoryChartData = {
-  category: string;
+type ChartData = {
+  label: string;
   totalSales: number;
   transactions: number;
   unitsSold: number;
@@ -30,19 +31,18 @@ type CategoryChartData = {
   templateUrl: './donut-chart.html',
 })
 export class DonutChart implements AfterViewInit, OnDestroy {
+  @ViewChild('chartCanvas')
+  chartCanvas!: ElementRef<HTMLCanvasElement>;
 
-  @ViewChild('categoryChartCanvas')
-  categoryChartCanvas!: ElementRef<HTMLCanvasElement>;
-
-  private categoryChart?: Chart;
+  private chart?: Chart;
 
   data = input.required<
-    SalesCategoryData[] | StoreCategorySalesData[]
+    SalesCategoryData[] |
+    StoreCategorySalesData[] |
+    StoreSalesData[]
   >();
 
-  salesData = input.required<SalesData>();
-
-  categoryColors: string[] = [
+  chartColors: string[] = [
     '#38bdf8',
     '#6366f1',
     '#14b8a6',
@@ -52,30 +52,38 @@ export class DonutChart implements AfterViewInit, OnDestroy {
     '#eab308'
   ];
 
+  totalSales = computed(() =>
+    this.chartData().reduce(
+      (sum, item) => sum + item.totalSales,
+      0
+    )
+  );
+
   constructor() {
     effect(() => {
-      const chartData = this.normalizedData;
+      const data = this.chartData();
 
-      if (this.categoryChart) {
-        this.updateCategoryChart(chartData);
+      if (this.chart) {
+        this.updateChart(data);
       }
     });
   }
 
   ngAfterViewInit(): void {
-    this.initCategoryChart();
+    this.initChart();
   }
 
   ngOnDestroy(): void {
-    this.categoryChart?.destroy();
+    this.chart?.destroy();
   }
 
-  get normalizedData(): CategoryChartData[] {
+  chartData = computed<ChartData[]>(() => {
     return this.data().map(item => {
-
-      if ('total_Sales' in item) {
+      if ('total_Transactions' in item) {
         return {
-          category: item.category,
+          label: 'category' in item
+            ? item.category
+            : item.store_name,
           totalSales: item.total_Sales,
           transactions: item.total_Transactions,
           unitsSold: 0
@@ -83,97 +91,59 @@ export class DonutChart implements AfterViewInit, OnDestroy {
       }
 
       return {
-        category: item.category,
+        label: item.category,
         totalSales: item.totalSales,
         transactions: item.numberOfTransactions,
         unitsSold: item.unitsSold
       };
+
     });
-  }
-  getCategoryPercentage(totalSales: number): number {
 
-    const total = this.normalizedData.reduce(
-      (sum, category) => sum + category.totalSales,
-      0
-    );
+  });
 
-    return total > 0
-      ? Number(((totalSales / total) * 100).toFixed(1))
+  getPercentage(value: number): number {
+    return this.totalSales() > 0
+      ? Number(
+        ((value / this.totalSales()) * 100).toFixed(1)
+      )
       : 0;
   }
 
-  /**
-   * Update existing chart.
-   */
-  private updateCategoryChart(
-    categoryData: CategoryChartData[]
-  ): void {
-
-    if (!this.categoryChart) return;
-
-    this.categoryChart.data.labels = categoryData.map(
-      item => item.category
-    );
-
-    this.categoryChart.data.datasets[0].data =
-      categoryData.map(item => item.totalSales);
-
-    this.categoryChart.data.datasets[0].backgroundColor =
-      categoryData.map(
-        (_, index) =>
-          this.categoryColors[index % this.categoryColors.length]
-      );
-
-    this.categoryChart.update();
-  }
-
-  private initCategoryChart(): void {
-
-    const ctx =
-      this.categoryChartCanvas.nativeElement.getContext('2d');
+  private initChart(): void {
+    const ctx = this.chartCanvas.nativeElement.getContext('2d');
 
     if (!ctx) return;
 
-    const categoryData = this.normalizedData;
+    const data = this.chartData();
 
-    this.categoryChart = new Chart(ctx, {
-
+    this.chart = new Chart(ctx, {
       type: 'doughnut',
-
       data: {
-        labels: categoryData.map(item => item.category),
-
+        labels: data.map(item => item.label),
         datasets: [{
-          data: categoryData.map(item => item.totalSales),
-
-          backgroundColor: categoryData.map(
+          data: data.map(item => item.totalSales),
+          backgroundColor: data.map(
             (_, index) =>
-              this.categoryColors[index % this.categoryColors.length]
+              this.chartColors[index % this.chartColors.length]
           ),
-
           borderWidth: 4,
           borderColor: '#111827',
           hoverOffset: 4
         }]
       },
-
       options: {
         responsive: true,
         maintainAspectRatio: false,
         cutout: '76%',
-
         plugins: {
           legend: {
             display: false
           },
-
           tooltip: {
             callbacks: {
-              label: (ctx) => {
-
-                const value = Number(ctx.raw);
-
-                const total = ctx.dataset.data.reduce(
+              label: (context) => {
+                const value = Number(context.raw);
+                const total = context.dataset.data.reduce(
                   (sum, item) => sum + Number(item),
                   0
                 );
@@ -182,12 +152,29 @@ export class DonutChart implements AfterViewInit, OnDestroy {
                   ? ((value / total) * 100).toFixed(1)
                   : '0.0';
 
-                return ` ${ctx.label}: $${value.toLocaleString()} (${percentage}%)`;
+                return ` ${context.label}: $${value.toLocaleString()} (${percentage}%)`;
               }
             }
           }
         }
       }
     });
+  }
+
+  private updateChart(data: ChartData[]): void {
+    if (!this.chart) return;
+
+    this.chart.data.labels = data.map(item => item.label);
+
+    this.chart.data.datasets[0].data =
+      data.map(item => item.totalSales);
+
+    this.chart.data.datasets[0].backgroundColor =
+      data.map(
+        (_, index) =>
+          this.chartColors[index % this.chartColors.length]
+      );
+
+    this.chart.update();
   }
 }

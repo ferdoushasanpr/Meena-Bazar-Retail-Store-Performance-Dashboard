@@ -2,7 +2,9 @@
     <div class="chart-header">
         <div class="title-group">
             <h3 class="chart-title">{{ title() }}</h3>
-            <p class="chart-subtitle">{{ subtitle() }}</p>
+            <p class="chart-subtitle">
+                {{ subtitle() }}
+            </p>
         </div>
     </div>
 
@@ -30,7 +32,7 @@
                     <!-- Tooltip -->
                     <div class="tooltip">
                         <span class="tooltip-title">
-                            {{ getLabel(item) }}
+                            {{ item.category }}
                         </span>
 
                         <span class="tooltip-sales">
@@ -52,8 +54,8 @@
                     </div>
 
                     <!-- Category Label -->
-                    <div class="x-label" [title]="getLabel(item)">
-                        {{ getLabel(item) }}
+                    <div class="x-label" [title]="item.category">
+                        {{ item.category }}
                     </div>
 
                 </div>

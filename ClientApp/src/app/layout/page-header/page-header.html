@@ -1,8 +1,5 @@
 <header class="dashboard-header">
-
-    <!-- Header Title -->
     <div class="header-title">
-
         <div class="title-row">
             <h1>{{ title() }}</h1>
 
@@ -14,15 +11,10 @@
         <p class="subtitle">
             {{ subtitle() }}
         </p>
-
     </div>
 
-    <!-- Header Actions -->
     <div class="header-actions">
-
-        <!-- Last Updated -->
         <div class="last-updated">
-
             <span class="status-dot"></span>
 
             <span class="updated-text">
@@ -30,22 +22,15 @@
             </span>
 
             <button class="icon-btn" type="button" title="Refresh Data" aria-label="Refresh Data">
-
                 <i class="fa-solid fa-rotate-right"></i>
-
             </button>
-
         </div>
 
-        <!-- Export -->
+        @if (isReport()) {
         <button class="btn btn-outline" type="button" (click)="onExportReport()">
-
             <i class="fa-solid fa-cloud-arrow-down"></i>
-
             <span>Export CSV Report</span>
-
         </button>
-
+        }
     </div>
-
 </header>
