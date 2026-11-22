@@ -9,42 +9,73 @@ public static class ProductRoute
     {
         var group = app.MapGroup("/products").WithTags("Products");
 
-        group.MapGet("/", async (int pageNumber, int pageSize, IProductService service) =>
+        group.MapGet("/", async (int pageNumber = 1, int pageSize = 10, IProductService service = null!) =>
         {
-            var products = await service.GetAllProductsAsync(pageNumber, pageSize);
-            return Results.Ok(products);
+            try
+            {
+                if (pageNumber < 1 || pageSize < 1)
+                    return Results.BadRequest("Invalid pagination parameters.");
+
+                var products = await service.GetAllProductsAsync(pageNumber, pageSize);
+                return Results.Ok(products);
+            }
+            catch (Exception ex)
+            {
+                return Results.Problem(ex.Message, statusCode: 500);
+            }
         });
 
         group.MapGet("/{product_id}", async (
             string product_id,
             IProductService service) =>
         {
-            var product = await service.GetProductByIdAsync(product_id);
+            try
+            {
+                var product = await service.GetProductByIdAsync(product_id);
 
-            return product is not null
-                ? Results.Ok(product)
-                : Results.NotFound();
+                return product is not null
+                    ? Results.Ok(product)
+                    : Results.NotFound();
+            }
+            catch (Exception ex)
+            {
+                return Results.Problem(ex.Message, statusCode: 500);
+            }
         });
 
-        group.MapGet("/search", async (string? searchTerm, int pageNumber, int pageSize, IProductService service) =>
+        group.MapGet("/search", async (string? searchTerm, int pageNumber = 1, int pageSize = 10, IProductService service = null!) =>
         {
-            if (pageNumber < 1 || pageSize < 1)
-                return Results.BadRequest("Invalid pagination parameters.");
+            try
+            {
+                if (pageNumber < 1 || pageSize < 1)
+                    return Results.BadRequest("Invalid pagination parameters.");
 
-            var result = await service.SearchProductsAsync(searchTerm, pageNumber, pageSize);
+                var result = await service.SearchProductsAsync(searchTerm, pageNumber, pageSize);
 
-            return Results.Ok(result);
+                return Results.Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return Results.Problem(ex.Message, statusCode: 500);
+            }
         });
 
         group.MapPost("/", async (
             Product product,
             IProductService service) =>
         {
-            var result = await service.AddProductAsync(product);
+            try
+            {
+                var result = await service.AddProductAsync(product);
 
-            return result
-                ? Results.Created($"/products/{product.product_id}", product)
-                : Results.BadRequest();
+                return result
+                    ? Results.Created($"/products/{product.product_id}", product)
+                    : Results.BadRequest();
+            }
+            catch (Exception ex)
+            {
+                return Results.Problem(ex.Message, statusCode: 500);
+            }
         });
 
         group.MapPut("/{product_id}", async (
@@ -52,21 +83,35 @@ public static class ProductRoute
             Product product,
             IProductService service) =>
         {
-            if (product_id != product.product_id)
-                return Results.BadRequest("Product ID mismatch.");
+            try
+            {
+                if (product_id != product.product_id)
+                    return Results.BadRequest("Product ID mismatch.");
 
-            var result = await service.UpdateProductAsync(product);
+                var result = await service.UpdateProductAsync(product);
 
-            return result ? Results.NoContent() : Results.NotFound();
+                return result ? Results.NoContent() : Results.NotFound();
+            }
+            catch (Exception ex)
+            {
+                return Results.Problem(ex.Message, statusCode: 500);
+            }
         });
 
         group.MapDelete("/{product_id}", async (
             string product_id,
             IProductService service) =>
         {
-            var result = await service.DeleteProductAsync(product_id);
+            try
+            {
+                var result = await service.DeleteProductAsync(product_id);
 
-            return result ? Results.NoContent() : Results.NotFound();
+                return result ? Results.NoContent() : Results.NotFound();
+            }
+            catch (Exception ex)
+            {
+                return Results.Problem(ex.Message, statusCode: 500);
+            }
         });
 
         return app;

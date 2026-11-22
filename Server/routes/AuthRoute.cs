@@ -15,56 +15,70 @@ public static class AuthRoute
             [FromBody] RegisterRequest request,
             IAuthService authService) =>
         {
-            if (string.IsNullOrWhiteSpace(request.user_name) ||
-                string.IsNullOrWhiteSpace(request.user_email) ||
-                string.IsNullOrWhiteSpace(request.password))
+            try
             {
-                return Results.BadRequest(new
+                if (string.IsNullOrWhiteSpace(request.user_name) ||
+                    string.IsNullOrWhiteSpace(request.user_email) ||
+                    string.IsNullOrWhiteSpace(request.password))
                 {
-                    message = "All fields are required."
+                    return Results.BadRequest(new
+                    {
+                        message = "All fields are required."
+                    });
+                }
+
+                var result = await authService.RegisterAsync(request);
+
+                if (result == null)
+                {
+                    return Results.Conflict(new
+                    {
+                        message = "Email already exists."
+                    });
+                }
+
+                return Results.Ok(new
+                {
+                    message = "Registration successful.",
+                    data = result
                 });
             }
-
-            var result = await authService.RegisterAsync(request);
-
-            if (result == null)
+            catch (Exception ex)
             {
-                return Results.Conflict(new
-                {
-                    message = "Email already exists."
-                });
+                return Results.Problem(ex.Message, statusCode: 500);
             }
-
-            return Results.Ok(new
-            {
-                message = "Registration successful.",
-                data = result
-            });
         });
 
         group.MapPost("/login", async ([FromBody] LoginRequest request, IAuthService service) =>
         {
-            if (string.IsNullOrWhiteSpace(request.user_email) ||
-                string.IsNullOrWhiteSpace(request.password))
+            try
             {
-                return Results.BadRequest(new
+                if (string.IsNullOrWhiteSpace(request.user_email) ||
+                    string.IsNullOrWhiteSpace(request.password))
                 {
-                    message = "Email and Password are required."
+                    return Results.BadRequest(new
+                    {
+                        message = "Email and Password are required."
+                    });
+                }
+
+                var result = await service.LoginAsync(request);
+
+                if (result == null)
+                {
+                    return Results.Unauthorized();
+                }
+
+                return Results.Ok(new
+                {
+                    message = "Login successful.",
+                    data = result
                 });
             }
-
-            var result = await service.LoginAsync(request);
-
-            if (result == null)
+            catch (Exception ex)
             {
-                return Results.Unauthorized();
+                return Results.Problem(ex.Message, statusCode: 500);
             }
-
-            return Results.Ok(new
-            {
-                message = "Login successful.",
-                data = result
-            });
         });
 
         return app;

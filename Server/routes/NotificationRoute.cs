@@ -11,25 +11,46 @@ public static class NotificationRoute
 
         group.MapGet("/", async (INotificationService service) =>
         {
-            var results = await service.GetNotificationsAsync();
-            return Results.Ok(results);
+            try
+            {
+                var results = await service.GetNotificationsAsync();
+                return Results.Ok(results);
+            }
+            catch (Exception ex)
+            {
+                return Results.Problem(ex.Message, statusCode: 200);
+            }
         });
 
         group.MapPost("/", async (INotificationService service, [FromBody] Notification notification) =>
         {
-            var result = await service.AddNotificationAsync(notification);
-            return result ? Results.Ok("Successfully Created Notification.") : Results.BadRequest();
+            try
+            {
+                var result = await service.AddNotificationAsync(notification);
+                return result ? Results.Ok("Successfully Created Notification.") : Results.BadRequest();
+            }
+            catch (Exception ex)
+            {
+                return Results.Problem(ex.Message, statusCode: 200);
+            }
         });
 
         group.MapPut("/{notification_id}", async (INotificationService service, string notification_id, NotificationResponse notification) =>
         {
-            if (notification.notification_id != notification_id)
+            try
             {
-                return Results.BadRequest("Notification ID Mismatched!");
-            }
+                if (notification.notification_id != notification_id)
+                {
+                    return Results.BadRequest("Notification ID Mismatched!");
+                }
 
-            var result = await service.ReadNotificationAsync(notification);
-            return result ? Results.Ok("Successfully Read Notification.") : Results.NotFound();
+                var result = await service.ReadNotificationAsync(notification);
+                return result ? Results.Ok("Successfully Read Notification.") : Results.NotFound();
+            }
+            catch (Exception ex)
+            {
+                return Results.Problem(ex.Message, statusCode: 200);
+            }
         });
 
         return app;

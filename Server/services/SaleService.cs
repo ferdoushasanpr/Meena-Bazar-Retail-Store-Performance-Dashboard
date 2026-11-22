@@ -18,117 +18,163 @@ public class SaleService : ISaleService
     int pageNumber = 1,
     int pageSize = 10)
     {
-        var query = _context.DemoSales.AsNoTracking();
-
-        var totalRecords = await query.CountAsync();
-
-        var totalPages = (int)Math.Ceiling(totalRecords / (double)pageSize);
-
-        var sales = await query
-            .OrderByDescending(s => s.order_id)
-            .Skip((pageNumber - 1) * pageSize)
-            .Take(pageSize)
-            .ToListAsync();
-
-        return new PaginatedResponse<Sale>
+        try
         {
-            Data = sales,
-            PageNumber = pageNumber,
-            PageSize = pageSize,
-            TotalRecords = totalRecords,
-            TotalPages = totalPages
-        };
+            var query = _context.DemoSales.AsNoTracking();
+
+            var totalRecords = await query.CountAsync();
+            var totalPages = (int)Math.Ceiling(totalRecords / (double)pageSize);
+
+            var sales = await query
+                .OrderByDescending(s => s.order_id)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new PaginatedResponse<Sale>
+            {
+                Data = sales,
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                TotalRecords = totalRecords,
+                TotalPages = totalPages
+            };
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            throw;
+        }
     }
 
     public async Task<Sale?> GetSaleByIdAsync(string order_id)
     {
-        return await _context.DemoSales
-            .AsNoTracking()
-            .FirstOrDefaultAsync(s => s.order_id == order_id);
+        try
+        {
+            return await _context.DemoSales
+                .AsNoTracking()
+                .FirstOrDefaultAsync(s => s.order_id == order_id);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            throw;
+        }
     }
 
     public async Task<PaginatedResponse<Sale>> SearchSalesAsync(string? searchTerm, int pageNumber = 1, int pageSize = 10)
     {
-        var query = _context.DemoSales.AsNoTracking();
-
-        if (!string.IsNullOrWhiteSpace(searchTerm))
+        try
         {
-            searchTerm = searchTerm.Trim();
+            var query = _context.DemoSales.AsNoTracking();
 
-            query = query.Where(s =>
-                s.order_id.Contains(searchTerm) ||
-                s.order_datetime.ToString().Contains(searchTerm) ||
-                s.store_id.Contains(searchTerm) ||
-                (s.customer_id != null && s.customer_id.Contains(searchTerm)) ||
-                s.order_channel.Contains(searchTerm) ||
-                s.payment_method.Contains(searchTerm) ||
-                s.order_status.Contains(searchTerm) ||
-                s.subtotal.ToString().Contains(searchTerm) ||
-                s.discount_total.ToString().Contains(searchTerm) ||
-                s.vat_total.ToString().Contains(searchTerm) ||
-                s.delivery_fee.ToString().Contains(searchTerm) ||
-                s.total_amount.ToString().Contains(searchTerm)
-            );
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                searchTerm = searchTerm.Trim();
+
+                query = query.Where(s =>
+                    s.order_id.Contains(searchTerm) ||
+                    s.order_datetime.ToString().Contains(searchTerm) ||
+                    s.store_id.Contains(searchTerm) ||
+                    (s.customer_id != null && s.customer_id.Contains(searchTerm)) ||
+                    s.order_channel.Contains(searchTerm) ||
+                    s.payment_method.Contains(searchTerm) ||
+                    s.order_status.Contains(searchTerm) ||
+                    s.subtotal.ToString().Contains(searchTerm) ||
+                    s.discount_total.ToString().Contains(searchTerm) ||
+                    s.vat_total.ToString().Contains(searchTerm) ||
+                    s.delivery_fee.ToString().Contains(searchTerm) ||
+                    s.total_amount.ToString().Contains(searchTerm)
+                );
+            }
+
+            var totalRecords = await query.CountAsync();
+            var totalPages = (int)Math.Ceiling(totalRecords / (double)pageSize);
+
+            var sales = await query
+                .OrderByDescending(s => s.order_id)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new PaginatedResponse<Sale>
+            {
+                Data = sales,
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                TotalRecords = totalRecords,
+                TotalPages = totalPages
+            };
         }
-
-        var totalRecords = await query.CountAsync();
-        var totalPages = (int)Math.Ceiling(totalRecords / (double)pageSize);
-
-        var sales = await query
-            .OrderByDescending(s => s.order_id)
-            .Skip((pageNumber - 1) * pageSize)
-            .Take(pageSize)
-            .ToListAsync();
-
-        return new PaginatedResponse<Sale>
+        catch (Exception ex)
         {
-            Data = sales,
-            PageNumber = pageNumber,
-            PageSize = pageSize,
-            TotalRecords = totalRecords,
-            TotalPages = totalPages
-        };
+            Console.WriteLine(ex.Message);
+            throw;
+        }
     }
 
     public async Task<bool> AddSaleAsync(Sale sale)
     {
-        await _context.DemoSales.AddAsync(sale);
-        return await _context.SaveChangesAsync() > 0;
+        try
+        {
+            await _context.DemoSales.AddAsync(sale);
+            return await _context.SaveChangesAsync() > 0;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            throw;
+        }
     }
 
     public async Task<bool> UpdateSaleAsync(Sale sale)
     {
-        var existingSale = await _context.DemoSales
-            .FirstOrDefaultAsync(s => s.order_id == sale.order_id);
+        try
+        {
+            var existingSale = await _context.DemoSales
+                .FirstOrDefaultAsync(s => s.order_id == sale.order_id);
 
-        if (existingSale == null)
-            return false;
+            if (existingSale == null)
+                return false;
 
-        existingSale.order_datetime = sale.order_datetime;
-        existingSale.store_id = sale.store_id;
-        existingSale.customer_id = sale.customer_id;
-        existingSale.order_channel = sale.order_channel;
-        existingSale.payment_method = sale.payment_method;
-        existingSale.order_status = sale.order_status;
-        existingSale.subtotal = sale.subtotal;
-        existingSale.discount_total = sale.discount_total;
-        existingSale.vat_total = sale.vat_total;
-        existingSale.delivery_fee = sale.delivery_fee;
-        existingSale.total_amount = sale.total_amount;
+            existingSale.order_datetime = sale.order_datetime;
+            existingSale.store_id = sale.store_id;
+            existingSale.customer_id = sale.customer_id;
+            existingSale.order_channel = sale.order_channel;
+            existingSale.payment_method = sale.payment_method;
+            existingSale.order_status = sale.order_status;
+            existingSale.subtotal = sale.subtotal;
+            existingSale.discount_total = sale.discount_total;
+            existingSale.vat_total = sale.vat_total;
+            existingSale.delivery_fee = sale.delivery_fee;
+            existingSale.total_amount = sale.total_amount;
 
-        return await _context.SaveChangesAsync() > 0;
+            return await _context.SaveChangesAsync() > 0;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            throw;
+        }
     }
 
     public async Task<bool> DeleteSaleAsync(string order_id)
     {
-        var sale = await _context.DemoSales
-            .FirstOrDefaultAsync(s => s.order_id == order_id);
+        try
+        {
+            var sale = await _context.DemoSales
+                .FirstOrDefaultAsync(s => s.order_id == order_id);
 
-        if (sale == null)
-            return false;
+            if (sale == null)
+                return false;
 
-        _context.DemoSales.Remove(sale);
-
-        return await _context.SaveChangesAsync() > 0;
+            _context.DemoSales.Remove(sale);
+            return await _context.SaveChangesAsync() > 0;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            throw;
+        }
     }
 }
