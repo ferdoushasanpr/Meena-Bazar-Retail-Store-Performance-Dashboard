@@ -10,9 +10,10 @@ import { Loading } from '../../../shared/components/loading/loading';
 import { ErrorDisplay } from '../../../shared/components/error-display/error-display';
 import { VerticalBarChart } from '../../../shared/components/vertical-bar-chart/vertical-bar-chart';
 import { TableChart } from '../../../shared/components/table-chart/table-chart';
+import { DonutChart } from '../../../shared/components/donut-chart/donut-chart';
 
 @Component({
-  imports: [FormsModule, PageHeader, Filter, Loading, ErrorDisplay, VerticalBarChart, HorizontalBarChart, TableChart],
+  imports: [FormsModule, PageHeader, Filter, Loading, ErrorDisplay, VerticalBarChart, DonutChart, HorizontalBarChart, TableChart],
   selector: 'app-sales-breakdown',
   styleUrl: './sales-breakdown.css',
   templateUrl: './sales-breakdown.html',
@@ -44,6 +45,7 @@ export class SalesBreakdown {
     storeId: 'All Stores'
   });
 
+  // Data
   salesCategoryData = this.salesService.salesCategoryData;
   storesSalesData = this.salesService.storesSalesData;
   productSalesData = this.salesService.productSalesData;

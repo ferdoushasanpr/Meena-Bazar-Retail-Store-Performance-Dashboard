@@ -49,8 +49,17 @@
     min-width: 0;
 }
 
-.charts-section>app-category-matrix-chart,
-.charts-section>app-horizontal-bar-chart {
+.charts-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    align-items: stretch;
+    width: 100%;
+    min-width: 0;
+}
+
+.charts-row>app-vertical-bar-chart,
+.charts-row>app-horizontal-bar-chart {
     display: block;
     width: 100%;
     min-width: 0;
@@ -111,6 +120,10 @@
         gap: 14px;
     }
 
+    .charts-row {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 14px;
+    }
 }
 
 @media (max-width: 480px) {
