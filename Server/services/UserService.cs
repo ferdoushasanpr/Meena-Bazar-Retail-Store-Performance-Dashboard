@@ -4,6 +4,7 @@ using Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Server.DTOs;
 using Microsoft.AspNetCore.Identity;
+using NLog;
 
 namespace Server.Services;
 
@@ -11,6 +12,7 @@ public class UserService : IUserService
 {
     private readonly ApplicationDbContext _context;
     private readonly PasswordHasher<User> _passwordHasher;
+    private readonly Logger logger = LogManager.GetCurrentClassLogger();
 
     public UserService(ApplicationDbContext context)
     {
@@ -46,7 +48,7 @@ public class UserService : IUserService
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex, "Failed to retrieve all users. PageNumber: {PageNumber}, PageSize: {PageSize}");
             throw;
         }
     }
@@ -59,7 +61,9 @@ public class UserService : IUserService
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex,
+                "Failed to retrieve user. User_Id: {User_Id}",
+                user_id);
             throw;
         }
     }
@@ -102,7 +106,9 @@ public class UserService : IUserService
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex,
+                "Failed to search users. SearchTerm: {SearchTerm}",
+                searchTerm);
             throw;
         }
     }
@@ -138,11 +144,16 @@ public class UserService : IUserService
                 user.user_role = "user";
 
             _context.DemoUsers.Add(user);
-            return await _context.SaveChangesAsync() > 0;
+            var result = await _context.SaveChangesAsync() > 0;
+
+            if (result)
+                logger.Info("User created successfully.");
+
+            return result;
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex, "Failed to create user.");
             throw;
         }
     }
@@ -174,11 +185,18 @@ public class UserService : IUserService
                 existingUser.user_password_hash = _passwordHasher.HashPassword(existingUser, user.updated_password);
             }
 
-            return await _context.SaveChangesAsync() > 0;
+            var result = await _context.SaveChangesAsync() > 0;
+
+            if (result)
+            {
+                logger.Info("User updated successfully. User_Id: {User_Id}", user.user_id);
+            }
+
+            return result;
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex, "Failed to update user. User_Id: {User_Id}", user.user_id);
             throw;
         }
     }
@@ -192,11 +210,19 @@ public class UserService : IUserService
                 return false;
 
             _context.DemoUsers.Remove(user);
-            return await _context.SaveChangesAsync() > 0;
+            var result = await _context.SaveChangesAsync() > 0;
+
+            if (result)
+            {
+                logger.Info("User deleted successfully. User_Id: {User_Id}", user.user_id);
+            }
+
+            return result;
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex,
+                "Failed to delete user. User_Id: {User_Id}", user_id);
             throw;
         }
     }

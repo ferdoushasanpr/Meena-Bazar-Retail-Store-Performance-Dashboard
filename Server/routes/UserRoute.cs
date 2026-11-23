@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using NLog;
 using Server.DTOs;
 using Server.Interfaces;
 using Server.Models;
@@ -7,6 +8,7 @@ namespace Server.Routes;
 
 public static class UserRoute
 {
+    public static readonly Logger logger = LogManager.GetCurrentClassLogger();
     public static IEndpointRouteBuilder MapUserEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/users")
@@ -19,12 +21,7 @@ public static class UserRoute
             try
             {
                 if (pageNumber < 1 || pageSize < 1 || pageSize > 100)
-                {
-                    return Results.BadRequest(new
-                    {
-                        message = "Invalid pagination parameters."
-                    });
-                }
+                    return Results.BadRequest("Invalid pagination parameters.");
 
                 var isAdmin = context.User.IsInRole("admin");
 
@@ -33,14 +30,18 @@ public static class UserRoute
                     return Results.Forbid();
                 }
 
-                var result = await userService.GetAllUsersAsync(
+                var users = await userService.GetAllUsersAsync(
                     pageNumber, pageSize);
 
-                return Results.Ok(result);
+                logger.Info("Retrieved users. PageNumber: {PageNumber}, PageSize: {PageSize}, TotalRecords: {TotalRecords}", pageNumber, pageSize, users.TotalRecords);
+                return Results.Ok(users);
             }
             catch (Exception ex)
             {
-                return Results.Problem(ex.Message, statusCode: 500);
+                logger.Error(ex, "Something went wrong to retrieve all users.");
+                return Results.Problem(
+                    "An unexpected error occurred.",
+                    statusCode: 500);
             }
         });
 
@@ -48,26 +49,23 @@ public static class UserRoute
         {
             try
             {
-                var user = await userService.GetUserByIdAsync(user_id);
-
-                if (user == null)
-                {
-                    return Results.NotFound(new
-                    {
-                        message = "User not found."
-                    });
-                }
-
                 var currentUserId = context.User.FindFirst(
                     System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
                 var isAdmin = context.User.IsInRole("admin");
 
-                if (!isAdmin && currentUserId != user.user_id)
+                var user = await userService.GetUserByIdAsync(user_id);
+
+                if (user == null)
                 {
-                    return Results.Forbid();
+                    logger.Warn("No user found. User_Id: {User_Id}", user_id);
+                    return Results.NotFound("User not found.");
                 }
 
+                if (!isAdmin && currentUserId != user.user_id)
+                    return Results.Forbid();
+
+                logger.Info("Retrieved user successfully. {User_Id}", user_id);
                 return Results.Ok(new
                 {
                     user.user_id,
@@ -80,7 +78,10 @@ public static class UserRoute
             }
             catch (Exception ex)
             {
-                return Results.Problem(ex.Message, statusCode: 500);
+                logger.Error(ex, "Something went wrong to retrieve user. User_Id: {User_Id}", user_id);
+                return Results.Problem(
+                    "An unexpected error occurred.",
+                    statusCode: 500);
             }
         });
 
@@ -92,25 +93,22 @@ public static class UserRoute
                 var isAdmin = context.User.IsInRole("admin");
 
                 if (!isAdmin)
-                {
                     return Results.Json(new { message = "Access Denied." }, statusCode: StatusCodes.Status403Forbidden);
-                }
 
                 if (pageNumber < 1 || pageSize < 1 || pageSize > 100)
-                {
-                    return Results.BadRequest(new
-                    {
-                        message = "Invalid pagination parameters."
-                    });
-                }
+                    return Results.BadRequest("Invalid pagination parameters.");
 
                 var result = await userService.SearchUsersAsync(searchTerm, pageNumber, pageSize);
 
+                logger.Info("Retrieved search users successfully with SearchTerm: {SearchTerm}", searchTerm);
                 return Results.Ok(result);
             }
             catch (Exception ex)
             {
-                return Results.Problem(ex.Message, statusCode: 500);
+                logger.Error(ex, "Something went wrong to search user with SearchTerm: {SearchTerm}", searchTerm);
+                return Results.Problem(
+                    "An unexpected error occurred.",
+                    statusCode: 500);
             }
         });
 
@@ -123,12 +121,7 @@ public static class UserRoute
             try
             {
                 if (user_id != request.user_id)
-                {
-                    return Results.BadRequest(new
-                    {
-                        message = "User ID mismatch."
-                    });
-                }
+                    return Results.BadRequest("User ID mismatch.");
 
                 var currentUserId = context.User.FindFirst(
                     System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
@@ -136,33 +129,22 @@ public static class UserRoute
                 var isAdmin = context.User.IsInRole("admin");
 
                 if (!isAdmin && currentUserId != user_id)
-                {
                     return Results.Forbid();
-                }
 
                 var existingUser = await userService.GetUserByIdAsync(user_id);
 
                 if (existingUser == null)
-                {
-                    return Results.NotFound(new
-                    {
-                        message = "User not found."
-                    });
-                }
+                    return Results.NotFound("User not found.");
 
                 if (!isAdmin)
-                {
                     request.user_role = existingUser.user_role;
-                }
 
                 var result = await userService.UpdateUserAsync(request);
 
                 if (!result)
                 {
-                    return Results.Conflict(new
-                    {
-                        message = "Unable to update user. Email may already exist."
-                    });
+                    logger.Warn("User not found. User_Id: {User_Id}", user_id);
+                    return Results.Conflict("Unable to update user. Email may already exist.");
                 }
 
                 return Results.Ok(new
@@ -172,7 +154,10 @@ public static class UserRoute
             }
             catch (Exception ex)
             {
-                return Results.Problem(ex.Message, statusCode: 500);
+                logger.Error(ex, "Something went wrong to update user. User_Id: {User_Id}", user_id);
+                return Results.Problem(
+                    "An unexpected error occurred.",
+                    statusCode: 500); ;
             }
         });
 
@@ -185,18 +170,14 @@ public static class UserRoute
             {
                 var isAdmin = context.User.IsInRole("admin");
                 if (!isAdmin)
-                {
                     return Results.Json(new { message = "Access Denied." }, statusCode: StatusCodes.Status403Forbidden);
-                }
 
                 var result = await userService.DeleteUserAsync(user_id);
 
                 if (!result)
                 {
-                    return Results.NotFound(new
-                    {
-                        message = "User not found."
-                    });
+                    logger.Warn("User not found. User_Id: {User_Id}", user_id);
+                    return Results.NotFound("User not found.");
                 }
 
                 return Results.Ok(new
@@ -206,7 +187,10 @@ public static class UserRoute
             }
             catch (Exception ex)
             {
-                return Results.Problem(ex.Message, statusCode: 500);
+                logger.Error(ex, "Something went wrong to delete user. User_Id: {User_Id}", user_id);
+                return Results.Problem(
+                    "An unexpected error occurred.",
+                    statusCode: 500);
             }
         });
 

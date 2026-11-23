@@ -1,3 +1,4 @@
+using NLog;
 using Server.Interfaces;
 using Server.Models;
 
@@ -5,6 +6,7 @@ namespace Server.Routes;
 
 public static class CustomerRoute
 {
+    public static readonly Logger logger = LogManager.GetCurrentClassLogger();
     public static IEndpointRouteBuilder MapCustomerEndpoints(
         this IEndpointRouteBuilder app)
     {
@@ -20,11 +22,16 @@ public static class CustomerRoute
                     return Results.BadRequest("Invalid pagination parameters.");
 
                 var customers = await service.GetAllCustomersAsync(pageNumber, pageSize);
+
+                logger.Info("Retrieved customers. PageNumber: {PageNumber}, PageSize: {PageSize}, TotalRecords: {TotalRecords}", pageNumber, pageSize, customers.TotalRecords);
                 return Results.Ok(customers);
             }
             catch (Exception ex)
             {
-                return Results.Problem(ex.Message, statusCode: 500);
+                logger.Error(ex, "Something went wrong to retrieve all customers.");
+                return Results.Problem(
+                    "An unexpected error occurred.",
+                    statusCode: 500);
             }
         });
 
@@ -36,13 +43,21 @@ public static class CustomerRoute
             {
                 var customer = await service.GetCustomerByIdAsync(customer_id);
 
-                return customer is not null
-                    ? Results.Ok(customer)
-                    : Results.NotFound("No Customer Found.");
+                if (customer is null)
+                {
+                    logger.Warn("No customer found. CustomerId: {CustomerId}", customer_id);
+                    return Results.NotFound("No Customer Found.");
+                }
+
+                logger.Info("Retrieved customer successfully. {CustomerId}", customer_id);
+                return Results.Ok(customer);
             }
             catch (Exception ex)
             {
-                return Results.Problem(ex.Message, statusCode: 500);
+                logger.Error(ex, "Something went wrong to retrieve customer. CustomerId: {CustomerId}", customer_id);
+                return Results.Problem(
+                    "An unexpected error occurred.",
+                    statusCode: 500);
             }
         });
 
@@ -55,11 +70,15 @@ public static class CustomerRoute
 
                 var result = await service.SearchCustomersAsync(searchTerm, pageNumber, pageSize);
 
+                logger.Info("Retrieved search customers successfully with SearchTerm: {SearchTerm}", searchTerm);
                 return Results.Ok(result);
             }
             catch (Exception ex)
             {
-                return Results.Problem(ex.Message, statusCode: 500);
+                logger.Error(ex, "Something went wrong to search customer with SearchTerm: {SearchTerm}", searchTerm);
+                return Results.Problem(
+                    "An unexpected error occurred.",
+                    statusCode: 500);
             }
         });
 
@@ -71,13 +90,20 @@ public static class CustomerRoute
             {
                 var result = await service.AddCustomerAsync(customer);
 
-                return result
-                    ? Results.Created($"/customers/{customer.customer_id}", customer)
-                    : Results.BadRequest();
+                if (!result)
+                {
+                    logger.Warn("Customer not created.");
+                    return Results.BadRequest();
+                }
+
+                return Results.Created($"/customers/{customer.customer_id}", customer);
             }
             catch (Exception ex)
             {
-                return Results.Problem(ex.Message, statusCode: 500);
+                logger.Error(ex, "Something went wrong to create customer.");
+                return Results.Problem(
+                    "An unexpected error occurred.",
+                    statusCode: 500);
             }
         });
 
@@ -93,11 +119,20 @@ public static class CustomerRoute
 
                 var result = await service.UpdateCustomerAsync(customer);
 
-                return result ? Results.NoContent() : Results.NotFound("No Customer Found.");
+                if (!result)
+                {
+                    logger.Warn("Customer not found. CustomerId: {CustomerId}", customer_id);
+                    return Results.NotFound("No Customer Found.");
+                }
+
+                return Results.NoContent();
             }
             catch (Exception ex)
             {
-                return Results.Problem(ex.Message, statusCode: 500);
+                logger.Error(ex, "Something went wrong to update customer. CustomerId: {CustomerId}", customer_id);
+                return Results.Problem(
+                    "An unexpected error occurred.",
+                    statusCode: 500);
             }
         });
 
@@ -109,11 +144,20 @@ public static class CustomerRoute
             {
                 var result = await service.DeleteCustomerAsync(customer_id);
 
-                return result ? Results.NoContent() : Results.NotFound("No Customer Found.");
+                if (!result)
+                {
+                    logger.Warn("Customer not found. CustomerId: {CustomerId}", customer_id);
+                    return Results.NotFound("No Customer Found.");
+                }
+
+                return Results.NoContent();
             }
             catch (Exception ex)
             {
-                return Results.Problem(ex.Message, statusCode: 500);
+                logger.Error(ex, "Something went wrong to delete customer. CustomerId: {CustomerId}", customer_id);
+                return Results.Problem(
+                    "An unexpected error occurred.",
+                    statusCode: 500);
             }
         });
 

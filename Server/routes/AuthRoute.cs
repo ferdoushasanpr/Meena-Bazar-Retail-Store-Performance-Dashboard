@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using NLog;
 using Server.DTOs;
 using Server.Interfaces;
 
@@ -6,6 +7,7 @@ namespace Server.Routes;
 
 public static class AuthRoute
 {
+    public static readonly Logger logger = LogManager.GetCurrentClassLogger();
     public static IEndpointRouteBuilder MapAuthEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/auth")
@@ -31,6 +33,7 @@ public static class AuthRoute
 
                 if (result == null)
                 {
+                    logger.Warn("User not registered.");
                     return Results.Conflict(new
                     {
                         message = "Email already exists."
@@ -45,7 +48,10 @@ public static class AuthRoute
             }
             catch (Exception ex)
             {
-                return Results.Problem(ex.Message, statusCode: 500);
+                logger.Error(ex, "Something went wrong to register user.");
+                return Results.Problem(
+                    "An unexpected error occurred.",
+                    statusCode: 500);
             }
         });
 
@@ -66,6 +72,7 @@ public static class AuthRoute
 
                 if (result == null)
                 {
+                    logger.Warn("User not login.");
                     return Results.Unauthorized();
                 }
 
@@ -77,7 +84,10 @@ public static class AuthRoute
             }
             catch (Exception ex)
             {
-                return Results.Problem(ex.Message, statusCode: 500);
+                logger.Error(ex, "Something went wrong to login user.");
+                return Results.Problem(
+                    "An unexpected error occurred.",
+                    statusCode: 500);
             }
         });
 

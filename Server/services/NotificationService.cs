@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using NLog;
 using Server.Data;
 using Server.DTOs;
 using Server.Hubs;
@@ -10,6 +11,7 @@ class NotificationService : INotificationService
 {
     private readonly ApplicationDbContext _context;
     private readonly IHubContext<NotificationHub> _hubContext;
+    private readonly Logger logger = LogManager.GetCurrentClassLogger();
 
     public NotificationService(IHubContext<NotificationHub> hubContext, ApplicationDbContext context)
     {
@@ -36,7 +38,7 @@ class NotificationService : INotificationService
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex, "Failed to retrieve notifications.");
             throw;
         }
     }
@@ -65,6 +67,8 @@ class NotificationService : INotificationService
                 return false;
             }
 
+            logger.Info("Notification created successfully.");
+
             var notificationResponse = await (
             from n in _context.DemoNotifications.AsNoTracking()
             join u in _context.DemoUsers.AsNoTracking()
@@ -87,11 +91,12 @@ class NotificationService : INotificationService
                 );
             }
 
+            logger.Info("Notification response created successfully.");
             return true;
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex, "Failed to create notification.");
             throw;
         }
     }
@@ -109,11 +114,18 @@ class NotificationService : INotificationService
 
             existingNotification.isRead = 1;
 
-            return await _context.SaveChangesAsync() > 0;
+            var result = await _context.SaveChangesAsync() > 0;
+
+            if (result)
+            {
+                logger.Info("Notification updated successfully. Notification_Id: {Notification_Id}", notification.notification_id);
+            }
+
+            return result;
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex, "Failed to update notification. Notification_Id: {Notification_Id}", notification.notification_id);
             throw;
         }
     }

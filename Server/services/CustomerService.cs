@@ -2,12 +2,14 @@ using Microsoft.EntityFrameworkCore;
 using Server.Models;
 using Server.Interfaces;
 using Server.Data;
+using NLog;
 
 namespace Server.Services;
 
 public class CustomerService : ICustomerService
 {
     private readonly ApplicationDbContext _context;
+    private readonly Logger logger = LogManager.GetCurrentClassLogger();
 
     public CustomerService(ApplicationDbContext context)
     {
@@ -22,7 +24,6 @@ public class CustomerService : ICustomerService
         {
             var query = _context.DemoCustomers.AsNoTracking();
             var totalRecords = await query.CountAsync();
-
             var totalPages = (int)Math.Ceiling(totalRecords / (double)pageSize);
 
             var customers = await query
@@ -42,7 +43,7 @@ public class CustomerService : ICustomerService
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex, "Failed to retrieve all customers. PageNumber: {PageNumber}, PageSize: {PageSize}");
             throw;
         }
     }
@@ -57,15 +58,14 @@ public class CustomerService : ICustomerService
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex,
+                "Failed to retrieve customer. CustomerId: {CustomerId}",
+                customer_id);
             throw;
         }
     }
 
-    public async Task<PaginatedResponse<Customer>> SearchCustomersAsync(
-    string? searchTerm,
-    int pageNumber = 1,
-    int pageSize = 10)
+    public async Task<PaginatedResponse<Customer>> SearchCustomersAsync(string? searchTerm, int pageNumber = 1, int pageSize = 10)
     {
         try
         {
@@ -109,7 +109,9 @@ public class CustomerService : ICustomerService
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex,
+                "Failed to search customers. SearchTerm: {SearchTerm}",
+                searchTerm);
             throw;
         }
     }
@@ -119,8 +121,8 @@ public class CustomerService : ICustomerService
         try
         {
             var lastCustomer = await _context.DemoCustomers
-        .OrderByDescending(c => c.customer_id)
-        .FirstOrDefaultAsync();
+                .OrderByDescending(c => c.customer_id)
+                .FirstOrDefaultAsync();
 
             int nextId = 1;
 
@@ -134,11 +136,18 @@ public class CustomerService : ICustomerService
             customer.customer_segment = "New Customer";
 
             await _context.DemoCustomers.AddAsync(customer);
-            return await _context.SaveChangesAsync() > 0;
+            var result = await _context.SaveChangesAsync() > 0;
+
+            if (result)
+            {
+                logger.Info("Customer created successfully. CustomerId: {CustomerId}", customer.customer_id);
+            }
+
+            return result;
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex, "Failed to create customer. CustomerId: {CustomerId}", customer.customer_id);
             throw;
         }
     }
@@ -161,11 +170,18 @@ public class CustomerService : ICustomerService
             existingCustomer.loyalty_tier = customer.loyalty_tier;
             existingCustomer.customer_segment = customer.customer_segment;
 
-            return await _context.SaveChangesAsync() > 0;
+            var result = await _context.SaveChangesAsync() > 0;
+
+            if (result)
+            {
+                logger.Info("Customer updated successfully. CustomerId: {CustomerId}", customer.customer_id);
+            }
+
+            return result;
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex, "Failed to update customer. CustomerId: {CustomerId}", customer.customer_id);
             throw;
         }
     }
@@ -181,11 +197,20 @@ public class CustomerService : ICustomerService
                 return false;
 
             _context.DemoCustomers.Remove(customer);
-            return await _context.SaveChangesAsync() > 0;
+            var result = await _context.SaveChangesAsync() > 0;
+
+            if (result)
+            {
+                logger.Info("Customer deleted successfully. CustomerId: {CustomerId}", customer.customer_id);
+            }
+
+            return result;
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex,
+                "Failed to delete customer. CustomerId: {CustomerId}",
+                customer_id);
             throw;
         }
     }

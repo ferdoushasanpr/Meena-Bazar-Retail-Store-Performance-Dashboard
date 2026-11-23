@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using NLog;
 using Server.Data;
 using Server.Interfaces;
 using Server.Models;
@@ -8,6 +9,7 @@ namespace Server.Services;
 public class StoreService : IStoreService
 {
     private readonly ApplicationDbContext _context;
+    private readonly Logger logger = LogManager.GetCurrentClassLogger();
 
     public StoreService(ApplicationDbContext context)
     {
@@ -24,7 +26,7 @@ public class StoreService : IStoreService
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex, "Failed to retrieve all stores.");
             throw;
         }
     }
@@ -58,7 +60,10 @@ public class StoreService : IStoreService
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex,
+                "Failed to retrieve paginated stores. PageNumber: {PageNumber}, PageSize: {PageSize}",
+                pageNumber, pageSize);
+
             throw;
         }
     }
@@ -73,7 +78,10 @@ public class StoreService : IStoreService
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex,
+                "Failed to retrieve store. StoreId: {StoreId}",
+                store_id);
+
             throw;
         }
     }
@@ -115,7 +123,10 @@ public class StoreService : IStoreService
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex,
+                "Failed to search stores. SearchTerm: {SearchTerm}",
+                searchTerm);
+
             throw;
         }
     }
@@ -138,11 +149,21 @@ public class StoreService : IStoreService
             store.store_id = $"ST{nextId:D3}";
 
             await _context.DemoStores.AddAsync(store);
-            return await _context.SaveChangesAsync() > 0;
+            var result = await _context.SaveChangesAsync() > 0;
+
+            if (result)
+            {
+                logger.Info("Store created successfully. StoreId: {StoreId}", store.store_id);
+            }
+
+            return result;
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex,
+                "Failed to create store. StoreId: {StoreId}",
+                store.store_id);
+
             throw;
         }
     }
@@ -160,11 +181,21 @@ public class StoreService : IStoreService
             existingStore.store_name = store.store_name;
             existingStore.city = store.city;
 
-            return await _context.SaveChangesAsync() > 0;
+            var result = await _context.SaveChangesAsync() > 0;
+
+            if (result)
+            {
+                logger.Info("Store updated successfully. StoreId: {StoreId}", store.store_id);
+            }
+
+            return result;
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex,
+                "Failed to update store. StoreId: {StoreId}",
+                store.store_id);
+
             throw;
         }
     }
@@ -181,11 +212,21 @@ public class StoreService : IStoreService
 
             _context.DemoStores.Remove(store);
 
-            return await _context.SaveChangesAsync() > 0;
+            var result = await _context.SaveChangesAsync() > 0;
+
+            if (result)
+            {
+                logger.Info("Store deleted successfully. StoreId: {StoreId}", store_id);
+            }
+
+            return result;
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex,
+                "Failed to delete store. StoreId: {StoreId}",
+                store_id);
+
             throw;
         }
     }

@@ -1,3 +1,4 @@
+using NLog;
 using Server.Interfaces;
 using Server.Models;
 
@@ -5,6 +6,7 @@ namespace Server.Routes;
 
 public static class ProductRoute
 {
+    public static readonly Logger logger = LogManager.GetCurrentClassLogger();
     public static IEndpointRouteBuilder MapProductEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/products").WithTags("Products");
@@ -17,11 +19,16 @@ public static class ProductRoute
                     return Results.BadRequest("Invalid pagination parameters.");
 
                 var products = await service.GetAllProductsAsync(pageNumber, pageSize);
+
+                logger.Info("Retrieved products. PageNumber: {PageNumber}, PageSize: {PageSize}, TotalRecords: {TotalRecords}", pageNumber, pageSize, products.TotalRecords);
                 return Results.Ok(products);
             }
             catch (Exception ex)
             {
-                return Results.Problem(ex.Message, statusCode: 500);
+                logger.Error(ex, "Something went wrong to retrieve all products.");
+                return Results.Problem(
+                    "An unexpected error occurred.",
+                    statusCode: 500);
             }
         });
 
@@ -33,13 +40,21 @@ public static class ProductRoute
             {
                 var product = await service.GetProductByIdAsync(product_id);
 
-                return product is not null
-                    ? Results.Ok(product)
-                    : Results.NotFound();
+                if (product is null)
+                {
+                    logger.Warn("No product found. ProductId: {ProductId}", product_id);
+                    return Results.NotFound("No Product Found.");
+                }
+
+                logger.Info("Retrieved product successfully. {ProductId}", product_id);
+                return Results.Ok(product);
             }
             catch (Exception ex)
             {
-                return Results.Problem(ex.Message, statusCode: 500);
+                logger.Error(ex, "Something went wrong to retrieve product. ProductId: {ProductId}", product_id);
+                return Results.Problem(
+                    "An unexpected error occurred.",
+                    statusCode: 500);
             }
         });
 
@@ -52,11 +67,15 @@ public static class ProductRoute
 
                 var result = await service.SearchProductsAsync(searchTerm, pageNumber, pageSize);
 
+                logger.Info("Retrieved search products successfully with SearchTerm: {SearchTerm}", searchTerm);
                 return Results.Ok(result);
             }
             catch (Exception ex)
             {
-                return Results.Problem(ex.Message, statusCode: 500);
+                logger.Error(ex, "Something went wrong to search product with SearchTerm: {SearchTerm}", searchTerm);
+                return Results.Problem(
+                    "An unexpected error occurred.",
+                    statusCode: 500);
             }
         });
 
@@ -68,13 +87,20 @@ public static class ProductRoute
             {
                 var result = await service.AddProductAsync(product);
 
-                return result
-                    ? Results.Created($"/products/{product.product_id}", product)
-                    : Results.BadRequest();
+                if (!result)
+                {
+                    logger.Warn("Product not created.");
+                    return Results.BadRequest();
+                }
+
+                return Results.Created($"/products/{product.product_id}", product);
             }
             catch (Exception ex)
             {
-                return Results.Problem(ex.Message, statusCode: 500);
+                logger.Error(ex, "Something went wrong to create product.");
+                return Results.Problem(
+                    "An unexpected error occurred.",
+                    statusCode: 500);
             }
         });
 
@@ -90,11 +116,20 @@ public static class ProductRoute
 
                 var result = await service.UpdateProductAsync(product);
 
-                return result ? Results.NoContent() : Results.NotFound();
+                if (!result)
+                {
+                    logger.Warn("Product not found. ProductId: {ProductId}", product_id);
+                    return Results.NotFound("No Product Found.");
+                }
+
+                return Results.NoContent();
             }
             catch (Exception ex)
             {
-                return Results.Problem(ex.Message, statusCode: 500);
+                logger.Error(ex, "Something went wrong to update product. ProductId: {ProductId}", product_id);
+                return Results.Problem(
+                    "An unexpected error occurred.",
+                    statusCode: 500);
             }
         });
 
@@ -106,11 +141,20 @@ public static class ProductRoute
             {
                 var result = await service.DeleteProductAsync(product_id);
 
-                return result ? Results.NoContent() : Results.NotFound();
+                if (!result)
+                {
+                    logger.Warn("Product not found. ProductId: {ProductId}", product_id);
+                    return Results.NotFound("No Product Found.");
+                }
+
+                return Results.NoContent();
             }
             catch (Exception ex)
             {
-                return Results.Problem(ex.Message, statusCode: 500);
+                logger.Error(ex, "Something went wrong to delete product. ProductId: {ProductId}", product_id);
+                return Results.Problem(
+                    "An unexpected error occurred.",
+                    statusCode: 500);
             }
         });
 

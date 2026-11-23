@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using NLog;
 using Server.Data;
 using Server.DTOs;
 using Server.Interfaces;
@@ -16,6 +17,7 @@ public class AuthService : IAuthService
     private readonly ApplicationDbContext _context;
     private readonly IConfiguration _configuration;
     private readonly PasswordHasher<User> _passwordHasher;
+    private readonly Logger logger = LogManager.GetCurrentClassLogger();
 
     public AuthService(
         ApplicationDbContext context,
@@ -57,12 +59,16 @@ public class AuthService : IAuthService
                 _passwordHasher.HashPassword(user, request.password);
 
             _context.DemoUsers.Add(user);
-            await _context.SaveChangesAsync();
+            var result = await _context.SaveChangesAsync() > 0;
+
+            if (result)
+                logger.Info("User signup successfully.");
+
             return GenerateJwtToken(user);
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex, "Failed to signup user.");
             throw;
         }
     }
@@ -94,11 +100,12 @@ public class AuthService : IAuthService
                 await _context.SaveChangesAsync();
             }
 
+            logger.Info("User login successfully.");
             return GenerateJwtToken(user);
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex, "Failed to login user.");
             throw;
         }
     }
@@ -155,7 +162,7 @@ public class AuthService : IAuthService
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex, "Failed to generate token.");
             throw;
         }
     }

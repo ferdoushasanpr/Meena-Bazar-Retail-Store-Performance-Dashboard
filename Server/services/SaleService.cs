@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using NLog;
 using Server.Data;
 using Server.Interfaces;
 using Server.Models;
@@ -8,15 +9,14 @@ namespace Server.Services;
 public class SaleService : ISaleService
 {
     private readonly ApplicationDbContext _context;
+    private readonly Logger logger = LogManager.GetCurrentClassLogger();
 
     public SaleService(ApplicationDbContext context)
     {
         _context = context;
     }
 
-    public async Task<PaginatedResponse<Sale>> GetAllSalesAsync(
-    int pageNumber = 1,
-    int pageSize = 10)
+    public async Task<PaginatedResponse<Sale>> GetAllSalesAsync(int pageNumber = 1, int pageSize = 10)
     {
         try
         {
@@ -42,7 +42,7 @@ public class SaleService : ISaleService
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex, "Failed to retrieve all orders. PageNumber: {PageNumber}, PageSize: {PageSize}");
             throw;
         }
     }
@@ -57,7 +57,9 @@ public class SaleService : ISaleService
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex,
+                "Failed to retrieve order. OrderId: {OrderId}",
+                order_id);
             throw;
         }
     }
@@ -108,7 +110,9 @@ public class SaleService : ISaleService
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex,
+                "Failed to search orders. SearchTerm: {SearchTerm}",
+                searchTerm);
             throw;
         }
     }
@@ -118,11 +122,18 @@ public class SaleService : ISaleService
         try
         {
             await _context.DemoSales.AddAsync(sale);
-            return await _context.SaveChangesAsync() > 0;
+            var result = await _context.SaveChangesAsync() > 0;
+
+            if (result)
+            {
+                logger.Info("Order created successfully.");
+            }
+
+            return result;
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex, "Failed to create order.");
             throw;
         }
     }
@@ -149,11 +160,18 @@ public class SaleService : ISaleService
             existingSale.delivery_fee = sale.delivery_fee;
             existingSale.total_amount = sale.total_amount;
 
-            return await _context.SaveChangesAsync() > 0;
+            var result = await _context.SaveChangesAsync() > 0;
+
+            if (result)
+            {
+                logger.Info("Order updated successfully. OrderId: {OrderId}", sale.order_id);
+            }
+
+            return result;
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex, "Failed to update order. OrderId: {OrderId}", sale.order_id);
             throw;
         }
     }
@@ -169,11 +187,20 @@ public class SaleService : ISaleService
                 return false;
 
             _context.DemoSales.Remove(sale);
-            return await _context.SaveChangesAsync() > 0;
+            var result = await _context.SaveChangesAsync() > 0;
+
+            if (result)
+            {
+                logger.Info("Order deleted successfully. OrderId: {OrderId}", sale.order_id);
+            }
+
+            return result;
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex,
+                "Failed to delete order. OrderId: {OrderId}",
+                order_id);
             throw;
         }
     }

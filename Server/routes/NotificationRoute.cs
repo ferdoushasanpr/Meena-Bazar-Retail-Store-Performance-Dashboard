@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
+using NLog;
 using Server.DTOs;
 using Server.Interfaces;
 using Server.Models;
 
 public static class NotificationRoute
 {
+    public static readonly Logger logger = LogManager.GetCurrentClassLogger();
     public static IEndpointRouteBuilder MapNotificationsEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("notifications").WithTags("Notifications");
@@ -14,11 +16,16 @@ public static class NotificationRoute
             try
             {
                 var results = await service.GetNotificationsAsync();
+
+                logger.Info("Retrieved notifications successfully.");
                 return Results.Ok(results);
             }
             catch (Exception ex)
             {
-                return Results.Problem(ex.Message, statusCode: 200);
+                logger.Error(ex, "Something went wrong to retrieve all notifications.");
+                return Results.Problem(
+                    "An unexpected error occurred.",
+                    statusCode: 500);
             }
         });
 
@@ -27,11 +34,21 @@ public static class NotificationRoute
             try
             {
                 var result = await service.AddNotificationAsync(notification);
-                return result ? Results.Ok("Successfully Created Notification.") : Results.BadRequest();
+
+                if (!result)
+                {
+                    logger.Warn("Notification not created.");
+                    return Results.BadRequest();
+                }
+
+                return Results.Ok("Successfully Created Notification.");
             }
             catch (Exception ex)
             {
-                return Results.Problem(ex.Message, statusCode: 200);
+                logger.Error(ex, "Something went wrong to create notification.");
+                return Results.Problem(
+                    "An unexpected error occurred.",
+                    statusCode: 500);
             }
         });
 
@@ -45,11 +62,21 @@ public static class NotificationRoute
                 }
 
                 var result = await service.ReadNotificationAsync(notification);
-                return result ? Results.Ok("Successfully Read Notification.") : Results.NotFound();
+
+                if (!result)
+                {
+                    logger.Warn("Notification not found. Notifications_Id: {Notifications_Id}", notification_id);
+                    return Results.NotFound("No Notification Found.");
+                }
+
+                return Results.Ok("Successfully Read Notification.");
             }
             catch (Exception ex)
             {
-                return Results.Problem(ex.Message, statusCode: 200);
+                logger.Error(ex, "Something went wrong to update notification. Notification_Id: {Notification_Id}", notification_id);
+                return Results.Problem(
+                    "An unexpected error occurred.",
+                    statusCode: 500);
             }
         });
 

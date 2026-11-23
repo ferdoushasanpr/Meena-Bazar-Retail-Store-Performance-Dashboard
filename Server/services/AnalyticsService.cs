@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using NLog;
 using Server.Data;
 using Server.Interfaces;
 using Server.Models;
@@ -8,6 +9,7 @@ namespace Server.Services;
 public class AnalyticsService : IAnalyticsService
 {
     private readonly ApplicationDbContext _context;
+    private readonly Logger logger = LogManager.GetCurrentClassLogger();
 
     public AnalyticsService(ApplicationDbContext context)
     {
@@ -30,6 +32,8 @@ public class AnalyticsService : IAnalyticsService
             var countStore = await stores.CountAsync();
             var countOrder = await orders.CountAsync();
 
+            logger.Info("Retrieved entitycountsummary successfully.");
+
             return new EntityCountSummary
             {
                 NumberOfCustomer = countCustomer,
@@ -41,7 +45,7 @@ public class AnalyticsService : IAnalyticsService
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex, "Failed to retrieve EntityCountSummary.");
             throw;
         }
     }
@@ -61,6 +65,8 @@ public class AnalyticsService : IAnalyticsService
             .Distinct()
             .CountAsync();
 
+            logger.Info("Retrieved KPIsummary successfully.");
+
             return new KpiSummary
             {
                 TotalSales = total ?? 0,
@@ -75,7 +81,7 @@ public class AnalyticsService : IAnalyticsService
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex, "Failed to retrieve KPISummary.");
             throw;
         }
     }
@@ -177,7 +183,7 @@ public class AnalyticsService : IAnalyticsService
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex, "Failed to retrieve all store category sales. PageNumber: {PageNumber}, PageSize: {PageSize}", pageNumber, pageSize);
             throw;
         }
     }
@@ -273,7 +279,7 @@ public class AnalyticsService : IAnalyticsService
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex, "Failed to retrieve all store product sales. PageNumber: {PageNumber}, PageSize: {PageSize}", pageNumber, pageSize);
             throw;
         }
     }
@@ -302,7 +308,7 @@ public class AnalyticsService : IAnalyticsService
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex, "Failed to retrieve all store sales.");
             throw;
         }
     }
@@ -363,7 +369,7 @@ public class AnalyticsService : IAnalyticsService
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex, "Failed to retrieve all product sales. PageNumber: {PageNumber}, PageSize: {PageSize}", pageNumber, pageSize);
             throw;
         }
     }
@@ -411,7 +417,7 @@ public class AnalyticsService : IAnalyticsService
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex, "Failed to retrieve all category sales.");
             throw;
         }
     }
@@ -436,7 +442,7 @@ public class AnalyticsService : IAnalyticsService
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex, "Failed to retrieve all brand sales.");
             throw;
         }
     }
@@ -463,7 +469,7 @@ public class AnalyticsService : IAnalyticsService
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex, "Failed to retrieve all daily sales.");
             throw;
         }
     }
@@ -488,7 +494,7 @@ public class AnalyticsService : IAnalyticsService
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex, "Failed to retrieve all yearly sales.");
             throw;
         }
     }
@@ -528,7 +534,7 @@ public class AnalyticsService : IAnalyticsService
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex, "Failed to retrieve all monthly sales.");
             throw;
         }
     }
@@ -573,7 +579,7 @@ public class AnalyticsService : IAnalyticsService
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex, "Failed to retrieve filtered KPISummary.");
             throw;
         }
     }
@@ -621,7 +627,7 @@ public class AnalyticsService : IAnalyticsService
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex, "Failed to retrieve all daily store sales.");
             throw;
         }
     }
@@ -680,7 +686,7 @@ public class AnalyticsService : IAnalyticsService
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex, "Failed to retrieve all store category sales.");
             throw;
         }
     }

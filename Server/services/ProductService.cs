@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using NLog;
 using Server.Data;
 using Server.Interfaces;
 using Server.Models;
@@ -8,6 +9,7 @@ namespace Server.Services;
 public class ProductService : IProductService
 {
     private readonly ApplicationDbContext _context;
+    private readonly Logger logger = LogManager.GetCurrentClassLogger();
 
     public ProductService(ApplicationDbContext context)
     {
@@ -41,7 +43,7 @@ public class ProductService : IProductService
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex, "Failed to retrieve all products. PageNumber: {PageNumber}, PageSize: {PageSize}");
             throw;
         }
     }
@@ -56,7 +58,9 @@ public class ProductService : IProductService
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex,
+                "Failed to retrieve product. ProductId: {ProductId}",
+                product_id);
             throw;
         }
     }
@@ -103,7 +107,9 @@ public class ProductService : IProductService
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex,
+                "Failed to search products. SearchTerm: {SearchTerm}",
+                searchTerm);
             throw;
         }
     }
@@ -126,11 +132,18 @@ public class ProductService : IProductService
             product.product_id = $"P{nextId:D5}";
 
             await _context.DemoProducts.AddAsync(product);
-            return await _context.SaveChangesAsync() > 0;
+            var result = await _context.SaveChangesAsync() > 0;
+
+            if (result)
+            {
+                logger.Info("Product created successfully. ProductId: {ProductId}", product.product_id);
+            }
+
+            return result;
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex, "Failed to create product. ProductId: {ProductId}", product.product_id);
             throw;
         }
     }
@@ -152,11 +165,18 @@ public class ProductService : IProductService
             existingProduct.unit_price = product.unit_price;
             existingProduct.vat_rate = product.vat_rate;
 
-            return await _context.SaveChangesAsync() > 0;
+            var result = await _context.SaveChangesAsync() > 0;
+
+            if (result)
+            {
+                logger.Info("Product updated successfully. ProductId: {ProductId}", product.product_id);
+            }
+
+            return result;
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex, "Failed to update product. ProductId: {ProductId}", product.product_id);
             throw;
         }
     }
@@ -172,11 +192,20 @@ public class ProductService : IProductService
                 return false;
 
             _context.DemoProducts.Remove(product);
-            return await _context.SaveChangesAsync() > 0;
+            var result = await _context.SaveChangesAsync() > 0;
+
+            if (result)
+            {
+                logger.Info("Product deleted successfully. ProductId: {ProductId}", product.product_id);
+            }
+
+            return result;
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex,
+                "Failed to delete product. ProductId: {ProductId}",
+                product_id);
             throw;
         }
     }

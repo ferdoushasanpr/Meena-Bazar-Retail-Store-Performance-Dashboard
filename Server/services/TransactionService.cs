@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using NLog;
 using Server.Data;
 using Server.Interfaces;
 using Server.Models;
@@ -8,15 +9,14 @@ namespace Server.Services;
 public class TransactionService : ITransactionService
 {
     private readonly ApplicationDbContext _context;
+    private readonly Logger logger = LogManager.GetCurrentClassLogger();
 
     public TransactionService(ApplicationDbContext context)
     {
         _context = context;
     }
 
-    public async Task<PaginatedResponse<Transaction>> GetAllTransactionsAsync(
-    int pageNumber = 1,
-    int pageSize = 10)
+    public async Task<PaginatedResponse<Transaction>> GetAllTransactionsAsync(int pageNumber = 1, int pageSize = 10)
     {
         try
         {
@@ -42,7 +42,7 @@ public class TransactionService : ITransactionService
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex, "Failed to retrieve all transactions. PageNumber: {PageNumber}, PageSize: {PageSize}", pageNumber, pageSize);
             throw;
         }
     }
@@ -57,7 +57,9 @@ public class TransactionService : ITransactionService
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex,
+                "Failed to retrieve transaction. Order_Item_Id: {Order_Item_Id}",
+                order_item_id);
             throw;
         }
     }
@@ -104,7 +106,9 @@ public class TransactionService : ITransactionService
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex,
+                "Failed to search transactions. SearchTerm: {SearchTerm}",
+                searchTerm);
             throw;
         }
     }
@@ -114,11 +118,18 @@ public class TransactionService : ITransactionService
         try
         {
             await _context.DemoTransactions.AddAsync(transaction);
-            return await _context.SaveChangesAsync() > 0;
+            var result = await _context.SaveChangesAsync() > 0;
+
+            if (result)
+            {
+                logger.Info("Order item created successfully.");
+            }
+
+            return result;
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex, "Failed to create order item.");
             throw;
         }
     }
@@ -141,11 +152,18 @@ public class TransactionService : ITransactionService
             existingTransaction.line_net_amount = transaction.line_net_amount;
             existingTransaction.line_vat_amount = transaction.line_vat_amount;
 
-            return await _context.SaveChangesAsync() > 0;
+            var result = await _context.SaveChangesAsync() > 0;
+
+            if (result)
+            {
+                logger.Info("Order item updated successfully. Order_item_Id: {Order_item_Id}", transaction.order_item_id);
+            }
+
+            return result;
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex, "Failed to update order item. Order_item_Id: {Order_item_Id}", transaction.order_item_id);
             throw;
         }
     }
@@ -161,11 +179,19 @@ public class TransactionService : ITransactionService
                 return false;
 
             _context.DemoTransactions.Remove(transaction);
-            return await _context.SaveChangesAsync() > 0;
+            var result = await _context.SaveChangesAsync() > 0;
+
+            if (result)
+            {
+                logger.Info("Order item deleted successfully. Order_item_Id: {Order_item_Id}", transaction.order_item_id);
+            }
+
+            return result;
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            logger.Error(ex,
+                "Failed to delete order item. Order_item_Id: {Order_item_Id}", order_item_id);
             throw;
         }
     }

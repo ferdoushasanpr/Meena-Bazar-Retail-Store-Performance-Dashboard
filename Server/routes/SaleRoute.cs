@@ -1,3 +1,4 @@
+using NLog;
 using Server.Interfaces;
 using Server.Models;
 
@@ -5,6 +6,7 @@ namespace Server.Routes;
 
 public static class SaleRoute
 {
+    public static readonly Logger logger = LogManager.GetCurrentClassLogger();
     public static IEndpointRouteBuilder MapSaleEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/sales").WithTags("Sales");
@@ -17,11 +19,16 @@ public static class SaleRoute
                     return Results.BadRequest("Invalid pagination parameters.");
 
                 var sales = await service.GetAllSalesAsync(pageNumber, pageSize);
+
+                logger.Info("Retrieved orders. PageNumber: {PageNumber}, PageSize: {PageSize}, TotalRecords: {TotalRecords}", pageNumber, pageSize, sales.TotalRecords);
                 return Results.Ok(sales);
             }
             catch (Exception ex)
             {
-                return Results.Problem(ex.Message, statusCode: 500);
+                logger.Error(ex, "Something went wrong to retrieve all orders.");
+                return Results.Problem(
+                    "An unexpected error occurred.",
+                    statusCode: 500);
             }
         });
 
@@ -33,13 +40,21 @@ public static class SaleRoute
             {
                 var sale = await service.GetSaleByIdAsync(order_id);
 
-                return sale is not null
-                    ? Results.Ok(sale)
-                    : Results.NotFound();
+                if (sale is null)
+                {
+                    logger.Warn("No order found. OrderId: {OrderId}", order_id);
+                    return Results.NotFound("No Order Found.");
+                }
+
+                logger.Info("Retrieved order successfully. {OrderId}", order_id);
+                return Results.Ok(sale);
             }
             catch (Exception ex)
             {
-                return Results.Problem(ex.Message, statusCode: 500);
+                logger.Error(ex, "Something went wrong to retrieve order. OrderId: {OrderId}", order_id);
+                return Results.Problem(
+                    "An unexpected error occurred.",
+                    statusCode: 500);
             }
         });
 
@@ -52,11 +67,15 @@ public static class SaleRoute
 
                 var result = await service.SearchSalesAsync(searchTerm, pageNumber, pageSize);
 
+                logger.Info("Retrieved search orders successfully with SearchTerm: {SearchTerm}", searchTerm);
                 return Results.Ok(result);
             }
             catch (Exception ex)
             {
-                return Results.Problem(ex.Message, statusCode: 500);
+                logger.Error(ex, "Something went wrong to search order with SearchTerm: {SearchTerm}", searchTerm);
+                return Results.Problem(
+                    "An unexpected error occurred.",
+                    statusCode: 500);
             }
         });
 
@@ -68,13 +87,20 @@ public static class SaleRoute
             {
                 var result = await service.AddSaleAsync(sale);
 
-                return result
-                    ? Results.Created($"/sales/{sale.order_id}", sale)
-                    : Results.BadRequest();
+                if (!result)
+                {
+                    logger.Warn("Order not created.");
+                    return Results.BadRequest();
+                }
+
+                return Results.Created($"/sales/{sale.order_id}", sale);
             }
             catch (Exception ex)
             {
-                return Results.Problem(ex.Message, statusCode: 500);
+                logger.Error(ex, "Something went wrong to create order.");
+                return Results.Problem(
+                    "An unexpected error occurred.",
+                    statusCode: 500);
             }
         });
 
@@ -90,11 +116,20 @@ public static class SaleRoute
 
                 var result = await service.UpdateSaleAsync(sale);
 
-                return result ? Results.NoContent() : Results.NotFound();
+                if (!result)
+                {
+                    logger.Warn("Order not found. OrderId: {OrderId}", order_id);
+                    return Results.NotFound("No Order Found.");
+                }
+
+                return Results.NoContent();
             }
             catch (Exception ex)
             {
-                return Results.Problem(ex.Message, statusCode: 500);
+                logger.Error(ex, "Something went wrong to update order. OrderId: {OrderId}", order_id);
+                return Results.Problem(
+                    "An unexpected error occurred.",
+                    statusCode: 500);
             }
         });
 
@@ -105,11 +140,21 @@ public static class SaleRoute
             try
             {
                 var result = await service.DeleteSaleAsync(order_id);
-                return result ? Results.NoContent() : Results.NotFound();
+
+                if (!result)
+                {
+                    logger.Warn("Order not found. OrderId: {OrderId}", order_id);
+                    return Results.NotFound("No Order Found.");
+                }
+
+                return Results.NoContent();
             }
             catch (Exception ex)
             {
-                return Results.Problem(ex.Message, statusCode: 500);
+                logger.Error(ex, "Something went wrong to delete order. OrderId: {OrderId}", order_id);
+                return Results.Problem(
+                    "An unexpected error occurred.",
+                    statusCode: 500);
             }
         });
 
