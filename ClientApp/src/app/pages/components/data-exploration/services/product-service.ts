@@ -23,14 +23,14 @@ export class ProductService {
         hasNextPage: false,
     });
 
-    addProduct(data: any) {
-        return this.operationsService.addProductData(data);
+    addProduct(token: string, data: any) {
+        return this.operationsService.addProductData(token, data);
     }
 
-    loadSearchProductData(pageNumber: number, searchTerm?: string) {
+    loadSearchProductData(token: string, pageNumber: number, searchTerm?: string) {
         this.componentDataLoading.set(true);
         this.componentDataError.set(null);
-        this.operationsService.searchProductsData(pageNumber, undefined, searchTerm).subscribe({
+        this.operationsService.searchProductsData(token, pageNumber, undefined, searchTerm).subscribe({
             next: (response) => {
                 this.componentData.set(response);
                 this.componentDataLoading.set(false);
@@ -44,10 +44,10 @@ export class ProductService {
         });
     }
 
-    loadProductData(pageNumber: number, pageSize?: number) {
+    loadProductData(token: string, pageNumber: number, pageSize?: number) {
         this.componentDataLoading.set(true);
         this.componentDataError.set(null);
-        this.operationsService.getProductsData(pageNumber, pageSize).subscribe({
+        this.operationsService.getProductsData(token, pageNumber, pageSize).subscribe({
             next: (response) => {
                 this.componentData.set(response);
                 this.componentDataLoading.set(false);
@@ -61,11 +61,11 @@ export class ProductService {
         })
     }
 
-    updateProduct(id: string, data: any) {
-        return this.operationsService.updateProductData(data, id);
+    updateProduct(token: string, id: string, data: any) {
+        return this.operationsService.updateProductData(token, data, id);
     }
 
-    deleteProduct(id: string) {
-        return this.operationsService.deleteProductData(id);
+    deleteProduct(token: string, id: string) {
+        return this.operationsService.deleteProductData(token, id);
     }
 }

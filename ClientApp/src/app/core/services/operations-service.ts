@@ -17,88 +17,148 @@ export class OperationsService {
     private readonly apiUrlBase = 'http://localhost:5253';
 
     // Customer Operations
-    addCustomerData(customer: Customer): Observable<Customer> {
-        return this.http.post<Customer>(`${this.apiUrlBase}/customers`, customer);
+    addCustomerData(token: string, customer: Customer): Observable<Customer> {
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        }
+        return this.http.post<Customer>(`${this.apiUrlBase}/customers`, customer, { headers });
     }
 
-    getCustomersData(pageNumber: number, pageSize: number = 10): Observable<CustomerDataResponse> {
-        return this.http.get<CustomerDataResponse>(`${this.apiUrlBase}/customers?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    getCustomersData(token: string, pageNumber: number, pageSize: number = 10): Observable<CustomerDataResponse> {
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        }
+        return this.http.get<CustomerDataResponse>(`${this.apiUrlBase}/customers?pageNumber=${pageNumber}&pageSize=${pageSize}`, { headers });
     }
 
-    searchCustomersData(pageNumber: number, pageSize: number = 10, searchTerm?: string): Observable<CustomerDataResponse> {
-        return this.http.get<CustomerDataResponse>(`${this.apiUrlBase}/customers/search?searchTerm=${searchTerm}&pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    searchCustomersData(token: string, pageNumber: number, pageSize: number = 10, searchTerm?: string): Observable<CustomerDataResponse> {
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        }
+        return this.http.get<CustomerDataResponse>(`${this.apiUrlBase}/customers/search?searchTerm=${searchTerm}&pageNumber=${pageNumber}&pageSize=${pageSize}`, { headers });
     }
 
-    updateCustomerData(customer: Customer, id: string): Observable<Customer> {
-        return this.http.put<Customer>(`${this.apiUrlBase}/customers/${id}`, customer);
+    updateCustomerData(token: string, customer: Customer, id: string): Observable<Customer> {
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        }
+        return this.http.put<Customer>(`${this.apiUrlBase}/customers/${id}`, customer, { headers });
     }
 
-    deleteCustomerData(id: string): Observable<Customer> {
-        return this.http.delete<Customer>(`${this.apiUrlBase}/customers/${id}`);
+    deleteCustomerData(token: string, id: string): Observable<Customer> {
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        }
+        return this.http.delete<Customer>(`${this.apiUrlBase}/customers/${id}`, { headers });
     }
 
     // Product Operations
-    addProductData(product: Product): Observable<Product> {
-        return this.http.post<Product>(`${this.apiUrlBase}/products`, product);
+    addProductData(token: string, product: Product): Observable<Product> {
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        }
+        return this.http.post<Product>(`${this.apiUrlBase}/products`, product, { headers });
     }
 
-    getProductsData(pageNumber: number, pageSize: number = 10): Observable<ProductDataResponse> {
-        return this.http.get<ProductDataResponse>(`${this.apiUrlBase}/products?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    getProductsData(token: string, pageNumber: number, pageSize: number = 10): Observable<ProductDataResponse> {
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        }
+        return this.http.get<ProductDataResponse>(`${this.apiUrlBase}/products?pageNumber=${pageNumber}&pageSize=${pageSize}`, { headers });
     }
 
-    searchProductsData(pageNumber: number, pageSize: number = 10, searchTerm?: string): Observable<ProductDataResponse> {
-        return this.http.get<ProductDataResponse>(`${this.apiUrlBase}/products/search?searchTerm=${searchTerm}&pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    searchProductsData(token: string, pageNumber: number, pageSize: number = 10, searchTerm?: string): Observable<ProductDataResponse> {
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        }
+        return this.http.get<ProductDataResponse>(`${this.apiUrlBase}/products/search?searchTerm=${searchTerm}&pageNumber=${pageNumber}&pageSize=${pageSize}`, { headers });
     }
 
-    updateProductData(product: Product, id: string): Observable<Product> {
-        return this.http.put<Product>(`${this.apiUrlBase}/products/${id}`, product);
+    updateProductData(token: string, product: Product, id: string): Observable<Product> {
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        }
+        return this.http.put<Product>(`${this.apiUrlBase}/products/${id}`, product, { headers });
     }
 
-    deleteProductData(id: string): Observable<Product> {
-        return this.http.delete<Product>(`${this.apiUrlBase}/products/${id}`);
+    deleteProductData(token: string, id: string): Observable<Product> {
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        }
+        return this.http.delete<Product>(`${this.apiUrlBase}/products/${id}`, { headers });
     }
 
     // Store Operations
-    addStoreData(store: StoreData): Observable<StoreData> {
-        return this.http.post<StoreData>(`${this.apiUrlBase}/stores`, store);
+    addStoreData(token: string, store: StoreData): Observable<StoreData> {
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        }
+        return this.http.post<StoreData>(`${this.apiUrlBase}/stores`, store, { headers });
     }
 
-    getStoresData(): Observable<StoreData[]> {
-        return this.http.get<StoreData[]>(`${this.apiUrlBase}/stores`);
+    getStoresData(token: string): Observable<StoreData[]> {
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        }
+        return this.http.get<StoreData[]>(`${this.apiUrlBase}/stores`, { headers });
     }
 
-    getStoresPaginatedData(pageNumber: number, pageSize: number = 10): Observable<StoreDataResponse> {
-        return this.http.get<StoreDataResponse>(`${this.apiUrlBase}/stores/paginated?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    getStoresPaginatedData(token: string, pageNumber: number, pageSize: number = 10): Observable<StoreDataResponse> {
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        }
+        return this.http.get<StoreDataResponse>(`${this.apiUrlBase}/stores/paginated?pageNumber=${pageNumber}&pageSize=${pageSize}`, { headers });
     }
 
-    searchStoresData(pageNumber: number, pageSize: number = 10, searchTerm?: string): Observable<StoreDataResponse> {
-        return this.http.get<StoreDataResponse>(`${this.apiUrlBase}/stores/search?searchTerm=${searchTerm}&pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    searchStoresData(token: string, pageNumber: number, pageSize: number = 10, searchTerm?: string): Observable<StoreDataResponse> {
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        }
+        return this.http.get<StoreDataResponse>(`${this.apiUrlBase}/stores/search?searchTerm=${searchTerm}&pageNumber=${pageNumber}&pageSize=${pageSize}`, { headers });
     }
 
-    updateStoreData(store: StoreData, id: string): Observable<StoreData> {
-        return this.http.put<StoreData>(`${this.apiUrlBase}/stores/${id}`, store);
+    updateStoreData(token: string, store: StoreData, id: string): Observable<StoreData> {
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        }
+        return this.http.put<StoreData>(`${this.apiUrlBase}/stores/${id}`, store, { headers });
     }
 
-    deleteStoreData(id: string): Observable<StoreData> {
-        return this.http.delete<StoreData>(`${this.apiUrlBase}/stores/${id}`);
+    deleteStoreData(token: string, id: string): Observable<StoreData> {
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        }
+        return this.http.delete<StoreData>(`${this.apiUrlBase}/stores/${id}`, { headers });
     }
 
     // Order Operations
-    getOrdersData(pageNumber: number, pageSize: number = 10): Observable<OrderDataResponse> {
-        return this.http.get<OrderDataResponse>(`${this.apiUrlBase}/sales?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    getOrdersData(token: string, pageNumber: number, pageSize: number = 10): Observable<OrderDataResponse> {
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        }
+        return this.http.get<OrderDataResponse>(`${this.apiUrlBase}/sales?pageNumber=${pageNumber}&pageSize=${pageSize}`, { headers });
     }
 
-    searchOrdersData(pageNumber: number, pageSize: number = 10, searchTerm?: string): Observable<OrderDataResponse> {
-        return this.http.get<OrderDataResponse>(`${this.apiUrlBase}/sales/search?searchTerm=${searchTerm}&pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    searchOrdersData(token: string, pageNumber: number, pageSize: number = 10, searchTerm?: string): Observable<OrderDataResponse> {
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        }
+        return this.http.get<OrderDataResponse>(`${this.apiUrlBase}/sales/search?searchTerm=${searchTerm}&pageNumber=${pageNumber}&pageSize=${pageSize}`, { headers });
     }
 
     // Transactions Operations
-    getTransactionsData(pageNumber: number, pageSize: number = 10): Observable<TransactionDataResponse> {
-        return this.http.get<TransactionDataResponse>(`${this.apiUrlBase}/transactions?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    getTransactionsData(token: string, pageNumber: number, pageSize: number = 10): Observable<TransactionDataResponse> {
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        }
+        return this.http.get<TransactionDataResponse>(`${this.apiUrlBase}/transactions?pageNumber=${pageNumber}&pageSize=${pageSize}`, { headers });
     }
 
-    searchTransactionsData(pageNumber: number, pageSize: number = 10, searchTerm?: string): Observable<TransactionDataResponse> {
-        return this.http.get<TransactionDataResponse>(`${this.apiUrlBase}/transactions/search?searchTerm=${searchTerm}&pageNumber=${pageNumber}&pageSize=${pageSize}`);
+    searchTransactionsData(token: string, pageNumber: number, pageSize: number = 10, searchTerm?: string): Observable<TransactionDataResponse> {
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        }
+        return this.http.get<TransactionDataResponse>(`${this.apiUrlBase}/transactions/search?searchTerm=${searchTerm}&pageNumber=${pageNumber}&pageSize=${pageSize}`, { headers });
     }
 
     // User Operations
@@ -143,15 +203,24 @@ export class OperationsService {
     }
 
     // Notification Operations
-    addNotificationData(notification: NotificationData): Observable<NotificationData> {
-        return this.http.post<NotificationData>(`${this.apiUrlBase}/notifications`, notification);
+    addNotificationData(token: string, notification: NotificationData): Observable<NotificationData> {
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        }
+        return this.http.post<NotificationData>(`${this.apiUrlBase}/notifications`, notification, { headers });
     }
 
-    getNotificationsData(): Observable<NotificationResponse[]> {
-        return this.http.get<NotificationResponse[]>(`${this.apiUrlBase}/notifications`);
+    getNotificationsData(token: string,): Observable<NotificationResponse[]> {
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        }
+        return this.http.get<NotificationResponse[]>(`${this.apiUrlBase}/notifications`, { headers });
     }
 
-    updateNotificationData(notification_id: string, notification: NotificationResponse): Observable<boolean> {
-        return this.http.put<boolean>(`${this.apiUrlBase}/notifications/${notification_id}`, notification);
+    updateNotificationData(token: string, notification_id: string, notification: NotificationResponse): Observable<boolean> {
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        }
+        return this.http.put<boolean>(`${this.apiUrlBase}/notifications/${notification_id}`, notification, { headers });
     }
 }

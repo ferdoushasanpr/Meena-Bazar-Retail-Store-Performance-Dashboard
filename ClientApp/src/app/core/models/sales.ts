@@ -2,6 +2,7 @@ export interface EntityCountData {
     numberOfCustomer: number,
     numberOfOrder: number,
     numberOfProduct: number,
+    numberOfCategory: number,
     numberOfStore: number,
 }
 

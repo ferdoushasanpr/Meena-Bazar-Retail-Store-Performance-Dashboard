@@ -15,6 +15,7 @@ import { DonutChart } from '../../../shared/components/donut-chart/donut-chart';
 import { TableChart } from '../../../shared/components/table-chart/table-chart';
 import { formatDate } from '../../../shared/utilities/date';
 import { HorizontalBarChart } from '../../../shared/components/horizontal-bar-chart/horizontal-bar-chart';
+import { AuthService } from '../../../auth/services/auth-service';
 
 @Component({
   imports: [FormsModule, PageHeader, Filter, Loading, ErrorDisplay, MetricCard, TrendChart, DonutChart, HorizontalBarChart],
@@ -23,12 +24,16 @@ import { HorizontalBarChart } from '../../../shared/components/horizontal-bar-ch
   templateUrl: './sales-analytics.html',
 })
 export class SalesAnalytics {
+  private authService = inject(AuthService);
   private salesService = inject(SalesService);
   private reportExportService = inject(ReportExporter);
 
   //Page Header Component Info
   pageHeaderTitle = "Sales Analytics";
   pageHeaderSubtitle = "In-depth multi-dimensional trend analysis, period-over-period comparisons, and volume metrics.";
+
+  // User Data
+  authData = this.authService.authData;
 
   // Filter Criteria
   currentFilters = signal<FilterCriteria>({
@@ -136,19 +141,23 @@ export class SalesAnalytics {
   }
 
   loadSalesData(): void {
+    const token = this.authData()?.token;
     const currentFilter = this.currentFilters();
 
     const selectedStore = currentFilter.storeId === 'All Stores'
       ? 'ST001'
       : currentFilter.storeId;
 
-    this.salesService.loadFilteredSalesData(currentFilter.startDate, currentFilter.endDate, selectedStore);
-    this.salesService.loadDailyStoreSalesData(currentFilter.startDate, currentFilter.endDate, selectedStore);
-    this.salesService.loadFilteredStoreCategorySalesData(currentFilter.startDate, currentFilter.endDate, selectedStore);
-    this.salesService.loadStoreProductSalesData(1, currentFilter.startDate, currentFilter.endDate, selectedStore);
+    if (token) {
+      this.salesService.loadFilteredSalesData(token, currentFilter.startDate, currentFilter.endDate, selectedStore);
+      this.salesService.loadDailyStoreSalesData(token, currentFilter.startDate, currentFilter.endDate, selectedStore);
+      this.salesService.loadFilteredStoreCategorySalesData(token, currentFilter.startDate, currentFilter.endDate, selectedStore);
+      this.salesService.loadStoreProductSalesData(token, 1, currentFilter.startDate, currentFilter.endDate, selectedStore);
+    }
   }
 
   onPageChange(pageNumber: number): void {
+    const token = this.authData()?.token;
     const filters = this.currentFilters();
     const endDate = new Date(filters.endDate);
     const startDate = new Date(filters.startDate);
@@ -157,7 +166,8 @@ export class SalesAnalytics {
       ? 'ST001'
       : filters.storeId;
 
-    this.salesService.loadStoreProductSalesData(pageNumber, formatDate(startDate), formatDate(endDate), storeId);
+    if (token)
+      this.salesService.loadStoreProductSalesData(token, pageNumber, formatDate(startDate), formatDate(endDate), storeId);
   }
 
   // CSV Export Methods

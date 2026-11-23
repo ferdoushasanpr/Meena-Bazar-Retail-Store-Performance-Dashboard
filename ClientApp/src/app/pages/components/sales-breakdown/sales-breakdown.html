@@ -16,6 +16,14 @@
             (onLoad)="loadSalesData()" />
     </div>
     } @else {
+    <section class="metrics-grid">
+        <app-metric-card class="metric-item" [card]="totalCategoryCard()">
+        </app-metric-card>
+
+        <app-metric-card class="metric-item" [card]="totalProductCard()">
+        </app-metric-card>
+    </section>
+
     <div class="charts-section">
         <!-- Vertical Bar Chart with Store Selector -->
         <app-vertical-bar-chart title="Category Sales Performance"

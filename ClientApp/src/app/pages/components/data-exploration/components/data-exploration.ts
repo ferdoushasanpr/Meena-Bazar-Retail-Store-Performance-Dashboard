@@ -158,109 +158,124 @@ export class DataExploration {
   }
 
   loadComponentData(): void {
+    const token = this.token;
+
+    if (!token) {
+      this.toastService.showError("Authentication token missing!", "Error");
+      return;
+    }
+
     if (this.pageHeaderTitle() === 'Customers') {
       this.activeEntityType.set('Customer');
-      this.customerService.loadCustomerData(1);
+      this.customerService.loadCustomerData(token, 1);
     } else if (this.pageHeaderTitle() === 'Products') {
       this.activeEntityType.set('Product');
-      this.productService.loadProductData(1);
+      this.productService.loadProductData(token, 1);
     } else if (this.pageHeaderTitle() === 'Stores') {
       this.activeEntityType.set('Store');
-      this.storeService.loadStoreData(1);
+      this.storeService.loadStoreData(token, 1);
     } else if (this.pageHeaderTitle() === 'Orders') {
-      this.orderService.loadOrderData(1);
+      this.orderService.loadOrderData(token, 1);
     } else if (this.pageHeaderTitle() === 'Transactions') {
-      this.transactionService.loadTransactionsData(1);
-    } else if (this.pageHeaderTitle() === 'Users') {
+      this.transactionService.loadTransactionsData(token, 1);
+    } else if (this.pageHeaderTitle() === 'Users' && this.userRole === 'admin') {
       this.activeEntityType.set('User');
-      if (this.token && this.userRole === 'admin') {
-        this.userService.loadUserData(this.token, 1);
-      }
+      this.userService.loadUserData(token, 1);
     }
   }
 
   onSearch(searchTerm: string): void {
     this.searchQuery.set(searchTerm);
 
+    const token = this.token;
+
+    if (!token) {
+      this.toastService.showError("Authentication token missing!", "Error");
+      return;
+    }
+
     if (this.pageHeaderTitle() === 'Customers') {
       if (this.searchQuery() === '') {
-        this.customerService.loadCustomerData(1);
+        this.customerService.loadCustomerData(token, 1);
       } else {
-        this.customerService.loadSearchCustomerData(1, searchTerm);
+        this.customerService.loadSearchCustomerData(token, 1, searchTerm);
       }
     } else if (this.pageHeaderTitle() === 'Products') {
       if (this.searchQuery() === '') {
-        this.productService.loadProductData(1);
+        this.productService.loadProductData(token, 1);
       } else {
-        this.productService.loadSearchProductData(1, searchTerm);
+        this.productService.loadSearchProductData(token, 1, searchTerm);
       }
     } else if (this.pageHeaderTitle() === 'Stores') {
       if (this.searchQuery() === '') {
-        this.storeService.loadStoreData(1);
+        this.storeService.loadStoreData(token, 1);
       } else {
-        this.storeService.loadSearchStoreData(1, searchTerm);
+        this.storeService.loadSearchStoreData(token, 1, searchTerm);
       }
     } else if (this.pageHeaderTitle() === 'Orders') {
       if (this.searchQuery() === '') {
-        this.orderService.loadOrderData(1);
+        this.orderService.loadOrderData(token, 1);
       } else {
-        this.orderService.loadSearchOrderData(1, searchTerm);
+        this.orderService.loadSearchOrderData(token, 1, searchTerm);
       }
     } else if (this.pageHeaderTitle() === 'Transactions') {
       if (this.searchQuery() === '') {
-        this.transactionService.loadTransactionsData(1);
+        this.transactionService.loadTransactionsData(token, 1);
       } else {
-        this.transactionService.loadSearchTransactionData(1, searchTerm);
+        this.transactionService.loadSearchTransactionData(token, 1, searchTerm);
       }
-    } else if (this.pageHeaderTitle() === 'Users') {
-      if (this.token && this.userRole === 'admin') {
-        if (this.searchQuery() === '') {
-          this.userService.loadUserData(this.token, 1);
-        } else {
-          this.userService.loadSearchUserData(1, this.token, searchTerm);
-        }
+    } else if (this.pageHeaderTitle() === 'Users' && this.userRole === 'admin') {
+      if (this.searchQuery() === '') {
+        this.userService.loadUserData(token, 1);
+      } else {
+        this.userService.loadSearchUserData(1, token, searchTerm);
       }
     }
   }
 
   onPageChange(pageNumber: number): void {
+    const token = this.token;
+
+    if (!token) {
+      this.toastService.showError("Authentication token missing!", "Error");
+      return;
+    }
+
     if (this.pageHeaderTitle() === 'Customers') {
       if (this.searchQuery() === '') {
-        this.customerService.loadCustomerData(pageNumber);
+        this.customerService.loadCustomerData(token, pageNumber);
       } else {
-        this.customerService.loadSearchCustomerData(pageNumber, this.searchQuery());
+        this.customerService.loadSearchCustomerData(token, pageNumber, this.searchQuery());
       }
     } else if (this.pageHeaderTitle() === 'Products') {
       if (this.searchQuery() === '') {
-        this.productService.loadProductData(pageNumber);
+        this.productService.loadProductData(token, pageNumber);
       } else {
-        this.productService.loadSearchProductData(pageNumber, this.searchQuery());
+        this.productService.loadSearchProductData(token, pageNumber, this.searchQuery());
       }
     } else if (this.pageHeaderTitle() === 'Stores') {
       if (this.searchQuery() === '') {
-        this.storeService.loadStoreData(pageNumber);
+        this.storeService.loadStoreData(token, pageNumber);
       } else {
-        this.storeService.loadSearchStoreData(pageNumber, this.searchQuery());
+        this.storeService.loadSearchStoreData(token, pageNumber, this.searchQuery());
       }
     } else if (this.pageHeaderTitle() === 'Orders') {
       if (this.searchQuery() === '') {
-        this.orderService.loadOrderData(pageNumber);
+        this.orderService.loadOrderData(token, pageNumber);
       } else {
-        this.orderService.loadSearchOrderData(pageNumber, this.searchQuery());
+        this.orderService.loadSearchOrderData(token, pageNumber, this.searchQuery());
       }
     } else if (this.pageHeaderTitle() === 'Transactions') {
       if (this.searchQuery() === '') {
-        this.transactionService.loadTransactionsData(pageNumber);
+        this.transactionService.loadTransactionsData(token, pageNumber);
       } else {
-        this.transactionService.loadSearchTransactionData(pageNumber, this.searchQuery());
+        this.transactionService.loadSearchTransactionData(token, pageNumber, this.searchQuery());
       }
-    } else if (this.pageHeaderTitle() === 'Users') {
-      if (this.token && this.userRole === 'admin') {
-        if (this.searchQuery() === '') {
-          this.userService.loadUserData(this.token, pageNumber);
-        } else {
-          this.userService.loadSearchUserData(pageNumber, this.token, this.searchQuery());
-        }
+    } else if (this.pageHeaderTitle() === 'Users' && this.userRole === 'admin') {
+      if (this.searchQuery() === '') {
+        this.userService.loadUserData(token, pageNumber);
+      } else {
+        this.userService.loadSearchUserData(pageNumber, token, this.searchQuery());
       }
     }
   }
@@ -273,14 +288,21 @@ export class DataExploration {
   }
 
   handleSaveUpdate(payload: UpdatePayload): void {
+    const token = this.token;
+
+    if (!token) {
+      this.toastService.showError("Authentication token missing!", "Error");
+      return;
+    }
+
     payload.data[`${payload.type.toLowerCase()}_id`] = payload.id;
 
     if (payload.type === "Customer") {
-      this.customerService.updateCustomer(payload.id, payload.data).subscribe({
+      this.customerService.updateCustomer(token, payload.id, payload.data).subscribe({
         next: (response) => {
           const data = this.userData();
           if (data.user_id) {
-            this.notificationService.addNotification({
+            this.notificationService.addNotification(token, {
               user_id: data.user_id,
               message: `updated customer of customer id ${payload.id}.`,
               isRead: 0
@@ -291,16 +313,16 @@ export class DataExploration {
           }
           this.isModalOpen.set(false);
           this.toastService.showSuccess("Update", "Customer Updated Successfully!");
-          this.customerService.loadCustomerData(this.componentData().pageNumber);
+          this.customerService.loadCustomerData(token, this.componentData().pageNumber);
         },
         error: (error) => { this.toastService.showError("Something Went Wrong!", "Error") }
       });
     } else if (payload.type === "Product") {
-      this.productService.updateProduct(payload.id, payload.data).subscribe({
+      this.productService.updateProduct(token, payload.id, payload.data).subscribe({
         next: (response) => {
           const data = this.userData();
           if (data.user_id) {
-            this.notificationService.addNotification({
+            this.notificationService.addNotification(token, {
               user_id: data.user_id,
               message: `updated product of product id ${payload.id}.`,
               isRead: 0
@@ -311,16 +333,16 @@ export class DataExploration {
           }
           this.isModalOpen.set(false);
           this.toastService.showSuccess("Update", "Product Updated Successfully!");
-          this.productService.loadProductData(this.componentData().pageNumber);
+          this.productService.loadProductData(token, this.componentData().pageNumber);
         },
         error: (error) => { this.toastService.showError("Something Went Wrong!", "Error") }
       });
     } else if (payload.type === "Store") {
-      this.storeService.updateStore(payload.id, payload.data).subscribe({
+      this.storeService.updateStore(token, payload.id, payload.data).subscribe({
         next: (response) => {
           const data = this.userData();
           if (data.user_id) {
-            this.notificationService.addNotification({
+            this.notificationService.addNotification(token, {
               user_id: data.user_id,
               message: `updated store of store id ${payload.id}.`,
               isRead: 0
@@ -331,34 +353,32 @@ export class DataExploration {
           }
           this.isModalOpen.set(false);
           this.toastService.showSuccess("Update", "Store Updated Successfully!");
-          this.storeService.loadStoreData(this.componentData().pageNumber);
+          this.storeService.loadStoreData(token, this.componentData().pageNumber);
         },
         error: (error) => { this.toastService.showError("Something Went Wrong!", "Error") }
       });
     } else if (payload.type === "User") {
-      if (this.token) {
-        this.userService.updateUser(payload.id, payload.data, this.token).subscribe({
-          next: (response) => {
-            const data = this.userData();
-            if (data.user_id) {
-              this.notificationService.addNotification({
-                user_id: data.user_id,
-                message: `updated user of user id ${payload.id}.`,
-                isRead: 0
-              }).subscribe({
-                next: () => { console.log("User Updated Successfully!") },
-                error: (error) => { console.error(error) }
-              });
-            }
-            this.isModalOpen.set(false);
-            this.toastService.showSuccess("Update", "User Updated Successfully!");
-            if (this.token) {
-              this.userService.loadUserData(this.token, this.componentData().pageNumber);
-            }
-          },
-          error: (error) => { this.toastService.showError("Something Went Wrong!", "Error") }
-        });
-      }
+      this.userService.updateUser(payload.id, payload.data, token).subscribe({
+        next: (response) => {
+          const data = this.userData();
+          if (data.user_id) {
+            this.notificationService.addNotification(token, {
+              user_id: data.user_id,
+              message: `updated user of user id ${payload.id}.`,
+              isRead: 0
+            }).subscribe({
+              next: () => { console.log("User Updated Successfully!") },
+              error: (error) => { console.error(error) }
+            });
+          }
+          this.isModalOpen.set(false);
+          this.toastService.showSuccess("Update", "User Updated Successfully!");
+          if (this.token) {
+            this.userService.loadUserData(this.token, this.componentData().pageNumber);
+          }
+        },
+        error: (error) => { this.toastService.showError("Something Went Wrong!", "Error") }
+      });
     }
   }
 
@@ -375,14 +395,19 @@ export class DataExploration {
 
   onConfirmDelete(): void {
     const record = this.itemToDelete();
-    console.log('Deleting record from backend:', record);
+    const token = this.token;
+
+    if (!token) {
+      this.toastService.showError("Authentication token missing!", "Error");
+      return;
+    }
 
     if (this.pageHeaderTitle() === 'Customers') {
-      this.customerService.deleteCustomer(record.customer_id).subscribe({
+      this.customerService.deleteCustomer(token, record.customer_id).subscribe({
         next: (response) => {
           const data = this.userData();
           if (data.user_id) {
-            this.notificationService.addNotification({
+            this.notificationService.addNotification(token, {
               user_id: data.user_id,
               message: `deleted customer of customer id ${record.customer_id}.`,
               isRead: 0
@@ -392,16 +417,16 @@ export class DataExploration {
             });
           }
           this.toastService.showSuccess("Delete", "Customer Deleted Successfully!");
-          this.customerService.loadCustomerData(this.componentData().pageNumber);
+          this.customerService.loadCustomerData(token, this.componentData().pageNumber);
         },
         error: (error) => { this.toastService.showError("Something Went Wrong!", "Error") }
       });
     } else if (this.pageHeaderTitle() === 'Products') {
-      this.productService.deleteProduct(record.product_id).subscribe({
+      this.productService.deleteProduct(token, record.product_id).subscribe({
         next: (response) => {
           const data = this.userData();
           if (data.user_id) {
-            this.notificationService.addNotification({
+            this.notificationService.addNotification(token, {
               user_id: data.user_id,
               message: `deleted product of product id ${record.product_id}.`,
               isRead: 0
@@ -411,16 +436,16 @@ export class DataExploration {
             });
           }
           this.toastService.showSuccess("Delete", "Product Deleted Successfully!");
-          this.productService.loadProductData(this.componentData().pageNumber);
+          this.productService.loadProductData(token, this.componentData().pageNumber);
         },
         error: (error) => { this.toastService.showError("Something Went Wrong!", "Error") }
       });
     } else if (this.pageHeaderTitle() === 'Stores') {
-      this.storeService.deleteStore(record.store_id).subscribe({
+      this.storeService.deleteStore(token, record.store_id).subscribe({
         next: (response) => {
           const data = this.userData();
           if (data.user_id) {
-            this.notificationService.addNotification({
+            this.notificationService.addNotification(token, {
               user_id: data.user_id,
               message: `deleted store of store id ${record.store_id}.`,
               isRead: 0
@@ -430,33 +455,31 @@ export class DataExploration {
             });
           }
           this.toastService.showSuccess("Delete", "Store Deleted Successfully!");
-          this.storeService.loadStoreData(this.componentData().pageNumber);
+          this.storeService.loadStoreData(token, this.componentData().pageNumber);
         },
         error: (error) => { this.toastService.showError("Something Went Wrong!", "Error") }
       });
-    } else if (this.pageHeaderTitle() === 'Users') {
-      if (this.userRole === 'admin' && this.token) {
-        this.userService.deleteUser(record.user_id, this.token).subscribe({
-          next: (response) => {
-            const data = this.userData();
-            if (data.user_id) {
-              this.notificationService.addNotification({
-                user_id: data.user_id,
-                message: `deleted user of user id ${record.user_id}.`,
-                isRead: 0
-              }).subscribe({
-                next: () => { console.log("User Deleted Successfully!") },
-                error: (error) => { console.error(error) }
-              });
-            }
-            this.toastService.showSuccess("Delete", "User Deleted Successfully!");
-            if (this.token) {
-              this.userService.loadUserData(this.token, this.componentData().pageNumber);
-            }
-          },
-          error: (error) => { this.toastService.showError("Something Went Wrong!", "Error") }
-        });
-      }
+    } else if (this.pageHeaderTitle() === 'Users' && this.userRole === 'admin') {
+      this.userService.deleteUser(record.user_id, token).subscribe({
+        next: (response) => {
+          const data = this.userData();
+          if (data.user_id) {
+            this.notificationService.addNotification(token, {
+              user_id: data.user_id,
+              message: `deleted user of user id ${record.user_id}.`,
+              isRead: 0
+            }).subscribe({
+              next: () => { console.log("User Deleted Successfully!") },
+              error: (error) => { console.error(error) }
+            });
+          }
+          this.toastService.showSuccess("Delete", "User Deleted Successfully!");
+          if (this.token) {
+            this.userService.loadUserData(token, this.componentData().pageNumber);
+          }
+        },
+        error: (error) => { this.toastService.showError("Something Went Wrong!", "Error") }
+      });
     }
 
     this.isDeleteModalOpen.set(false);

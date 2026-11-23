@@ -11,14 +11,18 @@ import { ErrorDisplay } from '../../../shared/components/error-display/error-dis
 import { VerticalBarChart } from '../../../shared/components/vertical-bar-chart/vertical-bar-chart';
 import { TableChart } from '../../../shared/components/table-chart/table-chart';
 import { DonutChart } from '../../../shared/components/donut-chart/donut-chart';
+import { AuthService } from '../../../auth/services/auth-service';
+import { MetricCardProps } from '../../../core/models/props';
+import { MetricCard } from '../../../shared/components/metric-card/metric-card';
 
 @Component({
-  imports: [FormsModule, PageHeader, Filter, Loading, ErrorDisplay, VerticalBarChart, DonutChart, HorizontalBarChart, TableChart],
+  imports: [FormsModule, PageHeader, Filter, Loading, ErrorDisplay, MetricCard, VerticalBarChart, DonutChart, HorizontalBarChart, TableChart],
   selector: 'app-sales-breakdown',
   styleUrl: './sales-breakdown.css',
   templateUrl: './sales-breakdown.html',
 })
 export class SalesBreakdown {
+  private authService = inject(AuthService);
   private salesService = inject(SalesService);
   private reportExportService = inject(ReportExporter);
 
@@ -26,13 +30,18 @@ export class SalesBreakdown {
   pageHeaderTitle = "Sales Breakdown";
   pageHeaderSubtitle = "Benchmark, rank, and analyze revenue, customer volume, and efficiency across all product, categories and stores.";
 
+  // User Data
+  authData = this.authService.authData;
+
   // Loading States
+  entityCountLoading = this.salesService.entityCountLoading;
   salesCategoryLoading = this.salesService.salesCategoryLoading;
   storeSalesLoading = this.salesService.storesSalesLoading;
   productSalesLoading = this.salesService.productSalesLoading;
   storeCategorySalesLoading = this.salesService.storeCategorySalesLoading;
 
   // Error States
+  entityCountError = this.salesService.entityCountError;
   salesCategoryError = this.salesService.salesCategoryError;
   storesSalesError = this.salesService.storesSalesError;
   productSalesError = this.salesService.productSalesError;
@@ -46,6 +55,7 @@ export class SalesBreakdown {
   });
 
   // Data
+  entityCountData = this.salesService.entityCountData;
   salesCategoryData = this.salesService.salesCategoryData;
   storesSalesData = this.salesService.storesSalesData;
   productSalesData = this.salesService.productSalesData;
@@ -73,6 +83,28 @@ export class SalesBreakdown {
     );
   });
 
+  totalCategoryCard = computed((): MetricCardProps => {
+    const data = this.entityCountData();
+
+    return {
+      title: 'TOTAL CATEGORIES',
+      icon: 'fa-solid fa-shapes',
+      value: data.numberOfCategory,
+      visualIcon: 'fa-solid fa-chart-column comparison-icon bars-icon'
+    };
+  });
+
+  totalProductCard = computed((): MetricCardProps => {
+    const data = this.entityCountData();
+
+    return {
+      title: 'TOTAL PRODUCTS',
+      icon: 'fa-solid fa-box-open',
+      value: data.numberOfProduct,
+      visualIcon: 'fa-solid fa-tags comparison-icon sparkline-icon'
+    };
+  });
+
   constructor() {
     effect(() => {
       const filters = this.currentFilters();
@@ -88,28 +120,36 @@ export class SalesBreakdown {
   }
 
   loadSalesData(): void {
+    const token = this.authData()?.token;
     const currentFilter = this.currentFilters();
 
-    this.salesService.loadSalesCategoryData(currentFilter.startDate, currentFilter.endDate);
-    this.salesService.loadStoresSalesData(currentFilter.startDate, currentFilter.endDate);
-    this.salesService.loadProductSalesData(1, currentFilter.startDate, currentFilter.endDate);
-    this.salesService.loadStoreCategorySalesData(1, undefined, currentFilter.startDate, currentFilter.endDate);
+    if (token) {
+      this.salesService.loadEntityCountData(token);
+      this.salesService.loadSalesCategoryData(token, currentFilter.startDate, currentFilter.endDate);
+      this.salesService.loadStoresSalesData(token, currentFilter.startDate, currentFilter.endDate);
+      this.salesService.loadProductSalesData(token, 1, currentFilter.startDate, currentFilter.endDate);
+      this.salesService.loadStoreCategorySalesData(token, 1, undefined, currentFilter.startDate, currentFilter.endDate);
+    }
   }
 
   onHorizontalBarChartPageChange(pageNumber: number): void {
+    const token = this.authData()?.token;
     const filters = this.currentFilters();
     const endDate = filters.endDate;
     const startDate = filters.startDate;
 
-    this.salesService.loadProductSalesData(pageNumber, startDate, endDate);
+    if (token)
+      this.salesService.loadProductSalesData(token, pageNumber, startDate, endDate);
   }
 
   onTableChartPageChange(pageNumber: number): void {
+    const token = this.authData()?.token;
     const filters = this.currentFilters();
     const endDate = filters.endDate;
     const startDate = filters.startDate;
 
-    this.salesService.loadStoreCategorySalesData(pageNumber, undefined, startDate, endDate);
+    if (token)
+      this.salesService.loadStoreCategorySalesData(token, pageNumber, undefined, startDate, endDate);
   }
 
   // CSV Export Methods
