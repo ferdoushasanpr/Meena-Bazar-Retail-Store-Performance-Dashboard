@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using NLog;
 using Server.DTOs;
 using Server.Interfaces;
 
@@ -6,6 +7,7 @@ namespace Server.Routes;
 
 public static class AuthRoute
 {
+    public static readonly Logger logger = LogManager.GetCurrentClassLogger();
     public static IEndpointRouteBuilder MapAuthEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/auth")
@@ -15,56 +17,78 @@ public static class AuthRoute
             [FromBody] RegisterRequest request,
             IAuthService authService) =>
         {
-            if (string.IsNullOrWhiteSpace(request.user_name) ||
-                string.IsNullOrWhiteSpace(request.user_email) ||
-                string.IsNullOrWhiteSpace(request.password))
+            try
             {
-                return Results.BadRequest(new
+                if (string.IsNullOrWhiteSpace(request.user_name) ||
+                    string.IsNullOrWhiteSpace(request.user_email) ||
+                    string.IsNullOrWhiteSpace(request.password))
                 {
-                    message = "All fields are required."
+                    return Results.BadRequest(new
+                    {
+                        message = "All fields are required."
+                    });
+                }
+
+                var result = await authService.RegisterAsync(request);
+
+                if (result == null)
+                {
+                    logger.Warn("User not registered.");
+                    return Results.Conflict(new
+                    {
+                        message = "Email already exists."
+                    });
+                }
+
+                return Results.Ok(new
+                {
+                    message = "Registration successful.",
+                    data = result
                 });
             }
-
-            var result = await authService.RegisterAsync(request);
-
-            if (result == null)
+            catch (Exception ex)
             {
-                return Results.Conflict(new
-                {
-                    message = "Email already exists."
-                });
+                logger.Error(ex, "Something went wrong to register user.");
+                return Results.Problem(
+                    "An unexpected error occurred.",
+                    statusCode: 500);
             }
-
-            return Results.Ok(new
-            {
-                message = "Registration successful.",
-                data = result
-            });
         });
 
         group.MapPost("/login", async ([FromBody] LoginRequest request, IAuthService service) =>
         {
-            if (string.IsNullOrWhiteSpace(request.user_email) ||
-                string.IsNullOrWhiteSpace(request.password))
+            try
             {
-                return Results.BadRequest(new
+                if (string.IsNullOrWhiteSpace(request.user_email) ||
+                    string.IsNullOrWhiteSpace(request.password))
                 {
-                    message = "Email and Password are required."
+                    return Results.BadRequest(new
+                    {
+                        message = "Email and Password are required."
+                    });
+                }
+
+                var result = await service.LoginAsync(request);
+
+                if (result == null)
+                {
+                    logger.Warn("User not login.");
+                    return Results.Unauthorized();
+                }
+
+                return Results.Ok(new
+                {
+                    message = "Login successful.",
+                    data = result
                 });
             }
-
-            var result = await service.LoginAsync(request);
-
-            if (result == null)
+            catch (Exception ex)
             {
-                return Results.Unauthorized();
+                logger.Error(ex, "Something went wrong to login user.");
+                return Results.Problem(
+                    "An unexpected error occurred.",
+                    statusCode: 500);
             }
-
-            return Results.Ok(new
-            {
-                message = "Login successful.",
-                data = result
-            });
         });
 
         return app;

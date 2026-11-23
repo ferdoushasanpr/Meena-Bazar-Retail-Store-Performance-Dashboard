@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using NLog;
 using Server.Data;
 using Server.DTOs;
 using Server.Hubs;
@@ -10,6 +11,7 @@ class NotificationService : INotificationService
 {
     private readonly ApplicationDbContext _context;
     private readonly IHubContext<NotificationHub> _hubContext;
+    private readonly Logger logger = LogManager.GetCurrentClassLogger();
 
     public NotificationService(IHubContext<NotificationHub> hubContext, ApplicationDbContext context)
     {
@@ -19,78 +21,112 @@ class NotificationService : INotificationService
 
     public async Task<IEnumerable<NotificationResponse>> GetNotificationsAsync()
     {
-        var query = from n in _context.DemoNotifications.AsNoTracking()
-                    join u in _context.DemoUsers.AsNoTracking()
-                    on n.user_id equals u.user_id
-                    select new NotificationResponse
-                    {
-                        notification_id = n.notification_id,
-                        user_name = u.user_name,
-                        message = n.message,
-                        isRead = n.isRead,
-                        createdAt = n.createdAt
-                    };
-        return await query.OrderByDescending(n => n.notification_id).Take(20).ToListAsync();
+        try
+        {
+            var query = from n in _context.DemoNotifications.AsNoTracking()
+                        join u in _context.DemoUsers.AsNoTracking()
+                        on n.user_id equals u.user_id
+                        select new NotificationResponse
+                        {
+                            notification_id = n.notification_id,
+                            user_name = u.user_name,
+                            message = n.message,
+                            isRead = n.isRead,
+                            createdAt = n.createdAt
+                        };
+            return await query.OrderByDescending(n => n.notification_id).Take(20).ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            logger.Error(ex, "Failed to retrieve notifications.");
+            throw;
+        }
     }
 
     public async Task<bool> AddNotificationAsync(Notification notification)
     {
-        var lastNotification = await _context.DemoNotifications.OrderByDescending(n => n.notification_id).FirstOrDefaultAsync();
-        int nextId = 1;
-
-        if (lastNotification != null)
+        try
         {
-            nextId = int.Parse(lastNotification.notification_id.Substring(1)) + 1;
+            var lastNotification = await _context.DemoNotifications.OrderByDescending(n => n.notification_id).FirstOrDefaultAsync();
+            int nextId = 1;
+
+            if (lastNotification != null)
+            {
+                nextId = int.Parse(lastNotification.notification_id.Substring(1)) + 1;
+            }
+
+            notification.notification_id = $"N{nextId:D4}";
+            notification.createdAt = DateTime.UtcNow;
+
+            await _context.DemoNotifications.AddAsync(notification);
+
+            var result = await _context.SaveChangesAsync() > 0;
+
+            if (!result)
+            {
+                return false;
+            }
+
+            logger.Info("Notification created successfully.");
+
+            var notificationResponse = await (
+            from n in _context.DemoNotifications.AsNoTracking()
+            join u in _context.DemoUsers.AsNoTracking()
+                on n.user_id equals u.user_id
+            where n.notification_id == notification.notification_id
+            select new NotificationResponse
+            {
+                notification_id = n.notification_id,
+                user_name = u.user_name,
+                message = n.message,
+                isRead = n.isRead,
+                createdAt = n.createdAt
+            }).FirstOrDefaultAsync();
+
+            if (notificationResponse != null)
+            {
+                await _hubContext.Clients.All.SendAsync(
+                    "ReceiveNotification",
+                    notificationResponse
+                );
+            }
+
+            logger.Info("Notification response created successfully.");
+            return true;
         }
-
-        notification.notification_id = $"N{nextId:D4}";
-        notification.createdAt = DateTime.UtcNow;
-
-        await _context.DemoNotifications.AddAsync(notification);
-
-        var result = await _context.SaveChangesAsync() > 0;
-
-        if (!result)
+        catch (Exception ex)
         {
-            return false;
+            logger.Error(ex, "Failed to create notification.");
+            throw;
         }
-
-        var notificationResponse = await (
-        from n in _context.DemoNotifications.AsNoTracking()
-        join u in _context.DemoUsers.AsNoTracking()
-            on n.user_id equals u.user_id
-        where n.notification_id == notification.notification_id
-        select new NotificationResponse
-        {
-            notification_id = n.notification_id,
-            user_name = u.user_name,
-            message = n.message,
-            isRead = n.isRead,
-            createdAt = n.createdAt
-        }).FirstOrDefaultAsync();
-
-        if (notificationResponse != null)
-        {
-            await _hubContext.Clients.All.SendAsync(
-                "ReceiveNotification",
-                notificationResponse
-            );
-        }
-
-        return true;
     }
 
     public async Task<bool> ReadNotificationAsync(NotificationResponse notification)
     {
-        var existingNotification = await _context.DemoNotifications.FirstOrDefaultAsync(n => n.notification_id == notification.notification_id);
-
-        if (existingNotification == null)
+        try
         {
-            return false;
+            var existingNotification = await _context.DemoNotifications.FirstOrDefaultAsync(n => n.notification_id == notification.notification_id);
+
+            if (existingNotification == null)
+            {
+                return false;
+            }
+
+            existingNotification.isRead = 1;
+
+            var result = await _context.SaveChangesAsync() > 0;
+
+            if (result)
+            {
+                logger.Info("Notification updated successfully. Notification_Id: {Notification_Id}", notification.notification_id);
+            }
+
+            return result;
         }
-
-        existingNotification.isRead = 1;
-
-        return await _context.SaveChangesAsync() > 0;
+        catch (Exception ex)
+        {
+            logger.Error(ex, "Failed to update notification. Notification_Id: {Notification_Id}", notification.notification_id);
+            throw;
+        }
     }
 }

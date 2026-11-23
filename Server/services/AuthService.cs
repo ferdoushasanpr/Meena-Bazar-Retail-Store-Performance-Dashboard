@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using NLog;
 using Server.Data;
 using Server.DTOs;
 using Server.Interfaces;
@@ -16,6 +17,7 @@ public class AuthService : IAuthService
     private readonly ApplicationDbContext _context;
     private readonly IConfiguration _configuration;
     private readonly PasswordHasher<User> _passwordHasher;
+    private readonly Logger logger = LogManager.GetCurrentClassLogger();
 
     public AuthService(
         ApplicationDbContext context,
@@ -27,89 +29,110 @@ public class AuthService : IAuthService
     }
     public async Task<AuthResponse?> RegisterAsync(RegisterRequest request)
     {
-        var exists = await _context.DemoUsers.AnyAsync(
-                    u => u.user_email == request.user_email);
-
-        if (exists)
-            return null;
-
-        var lastUser = await _context.DemoUsers.OrderByDescending(u => u.user_id).FirstOrDefaultAsync();
-
-        int nextId = 1;
-
-        if (lastUser != null)
+        try
         {
-            nextId = int.Parse(lastUser.user_id.Substring(4)) + 1;
+            var exists = await _context.DemoUsers.AnyAsync(
+                        u => u.user_email == request.user_email);
+
+            if (exists)
+                return null;
+
+            var lastUser = await _context.DemoUsers.OrderByDescending(u => u.user_id).FirstOrDefaultAsync();
+
+            int nextId = 1;
+
+            if (lastUser != null)
+            {
+                nextId = int.Parse(lastUser.user_id.Substring(4)) + 1;
+            }
+
+            var user = new User
+            {
+                user_id = $"U{nextId:D5}",
+                user_name = request.user_name,
+                user_email = request.user_email,
+                user_role = "user",
+                user_signup = DateTime.UtcNow
+            };
+
+            user.user_password_hash =
+                _passwordHasher.HashPassword(user, request.password);
+
+            _context.DemoUsers.Add(user);
+            var result = await _context.SaveChangesAsync() > 0;
+
+            if (result)
+                logger.Info("User signup successfully.");
+
+            return GenerateJwtToken(user);
         }
-
-        var user = new User
+        catch (Exception ex)
         {
-            user_id = $"U{nextId:D5}",
-            user_name = request.user_name,
-            user_email = request.user_email,
-            user_role = "user",
-            user_signup = DateTime.UtcNow
-        };
-
-        user.user_password_hash =
-            _passwordHasher.HashPassword(user, request.password);
-
-        _context.DemoUsers.Add(user);
-
-        await _context.SaveChangesAsync();
-
-        return GenerateJwtToken(user);
+            logger.Error(ex, "Failed to signup user.");
+            throw;
+        }
     }
 
     public async Task<AuthResponse?> LoginAsync(LoginRequest request)
     {
-        var user = await _context.DemoUsers.FirstOrDefaultAsync(
-                    u => u.user_email == request.user_email);
-
-        if (user == null)
-            return null;
-
-        var result = _passwordHasher.VerifyHashedPassword(
-            user,
-            user.user_password_hash,
-            request.password
-        );
-
-        if (result == PasswordVerificationResult.Failed)
-            return null;
-
-        if (result == PasswordVerificationResult.SuccessRehashNeeded)
+        try
         {
-            user.user_password_hash =
-                _passwordHasher.HashPassword(user, request.password);
+            var user = await _context.DemoUsers.FirstOrDefaultAsync(
+                        u => u.user_email == request.user_email);
 
-            await _context.SaveChangesAsync();
+            if (user == null)
+                return null;
+
+            var result = _passwordHasher.VerifyHashedPassword(
+                user,
+                user.user_password_hash,
+                request.password
+            );
+
+            if (result == PasswordVerificationResult.Failed)
+                return null;
+
+            if (result == PasswordVerificationResult.SuccessRehashNeeded)
+            {
+                user.user_password_hash =
+                    _passwordHasher.HashPassword(user, request.password);
+
+                await _context.SaveChangesAsync();
+            }
+
+            logger.Info("User login successfully.");
+            return GenerateJwtToken(user);
         }
-
-        return GenerateJwtToken(user);
+        catch (Exception ex)
+        {
+            logger.Error(ex, "Failed to login user.");
+            throw;
+        }
     }
 
     private AuthResponse? GenerateJwtToken(User user)
     {
-        var jwtSettings = _configuration.GetSection("Jwt");
-
-        var key = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(
-                jwtSettings["Key"]!
-            )
-        );
-
-        var credentials = new SigningCredentials(
-            key,
-            SecurityAlgorithms.HmacSha256
-        );
-
-        var expiresAt = DateTime.UtcNow.AddMinutes(
-            double.Parse(jwtSettings["ExpiresInMinutes"] ?? "60")
-        );
-
-        var claims = new[]
+        try
         {
+            var jwtSettings = _configuration.GetSection("Jwt");
+
+            var key = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(
+                    jwtSettings["Key"]!
+                )
+            );
+
+            var credentials = new SigningCredentials(
+                key,
+                SecurityAlgorithms.HmacSha256
+            );
+
+            var expiresAt = DateTime.UtcNow.AddMinutes(
+                double.Parse(jwtSettings["ExpiresInMinutes"] ?? "60")
+            );
+
+            var claims = new[]
+            {
             new Claim(JwtRegisteredClaimNames.Sub, user.user_id),
             new Claim(ClaimTypes.NameIdentifier, user.user_id),
             new Claim(ClaimTypes.Name, user.user_name),
@@ -117,24 +140,30 @@ public class AuthService : IAuthService
             new Claim(ClaimTypes.Role, user.user_role)
         };
 
-        var token = new JwtSecurityToken(
-            issuer: jwtSettings["Issuer"],
-            audience: jwtSettings["Audience"],
-            claims: claims,
-            expires: expiresAt,
-            signingCredentials: credentials
-        );
+            var token = new JwtSecurityToken(
+                issuer: jwtSettings["Issuer"],
+                audience: jwtSettings["Audience"],
+                claims: claims,
+                expires: expiresAt,
+                signingCredentials: credentials
+            );
 
-        return new AuthResponse
+            return new AuthResponse
+            {
+                Token = new JwtSecurityTokenHandler()
+                    .WriteToken(token),
+
+                UserId = user.user_id,
+                UserName = user.user_name,
+                UserEmail = user.user_email,
+                Role = user.user_role,
+                ExpiresAt = expiresAt
+            };
+        }
+        catch (Exception ex)
         {
-            Token = new JwtSecurityTokenHandler()
-                .WriteToken(token),
-
-            UserId = user.user_id,
-            UserName = user.user_name,
-            UserEmail = user.user_email,
-            Role = user.user_role,
-            ExpiresAt = expiresAt
-        };
+            logger.Error(ex, "Failed to generate token.");
+            throw;
+        }
     }
 }
