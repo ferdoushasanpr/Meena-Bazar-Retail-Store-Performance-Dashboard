@@ -47,6 +47,7 @@ export class SalesService {
         numberOfCustomer: 0,
         numberOfOrder: 0,
         numberOfProduct: 0,
+        numberOfCategory: 0,
         numberOfStore: 0,
     });
 
