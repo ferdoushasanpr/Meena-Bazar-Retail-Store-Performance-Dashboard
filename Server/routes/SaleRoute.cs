@@ -9,7 +9,7 @@ public static class SaleRoute
     public static readonly Logger logger = LogManager.GetCurrentClassLogger();
     public static IEndpointRouteBuilder MapSaleEndpoints(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/sales").WithTags("Sales");
+        var group = app.MapGroup("/sales").WithTags("Sales").RequireAuthorization();
 
         group.MapGet("/", async (int pageNumber = 1, int pageSize = 10, ISaleService service = null!) =>
         {

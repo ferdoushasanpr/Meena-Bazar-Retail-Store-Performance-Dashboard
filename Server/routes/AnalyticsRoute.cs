@@ -10,7 +10,8 @@ public static class AnalyticsRoute
         this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/analytics")
-            .WithTags("Sales Analytics");
+            .WithTags("Sales Analytics")
+            .RequireAuthorization();
 
         group.MapGet("/entitycount", async (IAnalyticsService service) =>
         {

@@ -11,7 +11,7 @@ public static class CustomerRoute
         this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/customers")
-            .WithTags("Customers");
+            .WithTags("Customers").RequireAuthorization();
 
         group.MapGet("/", async (int pageNumber = 1,
             int pageSize = 10, ICustomerService service = null!) =>

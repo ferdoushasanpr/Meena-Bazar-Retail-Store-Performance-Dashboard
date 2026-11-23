@@ -9,7 +9,7 @@ public static class NotificationRoute
     public static readonly Logger logger = LogManager.GetCurrentClassLogger();
     public static IEndpointRouteBuilder MapNotificationsEndpoints(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("notifications").WithTags("Notifications");
+        var group = app.MapGroup("notifications").WithTags("Notifications").RequireAuthorization();
 
         group.MapGet("/", async (INotificationService service) =>
         {

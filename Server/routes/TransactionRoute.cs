@@ -9,7 +9,7 @@ public static class TransactionRoute
     public static readonly Logger logger = LogManager.GetCurrentClassLogger();
     public static IEndpointRouteBuilder MapTransactionEndpoints(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/transactions").WithTags("Transactions");
+        var group = app.MapGroup("/transactions").WithTags("Transactions").RequireAuthorization();
 
         group.MapGet("/", async (int pageNumber, int pageSize, ITransactionService service) =>
         {

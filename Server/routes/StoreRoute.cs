@@ -10,7 +10,7 @@ public static class StoreRoute
     public static IEndpointRouteBuilder MapStoreEndpoints(this IEndpointRouteBuilder app)
     {
 
-        var group = app.MapGroup("/stores").WithTags("Stores");
+        var group = app.MapGroup("/stores").WithTags("Stores").RequireAuthorization();
 
         group.MapGet("/", async (IStoreService service) =>
         {

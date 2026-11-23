@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using NLog;
 using Server.DTOs;
 using Server.Interfaces;
-using Server.Models;
 
 namespace Server.Routes;
 
