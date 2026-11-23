@@ -17,8 +17,10 @@ export class Topbar implements OnInit {
   private authService = inject(AuthService);
   private notificationService = inject(NotificationService);
 
-  lastUpdatedTime: string = '10:42 AM';
+  // User Data
+  authData = this.authService.authData;
 
+  lastUpdatedTime: string = '10:42 AM';
   pathSegments = signal<string[]>([]);
   isNotificationsOpen = signal<boolean>(false);
   notifications = this.notificationService.notifications;
@@ -32,8 +34,12 @@ export class Topbar implements OnInit {
   }
 
   ngOnInit(): void {
-    this.notificationService.getNotifications();
-    this.notificationService.startNotificationConnection();
+    const token = this.authData()?.token;
+
+    if (token) {
+      this.notificationService.getNotifications(token);
+      this.notificationService.startNotificationConnection(token);
+    }
   }
 
   updatePath() {
@@ -50,10 +56,11 @@ export class Topbar implements OnInit {
   }
 
   updateMarkAsRead(id: string): void {
+    const token = this.authData()?.token;
     const data = this.notifications().find(item => item.notification_id === id);
-    if (data) {
+    if (data && token) {
       data.isRead = 1;
-      this.notificationService.markAsReadNotification(id, data).subscribe({
+      this.notificationService.markAsReadNotification(token, id, data).subscribe({
         next: (response) => { console.log("The Notifications is Read.") },
         error: (error) => {
           console.error(error);

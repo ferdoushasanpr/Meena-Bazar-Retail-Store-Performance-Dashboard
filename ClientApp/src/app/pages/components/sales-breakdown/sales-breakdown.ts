@@ -11,6 +11,7 @@ import { ErrorDisplay } from '../../../shared/components/error-display/error-dis
 import { VerticalBarChart } from '../../../shared/components/vertical-bar-chart/vertical-bar-chart';
 import { TableChart } from '../../../shared/components/table-chart/table-chart';
 import { DonutChart } from '../../../shared/components/donut-chart/donut-chart';
+import { AuthService } from '../../../auth/services/auth-service';
 
 @Component({
   imports: [FormsModule, PageHeader, Filter, Loading, ErrorDisplay, VerticalBarChart, DonutChart, HorizontalBarChart, TableChart],
@@ -19,12 +20,16 @@ import { DonutChart } from '../../../shared/components/donut-chart/donut-chart';
   templateUrl: './sales-breakdown.html',
 })
 export class SalesBreakdown {
+  private authService = inject(AuthService);
   private salesService = inject(SalesService);
   private reportExportService = inject(ReportExporter);
 
   //Page Header Component Info
   pageHeaderTitle = "Sales Breakdown";
   pageHeaderSubtitle = "Benchmark, rank, and analyze revenue, customer volume, and efficiency across all product, categories and stores.";
+
+  // User Data
+  authData = this.authService.authData;
 
   // Loading States
   salesCategoryLoading = this.salesService.salesCategoryLoading;
@@ -88,28 +93,35 @@ export class SalesBreakdown {
   }
 
   loadSalesData(): void {
+    const token = this.authData()?.token;
     const currentFilter = this.currentFilters();
 
-    this.salesService.loadSalesCategoryData(currentFilter.startDate, currentFilter.endDate);
-    this.salesService.loadStoresSalesData(currentFilter.startDate, currentFilter.endDate);
-    this.salesService.loadProductSalesData(1, currentFilter.startDate, currentFilter.endDate);
-    this.salesService.loadStoreCategorySalesData(1, undefined, currentFilter.startDate, currentFilter.endDate);
+    if (token) {
+      this.salesService.loadSalesCategoryData(token, currentFilter.startDate, currentFilter.endDate);
+      this.salesService.loadStoresSalesData(token, currentFilter.startDate, currentFilter.endDate);
+      this.salesService.loadProductSalesData(token, 1, currentFilter.startDate, currentFilter.endDate);
+      this.salesService.loadStoreCategorySalesData(token, 1, undefined, currentFilter.startDate, currentFilter.endDate);
+    }
   }
 
   onHorizontalBarChartPageChange(pageNumber: number): void {
+    const token = this.authData()?.token;
     const filters = this.currentFilters();
     const endDate = filters.endDate;
     const startDate = filters.startDate;
 
-    this.salesService.loadProductSalesData(pageNumber, startDate, endDate);
+    if (token)
+      this.salesService.loadProductSalesData(token, pageNumber, startDate, endDate);
   }
 
   onTableChartPageChange(pageNumber: number): void {
+    const token = this.authData()?.token;
     const filters = this.currentFilters();
     const endDate = filters.endDate;
     const startDate = filters.startDate;
 
-    this.salesService.loadStoreCategorySalesData(pageNumber, undefined, startDate, endDate);
+    if (token)
+      this.salesService.loadStoreCategorySalesData(token, pageNumber, undefined, startDate, endDate);
   }
 
   // CSV Export Methods

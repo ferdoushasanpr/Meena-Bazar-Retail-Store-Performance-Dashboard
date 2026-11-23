@@ -23,10 +23,10 @@ export class OrderService {
         hasNextPage: false,
     });
 
-    loadSearchOrderData(pageNumber: number, searchTerm?: string) {
+    loadSearchOrderData(token: string, pageNumber: number, searchTerm?: string) {
         this.componentDataLoading.set(true);
         this.componentDataError.set(null);
-        this.operationsService.searchOrdersData(pageNumber, undefined, searchTerm).subscribe({
+        this.operationsService.searchOrdersData(token, pageNumber, undefined, searchTerm).subscribe({
             next: (response) => {
                 this.componentData.set(response);
                 this.componentDataLoading.set(false);
@@ -40,10 +40,10 @@ export class OrderService {
         });
     }
 
-    loadOrderData(pageNumber: number, pageSize?: number) {
+    loadOrderData(token: string, pageNumber: number, pageSize?: number) {
         this.componentDataLoading.set(true);
         this.componentDataError.set(null);
-        this.operationsService.getOrdersData(pageNumber, pageSize).subscribe({
+        this.operationsService.getOrdersData(token, pageNumber, pageSize).subscribe({
             next: (response) => {
                 this.componentData.set(response);
                 this.componentDataLoading.set(false);

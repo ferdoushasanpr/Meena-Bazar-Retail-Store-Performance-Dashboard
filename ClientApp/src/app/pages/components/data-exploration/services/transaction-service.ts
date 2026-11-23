@@ -21,10 +21,10 @@ export class TransactionService {
         hasNextPage: false,
     });
 
-    loadSearchTransactionData(pageNumber: number, searchTerm?: string) {
+    loadSearchTransactionData(token: string, pageNumber: number, searchTerm?: string) {
         this.componentDataLoading.set(true);
         this.componentDataError.set(null);
-        this.operationsService.searchTransactionsData(pageNumber, undefined, searchTerm).subscribe({
+        this.operationsService.searchTransactionsData(token, pageNumber, undefined, searchTerm).subscribe({
             next: (response) => {
                 this.componentData.set(response);
                 this.componentDataLoading.set(false);
@@ -38,10 +38,10 @@ export class TransactionService {
         });
     }
 
-    loadTransactionsData(pageNumber: number): void {
+    loadTransactionsData(token: string, pageNumber: number): void {
         this.componentDataLoading.set(true);
         this.componentDataError.set(null);
-        this.operationsService.getTransactionsData(pageNumber).subscribe({
+        this.operationsService.getTransactionsData(token, pageNumber).subscribe({
             next: (response) => {
                 this.componentData.set(response);
                 this.componentDataLoading.set(false);

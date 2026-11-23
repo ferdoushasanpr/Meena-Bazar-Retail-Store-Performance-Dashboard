@@ -3,6 +3,7 @@ import { formatDate } from '../../../../shared/utilities/date';
 import { FormsModule } from '@angular/forms';
 import { SalesService } from '../../../services/sales-service';
 import { FilterCriteria } from '../../models/filter-model';
+import { AuthService } from '../../../../auth/services/auth-service';
 
 @Component({
   imports: [FormsModule],
@@ -12,6 +13,10 @@ import { FilterCriteria } from '../../models/filter-model';
 })
 export class Filter implements OnInit {
   private salesService = inject(SalesService);
+  private authService = inject(AuthService);
+
+  // User Data
+  authData = this.authService.authData;
 
   timeRanges = ['All', 'Today', 'Last 7 Days', 'Last 30 Days', 'Select Range'];
   selectedTimeRange = 'All';
@@ -33,7 +38,9 @@ export class Filter implements OnInit {
 
   ngOnInit(): void {
     this.setTimeRange('All');
-    this.salesService.loadStoresData();
+    const token = this.authData()?.token;
+    if (token)
+      this.salesService.loadStoresData(token);
   }
 
   setTimeRange(range: string): void {
