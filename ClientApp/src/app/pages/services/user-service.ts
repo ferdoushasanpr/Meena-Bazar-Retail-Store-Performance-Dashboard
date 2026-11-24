@@ -33,7 +33,8 @@ export class UserService {
         user_email: "",
         user_password_hash: "",
         user_role: "",
-        user_signup: ""
+        user_signup: "",
+        user_last_active_at: ""
     });
 
     loadSearchUserData(pageNumber: number, token: string, searchTerm?: string) {

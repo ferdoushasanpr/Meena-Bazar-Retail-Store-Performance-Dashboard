@@ -4,7 +4,8 @@ export interface UserData {
     user_email: string,
     user_password_hash?: string,
     user_role?: string,
-    user_signup?: string
+    user_signup?: string,
+    user_last_active_at?: string
 }
 
 export interface UserDataResponse {
