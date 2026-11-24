@@ -53,6 +53,7 @@ public class AuthService : IAuthService
                 user_email = request.user_email,
                 user_role = "user",
                 user_signup = DateTime.UtcNow,
+                user_last_login_at = DateTime.UtcNow,
                 user_last_active_at = DateTime.UtcNow
             };
 
@@ -97,10 +98,11 @@ public class AuthService : IAuthService
             {
                 user.user_password_hash =
                     _passwordHasher.HashPassword(user, request.password);
-                user.user_last_active_at = DateTime.UtcNow;
-
-                await _context.SaveChangesAsync();
             }
+
+            user.user_last_active_at = user.user_last_login_at;
+            user.user_last_login_at = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
 
             logger.Info("User login successfully. User Email: {UserEmail} At {LastActive}", user.user_email, user.user_last_active_at);
             return GenerateJwtToken(user);

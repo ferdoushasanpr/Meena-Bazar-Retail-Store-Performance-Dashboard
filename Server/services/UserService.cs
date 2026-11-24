@@ -141,6 +141,8 @@ public class UserService : IUserService
 
             user.user_id = $"U{nextId:D5}";
             user.user_signup = DateTime.UtcNow;
+            user.user_last_login_at = DateTime.UtcNow;
+            user.user_last_active_at = DateTime.UtcNow;
 
             if (string.IsNullOrWhiteSpace(user.user_role))
                 user.user_role = "user";
