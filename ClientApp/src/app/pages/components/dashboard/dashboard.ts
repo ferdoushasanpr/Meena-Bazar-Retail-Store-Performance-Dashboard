@@ -97,7 +97,7 @@ export class Dashboard implements OnInit {
       title: 'TOTAL CUSTOMERS',
       icon: 'fa-solid fa-users-line',
       value: data.numberOfCustomer,
-      visualIcon: 'fa-solid fa-chart-column comparison-icon bars-icon'
+      visualIcon: 'fa-solid fa-chart-column comparison-icon'
     };
   });
 
@@ -108,7 +108,7 @@ export class Dashboard implements OnInit {
       title: 'TOTAL PRODUCTS',
       icon: 'fa-solid fa-box-open',
       value: data.numberOfProduct,
-      visualIcon: 'fa-solid fa-cubes comparison-icon sparkline-icon'
+      visualIcon: 'fa-solid fa-cubes comparison-icon'
     };
   });
 
@@ -119,7 +119,7 @@ export class Dashboard implements OnInit {
       title: 'TOTAL STORES',
       icon: 'fa-solid fa-store',
       value: data.numberOfStore,
-      visualIcon: 'fa-solid fa-gauge-high comparison-icon gauge-icon'
+      visualIcon: 'fa-solid fa-gauge-high comparison-icon'
     };
   });
 
@@ -130,7 +130,7 @@ export class Dashboard implements OnInit {
       title: 'TOTAL ORDERS',
       icon: 'fa-solid fa-cart-shopping',
       value: data.numberOfOrder,
-      visualIcon: 'fa-solid fa-chart-line comparison-icon sparkline-icon'
+      visualIcon: 'fa-solid fa-chart-line comparison-icon'
     }
   });
 
@@ -141,7 +141,7 @@ export class Dashboard implements OnInit {
       title: 'TOTAL SALES',
       icon: 'fa-solid fa-wallet',
       value: `$${sales.totalSales.toFixed(2)}`,
-      visualIcon: 'fa-solid fa-chart-line comparison-icon sparkline-icon'
+      visualIcon: 'fa-solid fa-chart-line comparison-icon'
     };
   });
 
@@ -152,7 +152,7 @@ export class Dashboard implements OnInit {
       title: 'TRANSACTIONS',
       icon: 'fa-solid fa-receipt',
       value: sales.numberOfTransactions.toLocaleString(),
-      visualIcon: 'fa-solid fa-chart-column comparison-icon bars-icon'
+      visualIcon: 'fa-solid fa-chart-column comparison-icon'
     };
   });
 
@@ -163,7 +163,7 @@ export class Dashboard implements OnInit {
       title: 'AVG. BASKET VALUE',
       icon: 'fa-solid fa-bag-shopping',
       value: `$${sales.averageBasketValue.toFixed(2)}`,
-      visualIcon: 'fa-solid fa-chart-line comparison-icon sparkline-icon'
+      visualIcon: 'fa-solid fa-chart-line comparison-icon'
     };
   });
 
@@ -174,7 +174,7 @@ export class Dashboard implements OnInit {
       title: 'AVG DAILY SALES',
       icon: 'fa-solid fa-chart-line',
       value: `$${sales.averageDailySales.toFixed(2)}`,
-      visualIcon: 'fa-solid fa-gauge-high comparison-icon gauge-icon'
+      visualIcon: 'fa-solid fa-gauge-high comparison-icon'
     }
   });
 

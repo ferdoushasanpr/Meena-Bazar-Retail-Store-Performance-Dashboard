@@ -89,7 +89,7 @@ export class SalesAnalytics {
       title: 'TOTAL SALES',
       icon: 'fa-solid fa-wallet',
       value: `$${sales.totalSales.toFixed(2)}`,
-      visualIcon: 'fa-solid fa-chart-line comparison-icon sparkline-icon'
+      visualIcon: 'fa-solid fa-chart-line comparison-icon'
     };
   });
 
@@ -100,7 +100,7 @@ export class SalesAnalytics {
       title: 'TRANSACTIONS',
       icon: 'fa-solid fa-receipt',
       value: sales.numberOfTransactions.toLocaleString(),
-      visualIcon: 'fa-solid fa-chart-column comparison-icon bars-icon'
+      visualIcon: 'fa-solid fa-chart-column comparison-icon'
     };
   });
 
@@ -111,7 +111,7 @@ export class SalesAnalytics {
       title: 'AVG. BASKET VALUE',
       icon: 'fa-solid fa-bag-shopping',
       value: `$${sales.averageBasketValue.toFixed(2)}`,
-      visualIcon: 'fa-solid fa-chart-line comparison-icon sparkline-icon'
+      visualIcon: 'fa-solid fa-chart-line comparison-icon'
     };
   });
 
@@ -122,7 +122,7 @@ export class SalesAnalytics {
       title: 'AVG DAILY SALES',
       icon: 'fa-solid fa-chart-line',
       value: `$${sales.averageDailySales.toFixed(2)}`,
-      visualIcon: 'fa-solid fa-gauge-high comparison-icon gauge-icon'
+      visualIcon: 'fa-solid fa-gauge-high comparison-icon'
     }
   });
 
