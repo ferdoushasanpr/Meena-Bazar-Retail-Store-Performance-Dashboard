@@ -90,7 +90,7 @@ export class SalesBreakdown {
       title: 'TOTAL CATEGORIES',
       icon: 'fa-solid fa-shapes',
       value: data.numberOfCategory,
-      visualIcon: 'fa-solid fa-chart-column comparison-icon bars-icon'
+      visualIcon: 'fa-solid fa-chart-column comparison-icon'
     };
   });
 
@@ -101,7 +101,7 @@ export class SalesBreakdown {
       title: 'TOTAL PRODUCTS',
       icon: 'fa-solid fa-box-open',
       value: data.numberOfProduct,
-      visualIcon: 'fa-solid fa-tags comparison-icon sparkline-icon'
+      visualIcon: 'fa-solid fa-tags comparison-icon'
     };
   });
 

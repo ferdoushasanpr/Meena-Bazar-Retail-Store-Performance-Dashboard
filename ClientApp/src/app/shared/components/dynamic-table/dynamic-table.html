@@ -36,9 +36,13 @@
                         </div>
                     </th>
                     }
-                    <!-- Additional Update & Delete Columns -->
+                    @if (canUpdate()) {
                     <th class="action-header center-align">Update</th>
+                    }
+
+                    @if (canDelete()) {
                     <th class="action-header center-align">Delete</th>
+                    }
                 </tr>
             </thead>
             <tbody>
@@ -52,18 +56,21 @@
                         </span>
                     </td>
                     }
-                    <!-- Action Cell: Update -->
+                    @if (canUpdate()) {
                     <td class="action-cell center-align">
                         <button class="action-btn edit-btn" title="Edit Item" (click)="onUpdate(row)">
                             <i class="fa-solid fa-pen-to-square"></i>
                         </button>
                     </td>
-                    <!-- Action Cell: Delete -->
+                    }
+
+                    @if (canDelete()) {
                     <td class="action-cell center-align">
                         <button class="action-btn delete-btn" title="Delete Item" (click)="onDelete(row)">
                             <i class="fa-solid fa-trash-can"></i>
                         </button>
                     </td>
+                    }
                 </tr>
                 } @empty {
                 <tr>

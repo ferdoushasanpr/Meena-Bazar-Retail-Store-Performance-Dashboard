@@ -14,10 +14,12 @@ export interface ColumnMeta {
   templateUrl: './dynamic-table.html',
 })
 export class DynamicTable {
-  // Core Data Inputs
+  // Data Inputs
   title = input<string>('Order Items');
   subtitle = input<string>('');
   data = input<any[]>([]);
+  canUpdate = input.required<boolean>();
+  canDelete = input.required<boolean>();
 
   // Pagination Inputs
   pageNumber = input<number>(1);
@@ -27,16 +29,14 @@ export class DynamicTable {
   hasPreviousPage = input<boolean>(false);
   hasNextPage = input<boolean>(false);
 
-  // Event Outputs
+  // Outputs
   pageChange = output<number>();
   updateRow = output<any>();
   deleteRow = output<any>();
 
-  // Sorting State
+  // State
   sortColumn = signal<string | null>(null);
   sortDirection = signal<'asc' | 'desc'>('asc');
-
-  // Search implementation
   searchQuery = signal('');
   searchTerm = output<string>();
 
@@ -46,7 +46,6 @@ export class DynamicTable {
     this.searchTerm.emit(this.searchQuery());
   }
 
-  // Auto-generate data columns from the first object in the data array
   columns = computed<ColumnMeta[]>(() => {
     const firstRow = this.data()?.[0];
     if (!firstRow) return [];
@@ -59,7 +58,6 @@ export class DynamicTable {
     }));
   });
 
-  // Client-side sorted view fallback
   sortedData = computed(() => {
     const list = [...(this.data() || [])];
     const key = this.sortColumn();
