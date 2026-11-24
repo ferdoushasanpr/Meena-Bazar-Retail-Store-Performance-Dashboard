@@ -13,71 +13,41 @@ public static class NotificationRoute
 
         group.MapGet("/", async (INotificationService service) =>
         {
-            try
-            {
-                var results = await service.GetNotificationsAsync();
+            var results = await service.GetNotificationsAsync();
 
-                logger.Info("Retrieved notifications successfully.");
-                return Results.Ok(results);
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex, "Something went wrong to retrieve all notifications.");
-                return Results.Problem(
-                    "An unexpected error occurred.",
-                    statusCode: 500);
-            }
+            logger.Info("Retrieved notifications successfully.");
+            return Results.Ok(results);
         });
 
         group.MapPost("/", async (INotificationService service, [FromBody] Notification notification) =>
         {
-            try
-            {
-                var result = await service.AddNotificationAsync(notification);
+            var result = await service.AddNotificationAsync(notification);
 
-                if (!result)
-                {
-                    logger.Warn("Notification not created.");
-                    return Results.BadRequest();
-                }
-
-                return Results.Ok("Successfully Created Notification.");
-            }
-            catch (Exception ex)
+            if (!result)
             {
-                logger.Error(ex, "Something went wrong to create notification.");
-                return Results.Problem(
-                    "An unexpected error occurred.",
-                    statusCode: 500);
+                logger.Warn("Notification not created.");
+                return Results.BadRequest();
             }
+
+            return Results.Ok("Successfully Created Notification.");
         });
 
         group.MapPut("/{notification_id}", async (INotificationService service, string notification_id, NotificationResponse notification) =>
         {
-            try
+            if (notification.notification_id != notification_id)
             {
-                if (notification.notification_id != notification_id)
-                {
-                    return Results.BadRequest("Notification ID Mismatched!");
-                }
-
-                var result = await service.ReadNotificationAsync(notification);
-
-                if (!result)
-                {
-                    logger.Warn("Notification not found. Notifications_Id: {Notifications_Id}", notification_id);
-                    return Results.NotFound("No Notification Found.");
-                }
-
-                return Results.Ok("Successfully Read Notification.");
+                return Results.BadRequest("Notification ID Mismatched!");
             }
-            catch (Exception ex)
+
+            var result = await service.ReadNotificationAsync(notification);
+
+            if (!result)
             {
-                logger.Error(ex, "Something went wrong to update notification. Notification_Id: {Notification_Id}", notification_id);
-                return Results.Problem(
-                    "An unexpected error occurred.",
-                    statusCode: 500);
+                logger.Warn("Notification not found. Notifications_Id: {Notifications_Id}", notification_id);
+                return Results.NotFound("No Notification Found.");
             }
+
+            return Results.Ok("Successfully Read Notification.");
         });
 
         return app;

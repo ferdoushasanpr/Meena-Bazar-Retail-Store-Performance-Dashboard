@@ -284,8 +284,7 @@ public class AnalyticsService : IAnalyticsService
         }
     }
 
-    public async Task<IEnumerable<StoreSalesPerformance>>
-    GetStorePerformanceAsync(DateTime? startDate, DateTime? endDate)
+    public async Task<IEnumerable<StoreSalesPerformance>> GetStorePerformanceAsync(DateTime? startDate, DateTime? endDate)
     {
         try
         {
@@ -313,8 +312,7 @@ public class AnalyticsService : IAnalyticsService
         }
     }
 
-    public async Task<PaginatedResponse<ProductSalesPerformance>>
-    GetProductPerformanceAsync(
+    public async Task<PaginatedResponse<ProductSalesPerformance>> GetProductPerformanceAsync(
         int pageNumber,
         int pageSize,
         DateTime? startDate = null,
@@ -474,31 +472,6 @@ public class AnalyticsService : IAnalyticsService
         }
     }
 
-    // Yearly sales trend.
-    public async Task<IEnumerable<YearlySalesTrend>>
-        GetYearlySalesTrendAsync()
-    {
-        try
-        {
-            return await _context.DemoSales
-                .AsNoTracking()
-                .GroupBy(s => s.order_datetime.Year)
-                .Select(g => new YearlySalesTrend
-                {
-                    YEAR = g.Key,
-                    Total_Sales = g.Count(),
-                    Total_Revenue = g.Sum(s => s.total_amount)
-                })
-                .OrderBy(x => x.YEAR)
-                .ToListAsync();
-        }
-        catch (Exception ex)
-        {
-            logger.Error(ex, "Failed to retrieve all yearly sales.");
-            throw;
-        }
-    }
-
     // Monthly sales trend.
     public async Task<IEnumerable<MonthlySalesTrend>>
         GetMonthlySalesTrendAsync()
@@ -523,6 +496,8 @@ public class AnalyticsService : IAnalyticsService
             .ThenBy(x => x.MONTH)
             .ToListAsync();
 
+            logger.Info("Retrieved monthly sales trend successfully.");
+
             return salesData.Select(x => new MonthlySalesTrend
             {
                 YEAR = x.YEAR,
@@ -535,6 +510,31 @@ public class AnalyticsService : IAnalyticsService
         catch (Exception ex)
         {
             logger.Error(ex, "Failed to retrieve all monthly sales.");
+            throw;
+        }
+    }
+
+    // Yearly sales trend.
+    public async Task<IEnumerable<YearlySalesTrend>>
+        GetYearlySalesTrendAsync()
+    {
+        try
+        {
+            return await _context.DemoSales
+                .AsNoTracking()
+                .GroupBy(s => s.order_datetime.Year)
+                .Select(g => new YearlySalesTrend
+                {
+                    YEAR = g.Key,
+                    Total_Sales = g.Count(),
+                    Total_Revenue = g.Sum(s => s.total_amount)
+                })
+                .OrderBy(x => x.YEAR)
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            logger.Error(ex, "Failed to retrieve all yearly sales.");
             throw;
         }
     }
@@ -564,6 +564,8 @@ public class AnalyticsService : IAnalyticsService
             .Select(s => s.order_datetime.Date)
             .Distinct()
             .CountAsync();
+
+            logger.Info("Retrieved filtered KPI summary successfully.");
 
             return new KpiSummary
             {

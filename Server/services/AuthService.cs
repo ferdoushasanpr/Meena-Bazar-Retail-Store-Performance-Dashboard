@@ -62,7 +62,7 @@ public class AuthService : IAuthService
             var result = await _context.SaveChangesAsync() > 0;
 
             if (result)
-                logger.Info("User signup successfully.");
+                logger.Info("User signup successfully. User Email: {UserEmail}", user.user_email);
 
             return GenerateJwtToken(user);
         }
@@ -100,7 +100,7 @@ public class AuthService : IAuthService
                 await _context.SaveChangesAsync();
             }
 
-            logger.Info("User login successfully.");
+            logger.Info("User login successfully. User Email: {UserEmail}", user.user_email);
             return GenerateJwtToken(user);
         }
         catch (Exception ex)

@@ -85,6 +85,18 @@ app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapHub<NotificationHub>("/hubs/notifications");
+app.UseExceptionHandler(exceptionHandlerApp =>
+{
+    exceptionHandlerApp.Run(async context =>
+    {
+        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+        context.Response.ContentType = "application/json";
+        await context.Response.WriteAsJsonAsync(new
+        {
+            message = "An unexpected error occurred."
+        });
+    });
+});
 
 // ==================== ENDPOINTS ====================
 app.MapCustomerEndpoints();
