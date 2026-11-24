@@ -98,9 +98,18 @@ export class DataExploration {
     }
   });
 
-  isLoading = computed(() => {
+  canUpdate = computed(() => {
     const title = this.pageHeaderTitle();
-    return this.componentDataLoading();
+    const role = this.userRole;
+
+    if (role === "user") {
+      if (title === "Customers" || title === "Orders")
+        return true;
+      else
+        return false;
+    }
+
+    return true;
   });
 
   // Table Header Configuration

@@ -2,7 +2,7 @@
     <!-- Top Navigation Header -->
     <app-page-header [title]="pageHeaderTitle()" [subtitle]="pageHeaderSubtitle()" [isReport]="false" />
 
-    @if (isLoading()) {
+    @if (componentDataLoading()) {
     <div class="loading-error-container">
         <app-loading message="Fetching records..." />
     </div>
@@ -13,11 +13,11 @@
     </div>
     } @else {
     <app-dynamic-table [title]="tableHeader().title" [subtitle]="tableHeader().subtitle" [data]="componentData().data"
-        [pageNumber]="componentData().pageNumber" [pageSize]="componentData().pageSize"
-        [totalRecords]="componentData().totalRecords" [totalPages]="componentData().totalPages"
-        [hasPreviousPage]="componentData().hasPreviousPage" [hasNextPage]="componentData().hasNextPage"
-        (pageChange)="onPageChange($event)" (updateRow)="handleUpdate($event)" (deleteRow)="handleDelete($event)"
-        (searchTerm)="onSearch($event)" />
+        [canUpdate]="canUpdate()" [canDelete]="userRole === 'admin'" [pageNumber]="componentData().pageNumber"
+        [pageSize]="componentData().pageSize" [totalRecords]="componentData().totalRecords"
+        [totalPages]="componentData().totalPages" [hasPreviousPage]="componentData().hasPreviousPage"
+        [hasNextPage]="componentData().hasNextPage" (pageChange)="onPageChange($event)"
+        (updateRow)="handleUpdate($event)" (deleteRow)="handleDelete($event)" (searchTerm)="onSearch($event)" />
 
     <app-modal-form [isOpen]="isModalOpen()" [entityType]="activeEntityType()" [initialData]="selectedRowData()"
         (closeModal)="handleCloseModal()" (saveData)="handleSaveUpdate($event)" />
