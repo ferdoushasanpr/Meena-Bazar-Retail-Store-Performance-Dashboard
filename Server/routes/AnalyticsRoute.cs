@@ -83,7 +83,7 @@ public static class AnalyticsRoute
 
             var result = await service.GetStorePerformanceAsync(startDate, endDate);
             logger.Info("Retrieved store sales. From: {StartDate} - To: {EndDate}", startDate, endDate);
-            return Results.Ok();
+            return Results.Ok(result);
         });
 
         group.MapGet("/products", async (
@@ -144,7 +144,7 @@ public static class AnalyticsRoute
         {
             var result = await service.GetYearlySalesTrendAsync();
             logger.Info("Retrieved yearly sales trend successfully.");
-            return Results.Ok();
+            return Results.Ok(result);
         });
 
         group.MapGet("/kpis/filtered", async (
