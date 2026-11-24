@@ -60,7 +60,8 @@ public static class UserRoute
                 user.user_email,
                 user.user_password_hash,
                 user.user_role,
-                user.user_signup
+                user.user_signup,
+                user.user_last_active_at
             });
         });
 

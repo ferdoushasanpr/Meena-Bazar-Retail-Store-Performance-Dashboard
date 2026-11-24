@@ -7,4 +7,5 @@ public class UserResponse
     public string user_email { get; set; } = null!;
     public string user_role { get; set; } = null!;
     public DateTime user_signup { get; set; }
+    public DateTime user_last_active_at { get; set; }
 }

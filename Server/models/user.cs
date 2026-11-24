@@ -8,4 +8,5 @@ public class User
     public string user_password_hash { get; set; } = null!;
     public string user_role { get; set; } = "user";
     public DateTime user_signup { get; set; }
+    public DateTime user_last_active_at { get; set; }
 }

@@ -52,7 +52,8 @@ public class AuthService : IAuthService
                 user_name = request.user_name,
                 user_email = request.user_email,
                 user_role = "user",
-                user_signup = DateTime.UtcNow
+                user_signup = DateTime.UtcNow,
+                user_last_active_at = DateTime.UtcNow
             };
 
             user.user_password_hash =
@@ -62,7 +63,7 @@ public class AuthService : IAuthService
             var result = await _context.SaveChangesAsync() > 0;
 
             if (result)
-                logger.Info("User signup successfully. User Email: {UserEmail}", user.user_email);
+                logger.Info("User signup successfully. User Email: {UserEmail} At {LastActive}", user.user_email, user.user_signup);
 
             return GenerateJwtToken(user);
         }
@@ -96,11 +97,12 @@ public class AuthService : IAuthService
             {
                 user.user_password_hash =
                     _passwordHasher.HashPassword(user, request.password);
+                user.user_last_active_at = DateTime.UtcNow;
 
                 await _context.SaveChangesAsync();
             }
 
-            logger.Info("User login successfully. User Email: {UserEmail}", user.user_email);
+            logger.Info("User login successfully. User Email: {UserEmail} At {LastActive}", user.user_email, user.user_last_active_at);
             return GenerateJwtToken(user);
         }
         catch (Exception ex)
