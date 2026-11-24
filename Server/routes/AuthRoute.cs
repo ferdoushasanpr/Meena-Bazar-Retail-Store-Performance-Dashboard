@@ -17,78 +17,58 @@ public static class AuthRoute
             [FromBody] RegisterRequest request,
             IAuthService authService) =>
         {
-            try
-            {
-                if (string.IsNullOrWhiteSpace(request.user_name) ||
+            if (string.IsNullOrWhiteSpace(request.user_name) ||
                     string.IsNullOrWhiteSpace(request.user_email) ||
                     string.IsNullOrWhiteSpace(request.password))
+            {
+                return Results.BadRequest(new
                 {
-                    return Results.BadRequest(new
-                    {
-                        message = "All fields are required."
-                    });
-                }
-
-                var result = await authService.RegisterAsync(request);
-
-                if (result == null)
-                {
-                    logger.Warn("User not registered.");
-                    return Results.Conflict(new
-                    {
-                        message = "Email already exists."
-                    });
-                }
-
-                return Results.Ok(new
-                {
-                    message = "Registration successful.",
-                    data = result
+                    message = "All fields are required."
                 });
             }
-            catch (Exception ex)
+
+            var result = await authService.RegisterAsync(request);
+
+            if (result == null)
             {
-                logger.Error(ex, "Something went wrong to register user.");
-                return Results.Problem(
-                    "An unexpected error occurred.",
-                    statusCode: 500);
+                logger.Warn("User not registered. Maybe emali already exists.");
+                return Results.Conflict(new
+                {
+                    message = "Email already exists."
+                });
             }
+
+            return Results.Ok(new
+            {
+                message = "Registration successful.",
+                data = result
+            });
         });
 
         group.MapPost("/login", async ([FromBody] LoginRequest request, IAuthService service) =>
         {
-            try
-            {
-                if (string.IsNullOrWhiteSpace(request.user_email) ||
+            if (string.IsNullOrWhiteSpace(request.user_email) ||
                     string.IsNullOrWhiteSpace(request.password))
+            {
+                return Results.BadRequest(new
                 {
-                    return Results.BadRequest(new
-                    {
-                        message = "Email and Password are required."
-                    });
-                }
-
-                var result = await service.LoginAsync(request);
-
-                if (result == null)
-                {
-                    logger.Warn("User not login.");
-                    return Results.Unauthorized();
-                }
-
-                return Results.Ok(new
-                {
-                    message = "Login successful.",
-                    data = result
+                    message = "Email and Password are required."
                 });
             }
-            catch (Exception ex)
+
+            var result = await service.LoginAsync(request);
+
+            if (result == null)
             {
-                logger.Error(ex, "Something went wrong to login user.");
-                return Results.Problem(
-                    "An unexpected error occurred.",
-                    statusCode: 500);
+                logger.Warn("User not login. Maybe email or password are incorrect.");
+                return Results.Unauthorized();
             }
+
+            return Results.Ok(new
+            {
+                message = "Login successful.",
+                data = result
+            });
         });
 
         return app;

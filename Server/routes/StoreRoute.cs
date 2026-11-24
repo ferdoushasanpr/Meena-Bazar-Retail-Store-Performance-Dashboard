@@ -14,114 +14,69 @@ public static class StoreRoute
 
         group.MapGet("/", async (IStoreService service) =>
         {
-            try
-            {
-                var stores = await service.GetAllStoresAsync();
+            var stores = await service.GetAllStoresAsync();
 
-                logger.Info("Retrieved all stores successfully. Count: {Count}",
-                    stores.Count());
-                return Results.Ok(stores);
-            }
-            catch (Exception ex)
+            if (stores is null)
             {
-                logger.Error(ex, "Something went wrong to retrieve all stores.");
-                return Results.Problem(
-                    "An unexpected error occurred.",
-                    statusCode: 500);
+                logger.Warn("No store found.");
+                return Results.NoContent();
             }
+
+            logger.Info("Retrieved all stores successfully. Count: {Count}", stores.Count());
+            return Results.Ok(stores);
         });
 
         group.MapGet("/paginated", async (int pageNumber = 1, int pageSize = 10, IStoreService service = null!) =>
         {
-            try
-            {
-                if (pageNumber < 1 || pageSize < 1)
-                    return Results.BadRequest("Invalid pagination parameters.");
+            if (pageNumber < 1 || pageSize < 1)
+                return Results.BadRequest("Invalid pagination parameters.");
 
-                var stores = await service.GetPaginatedStoresAsync(pageNumber, pageSize);
+            var stores = await service.GetPaginatedStoresAsync(pageNumber, pageSize);
 
-                logger.Info("Retrieved paginated stores. PageNumber: {PageNumber}, PageSize: {PageSize}, TotalRecords: {TotalRecords}", pageNumber, pageSize, stores.TotalRecords);
-                return Results.Ok(stores);
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex, "Something went wrong to retrieve all paginated stores.");
-                return Results.Problem(
-                    "An unexpected error occurred.",
-                    statusCode: 500);
-            }
+            logger.Info("Retrieved paginated stores. PageNumber: {PageNumber}, PageSize: {PageSize}, TotalRecords: {TotalRecords}", pageNumber, pageSize, stores.TotalRecords);
+            return Results.Ok(stores);
         });
 
         group.MapGet("/{store_id}", async (
             string store_id,
             IStoreService service) =>
         {
-            try
-            {
-                var store = await service.GetStoreByIdAsync(store_id);
+            var store = await service.GetStoreByIdAsync(store_id);
 
-                if (store is null)
-                {
-                    logger.Warn("No store found. StoreId: {StoreId}", store_id);
-                    return Results.NotFound();
-                }
-
-                logger.Info("Retrieved store successfully. {StoreId}", store_id);
-                return Results.Ok(store);
-            }
-            catch (Exception ex)
+            if (store is null)
             {
-                logger.Error(ex, "Something went wrong to retrieve store. StoreId: {StoreId}", store_id);
-                return Results.Problem(
-                    "An unexpected error occurred.",
-                    statusCode: 500);
+                logger.Warn("No store found. StoreId: {StoreId}", store_id);
+                return Results.NotFound();
             }
+
+            logger.Info("Retrieved store successfully. {StoreId}", store_id);
+            return Results.Ok(store);
         });
 
         group.MapGet("/search", async (string? searchTerm, int pageNumber, int pageSize, IStoreService service) =>
         {
-            try
-            {
-                if (pageNumber < 1 || pageSize < 1)
-                    return Results.BadRequest("Invalid pagination parameters.");
+            if (pageNumber < 1 || pageSize < 1)
+                return Results.BadRequest("Invalid pagination parameters.");
 
-                var result = await service.SearchStoresAsync(searchTerm, pageNumber, pageSize);
+            var result = await service.SearchStoresAsync(searchTerm, pageNumber, pageSize);
 
-                logger.Info("Retrieved search stores successfully with SearchTerm: {SearchTerm}", searchTerm);
-                return Results.Ok(result);
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex, "Something went wrong to search store with SearchTerm: {SearchTerm}", searchTerm);
-                return Results.Problem(
-                    "An unexpected error occurred.",
-                    statusCode: 500);
-            }
+            logger.Info("Retrieved search stores successfully with SearchTerm: {SearchTerm}", searchTerm);
+            return Results.Ok(result);
         });
 
         group.MapPost("/", async (
             Store store,
             IStoreService service) =>
         {
-            try
-            {
-                var result = await service.AddStoreAsync(store);
+            var result = await service.AddStoreAsync(store);
 
-                if (!result)
-                {
-                    logger.Warn("Store not created.");
-                    return Results.BadRequest();
-                }
-
-                return Results.Created($"/stores/{store.store_id}", store);
-            }
-            catch (Exception ex)
+            if (!result)
             {
-                logger.Error(ex, "Something went wrong to create store.");
-                return Results.Problem(
-                    "An unexpected error occurred.",
-                    statusCode: 500);
+                logger.Warn("Store not created.");
+                return Results.BadRequest();
             }
+
+            return Results.Created($"/stores/{store.store_id}", store);
         });
 
         group.MapPut("/{store_id}", async (
@@ -129,53 +84,33 @@ public static class StoreRoute
             Store store,
             IStoreService service) =>
         {
-            try
+            if (store_id != store.store_id)
+                return Results.BadRequest("Store ID mismatch.");
+
+            var result = await service.UpdateStoreAsync(store);
+
+            if (!result)
             {
-                if (store_id != store.store_id)
-                    return Results.BadRequest("Store ID mismatch.");
-
-                var result = await service.UpdateStoreAsync(store);
-
-                if (!result)
-                {
-                    logger.Warn("Store not found. StoreId: {StoreId}", store_id);
-                    return Results.NotFound();
-                }
-
-                return Results.NoContent();
+                logger.Warn("Store not found. StoreId: {StoreId}", store_id);
+                return Results.NotFound();
             }
-            catch (Exception ex)
-            {
-                logger.Error(ex, "Something went wrong to update store. StoreId: {StoreId}", store_id);
-                return Results.Problem(
-                    "An unexpected error occurred.",
-                    statusCode: 500);
-            }
+
+            return Results.NoContent();
         });
 
         group.MapDelete("/{store_id}", async (
             string store_id,
             IStoreService service) =>
         {
-            try
-            {
-                var result = await service.DeleteStoreAsync(store_id);
+            var result = await service.DeleteStoreAsync(store_id);
 
-                if (!result)
-                {
-                    logger.Warn("Store not found. StoreId: {StoreId}", store_id);
-                    return Results.NotFound();
-                }
-
-                return Results.NoContent();
-            }
-            catch (Exception ex)
+            if (!result)
             {
-                logger.Error(ex, "Something went wrong to delete store. StoreId: {StoreId}", store_id);
-                return Results.Problem(
-                    "An unexpected error occurred.",
-                    statusCode: 500);
+                logger.Warn("Store not found. StoreId: {StoreId}", store_id);
+                return Results.NotFound();
             }
+
+            return Results.NoContent();
         });
 
         return app;

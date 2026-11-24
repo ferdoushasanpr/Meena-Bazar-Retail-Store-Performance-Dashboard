@@ -34,7 +34,8 @@ public class UserService : IUserService
                 user_name = u.user_name,
                 user_email = u.user_email,
                 user_role = u.user_role,
-                user_signup = u.user_signup
+                user_signup = u.user_signup,
+                user_last_active_at = u.user_last_active_at
             }).OrderByDescending(u => u.user_id).Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
 
             return new PaginatedResponse<UserResponse>
@@ -92,7 +93,8 @@ public class UserService : IUserService
                 user_name = u.user_name,
                 user_email = u.user_email,
                 user_role = u.user_role,
-                user_signup = u.user_signup
+                user_signup = u.user_signup,
+                user_last_active_at = u.user_last_active_at
             }).OrderByDescending(u => u.user_id).Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
 
             return new PaginatedResponse<UserResponse>
