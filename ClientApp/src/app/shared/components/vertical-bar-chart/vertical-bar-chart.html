@@ -13,7 +13,7 @@
         <div class="y-axis">
             @for (tick of yAxisTicks(); track $index) {
             <span class="y-tick">
-                {{ tick }}
+                {{ tick.toFixed(2) }}
             </span>
             }
         </div>

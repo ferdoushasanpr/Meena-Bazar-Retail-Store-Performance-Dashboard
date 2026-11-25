@@ -61,28 +61,6 @@ export class SalesBreakdown {
   productSalesData = this.salesService.productSalesData;
   storeCategorySalesData = this.salesService.storeCategorySalesData;
 
-  isLoading = computed(() => {
-    return this.salesCategoryLoading() || this.storeSalesLoading() || this.productSalesLoading() || this.storeCategorySalesLoading();;
-  });
-
-  hasError = computed(() => {
-    return !!(
-      this.salesCategoryError() ||
-      this.storesSalesError() ||
-      this.storeCategorySalesError() ||
-      this.productSalesError()
-    );
-  });
-
-  productCategoriesErrorMessage = computed(() => {
-    return (
-      this.salesCategoryError() ||
-      this.storesSalesError() ||
-      this.storeCategorySalesError() ||
-      this.productSalesError()
-    );
-  });
-
   totalCategoryCard = computed((): MetricCardProps => {
     const data = this.entityCountData();
 

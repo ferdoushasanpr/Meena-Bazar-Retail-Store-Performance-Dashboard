@@ -60,28 +60,6 @@ export class SalesAnalytics {
   filteredStoreCategorySalesData = this.salesService.filteredStoreCategorySalesData;
   paginatedSalesData = this.salesService.paginatedSalesData;
 
-  isLoading = computed(() => {
-    return this.salesKpiLoading() || this.dailyStoreSalesLoading() || this.filteredStoreCategorySalesLoading() || this.paginatedSalesLoading();
-  });
-
-  hasError = computed(() => {
-    return !!(
-      this.salesKpiError() ||
-      this.dailyStoreSaleError() ||
-      this.filteredStoreCategorySalesError() ||
-      this.paginatedSalesError()
-    );
-  });
-
-  salesAnalyticsErrorMessage = computed(() => {
-    return (
-      this.salesKpiError() ||
-      this.dailyStoreSaleError() ||
-      this.filteredStoreCategorySalesError() ||
-      this.paginatedSalesError()
-    );
-  });
-
   totalSalesCard = computed((): MetricCardProps => {
     const sales = this.salesKpiData();
 

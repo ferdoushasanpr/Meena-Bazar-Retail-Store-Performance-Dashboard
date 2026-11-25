@@ -6,18 +6,18 @@
     <!-- Filter Control Bar -->
     <app-filter (filterCriteria)="loadCurrentFilter($event)" />
 
-    @if (isLoading()) {
+    @if (salesKpiError() || dailyStoreSaleError() || filteredStoreCategorySalesError() || paginatedSalesError()) {
     <div class="loading-error-container">
-        <app-loading message="Fetching records..." />
-    </div>
-    } @else if (hasError()) {
-    <div class="loading-error-container">
-        <app-error-display [message]="salesAnalyticsErrorMessage() ?? 'Unable to Load Data. Please Try Again.'"
-            (onLoad)="loadSalesData()" />
+        <app-error-display message="Unable to Load Data. Please Try Again." (onLoad)="loadSalesData()" />
     </div>
     } @else {
     <!-- Metric Cards Grid (4 Columns) -->
     <section class="metrics-grid">
+        @if (salesKpiLoading()) {
+        <div class="loading-error-container">
+            <app-loading message="Fetching records..." />
+        </div>
+        } @else {
         <!-- Card 1: Total Sales -->
         <app-metric-card [card]="totalSalesCard()" />
 
@@ -29,17 +29,38 @@
 
         <!-- Card 4: Avg Daily Sales -->
         <app-metric-card [card]="avgDailySalesCard()" />
+        }
     </section>
 
     <div class="charts-section">
+        @if (dailyStoreSalesLoading()) {
+        <div class="loading-error-container">
+            <app-loading message="Fetching records..." />
+        </div>
+        } @else {
         <app-trend-chart class="trend-chart" [dailyStoreData]="dailyStoreSalesData()" [showControls]="false" />
+        }
 
-        <!-- Horizontal Bar Chart -->
-        <app-horizontal-bar-chart class="product-chart" [data]="paginatedSalesData()" labelKey="product_name"
-            salesKey="totalSales" (pageChange)="onPageChange($event)" />
+        <div class="charts-row">
+            <!-- Horizontal Bar Chart -->
+            @if (paginatedSalesLoading()) {
+            <div class="loading-error-container">
+                <app-loading message="Fetching records..." />
+            </div>
+            } @else {
+            <app-horizontal-bar-chart class="product-chart" [data]="paginatedSalesData()" labelKey="product_name"
+                salesKey="totalSales" (pageChange)="onPageChange($event)" />
+            }
 
-        <!-- Category Donut Chart -->
-        <app-donut-chart class="donut-chart" [data]="filteredStoreCategorySalesData()" />
+            <!-- Category Donut Chart -->
+            @if (filteredStoreCategorySalesLoading()) {
+            <div class="loading-error-container">
+                <app-loading message="Fetching records..." />
+            </div>
+            } @else {
+            <app-donut-chart class="donut-chart" [data]="filteredStoreCategorySalesData()" />
+            }
+        </div>
     </div>
     }
 </div>
