@@ -57,6 +57,10 @@ export class OrderService {
         })
     }
 
+    updateOrder(token: string, id: string, data: any) {
+        return this.operationsService.updateOrderData(token, data, id);
+    }
+
     deleteOrder(token: string, id: string) {
         return this.operationsService.deleteOrderData(token, id);
     }

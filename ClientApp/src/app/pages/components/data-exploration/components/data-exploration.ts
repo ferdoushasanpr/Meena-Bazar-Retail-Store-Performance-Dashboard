@@ -184,6 +184,7 @@ export class DataExploration {
       this.activeEntityType.set('Store');
       this.storeService.loadStoreData(token, 1);
     } else if (this.pageHeaderTitle() === 'Orders') {
+      this.activeEntityType.set('Order');
       this.orderService.loadOrderData(token, 1);
     } else if (this.pageHeaderTitle() === 'Transactions') {
       this.transactionService.loadTransactionsData(token, 1);
@@ -297,10 +298,16 @@ export class DataExploration {
   }
 
   handleSaveUpdate(payload: UpdatePayload): void {
+    const user_id = this.userData().user_id;
     const token = this.token;
 
     if (!token) {
       this.toastService.showError("Authentication token missing!", "Error");
+      return;
+    }
+
+    if (!user_id) {
+      this.toastService.showError("Need authentication!", "Error");
       return;
     }
 
@@ -309,17 +316,15 @@ export class DataExploration {
     if (payload.type === "Customer") {
       this.customerService.updateCustomer(token, payload.id, payload.data).subscribe({
         next: (response) => {
-          const data = this.userData();
-          if (data.user_id) {
-            this.notificationService.addNotification(token, {
-              user_id: data.user_id,
-              message: `updated customer of customer id ${payload.id}.`,
-              isRead: 0
-            }).subscribe({
-              next: () => { console.log("Customer Updated Successfully!") },
-              error: (error) => { console.error(error) }
-            });
-          }
+          this.notificationService.addNotification(token, {
+            user_id: user_id,
+            message: `updated customer of customer id ${payload.id}.`,
+            isRead: 0
+          }).subscribe({
+            next: () => { console.log("Customer Updated Successfully!") },
+            error: (error) => { console.error(error) }
+          });
+
           this.isModalOpen.set(false);
           this.toastService.showSuccess("Update", "Customer Updated Successfully!");
           this.customerService.loadCustomerData(token, this.componentData().pageNumber);
@@ -329,17 +334,15 @@ export class DataExploration {
     } else if (payload.type === "Product") {
       this.productService.updateProduct(token, payload.id, payload.data).subscribe({
         next: (response) => {
-          const data = this.userData();
-          if (data.user_id) {
-            this.notificationService.addNotification(token, {
-              user_id: data.user_id,
-              message: `updated product of product id ${payload.id}.`,
-              isRead: 0
-            }).subscribe({
-              next: () => { console.log("Product Updated Successfully!") },
-              error: (error) => { console.error(error) }
-            });
-          }
+          this.notificationService.addNotification(token, {
+            user_id: user_id,
+            message: `updated product of product id ${payload.id}.`,
+            isRead: 0
+          }).subscribe({
+            next: () => { console.log("Product Updated Successfully!") },
+            error: (error) => { console.error(error) }
+          });
+
           this.isModalOpen.set(false);
           this.toastService.showSuccess("Update", "Product Updated Successfully!");
           this.productService.loadProductData(token, this.componentData().pageNumber);
@@ -349,37 +352,51 @@ export class DataExploration {
     } else if (payload.type === "Store") {
       this.storeService.updateStore(token, payload.id, payload.data).subscribe({
         next: (response) => {
-          const data = this.userData();
-          if (data.user_id) {
-            this.notificationService.addNotification(token, {
-              user_id: data.user_id,
-              message: `updated store of store id ${payload.id}.`,
-              isRead: 0
-            }).subscribe({
-              next: () => { console.log("Store Updated Successfully!") },
-              error: (error) => { console.error(error) }
-            });
-          }
+          this.notificationService.addNotification(token, {
+            user_id: user_id,
+            message: `updated store of store id ${payload.id}.`,
+            isRead: 0
+          }).subscribe({
+            next: () => { console.log("Store Updated Successfully!") },
+            error: (error) => { console.error(error) }
+          });
+
           this.isModalOpen.set(false);
           this.toastService.showSuccess("Update", "Store Updated Successfully!");
           this.storeService.loadStoreData(token, this.componentData().pageNumber);
         },
         error: (error) => { this.toastService.showError("Something Went Wrong!", "Error") }
       });
+    } else if (payload.type === "Order") {
+      this.orderService.updateOrder(token, payload.id, payload.data).subscribe({
+        next: (response) => {
+          this.notificationService.addNotification(token, {
+            user_id: user_id,
+            message: `updated order of order id ${payload.id}.`,
+            isRead: 0
+          }).subscribe({
+            next: () => { console.log("Order Updated Successfully!") },
+            error: (error) => { console.error(error) }
+          });
+
+          this.isModalOpen.set(false);
+          this.toastService.showSuccess("Update", "Order Updated Successfully!");
+          this.orderService.loadOrderData(token, this.componentData().pageNumber);
+        },
+        error: (error) => { this.toastService.showError("Something Went Wrong!", "Error") }
+      });
     } else if (payload.type === "User") {
       this.userService.updateUser(payload.id, payload.data, token).subscribe({
         next: (response) => {
-          const data = this.userData();
-          if (data.user_id) {
-            this.notificationService.addNotification(token, {
-              user_id: data.user_id,
-              message: `updated user of user id ${payload.id}.`,
-              isRead: 0
-            }).subscribe({
-              next: () => { console.log("User Updated Successfully!") },
-              error: (error) => { console.error(error) }
-            });
-          }
+          this.notificationService.addNotification(token, {
+            user_id: user_id,
+            message: `updated user of user id ${payload.id}.`,
+            isRead: 0
+          }).subscribe({
+            next: () => { console.log("User Updated Successfully!") },
+            error: (error) => { console.error(error) }
+          });
+
           this.isModalOpen.set(false);
           this.toastService.showSuccess("Update", "User Updated Successfully!");
           if (this.token) {

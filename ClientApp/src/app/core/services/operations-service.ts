@@ -146,6 +146,13 @@ export class OperationsService {
         return this.http.get<OrderDataResponse>(`${this.apiUrlBase}/sales/search?searchTerm=${searchTerm}&pageNumber=${pageNumber}&pageSize=${pageSize}`, { headers });
     }
 
+    updateOrderData(token: string, order: Order, id: string): Observable<Order> {
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        }
+        return this.http.put<Order>(`${this.apiUrlBase}/sales/${id}`, order, { headers });
+    }
+
     deleteOrderData(token: string, id: string): Observable<Order> {
         const headers = {
             'Authorization': `Bearer ${token}`

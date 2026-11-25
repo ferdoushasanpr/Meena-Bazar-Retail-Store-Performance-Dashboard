@@ -5,7 +5,7 @@ export interface MetricCardProps {
     visualIcon: string
 }
 
-export type EntityType = 'Customer' | 'Product' | 'Store' | 'User';
+export type EntityType = 'Customer' | 'Product' | 'Store' | 'Order' | 'User';
 
 export interface UpdatePayload {
     type: EntityType;

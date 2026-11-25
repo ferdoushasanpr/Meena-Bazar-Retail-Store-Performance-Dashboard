@@ -42,6 +42,14 @@ export class ModalForm {
     city: ['', [Validators.required, Validators.maxLength(50)]]
   });
 
+  orderForm: FormGroup = this.fb.group({
+    store_id: ['', [Validators.required]],
+    customer_id: [''],
+    order_channel: ['', [Validators.required]],
+    payment_method: ['', [Validators.required]],
+    order_status: ['', [Validators.required]],
+  });
+
   userForm: FormGroup = this.fb.group({
     user_name: ['', [Validators.required, Validators.maxLength(50)]],
     user_email: ['', [Validators.required, Validators.email, Validators.maxLength(50)]],
@@ -75,6 +83,14 @@ export class ModalForm {
             store_name: data.store_name || '',
             city: data.city || ''
           });
+        } else if (type === 'Order') {
+          this.orderForm.patchValue({
+            store_id: data.store_id || '',
+            customer_id: data.customer_id || '',
+            order_channel: data.order_channel || '',
+            payment_method: data.payment_method || '',
+            order_status: data.order_status || ''
+          });
         } else if (type === 'User') {
           this.userForm.patchValue({
             user_name: data.user_name || '',
@@ -97,6 +113,7 @@ export class ModalForm {
     if (type === 'Customer') form = this.customerForm;
     else if (type === 'Product') form = this.productForm;
     else if (type === 'Store') form = this.storeForm;
+    else if (type === 'Order') form = this.orderForm;
     else form = this.userForm;
 
     if (form.valid) {
