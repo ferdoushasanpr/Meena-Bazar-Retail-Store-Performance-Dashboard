@@ -15,7 +15,10 @@ public static class TransactionRoute
         group.MapGet("/", async (int pageNumber, int pageSize, ITransactionService service) =>
         {
             if (pageNumber < 1 || pageSize < 1)
+            {
+                logger.Warn("Invalid pagination parameters.");
                 return Results.BadRequest("Invalid pagination parameters.");
+            }
 
             var transactions = await service.GetAllTransactionsAsync(pageNumber, pageSize);
 
@@ -42,7 +45,10 @@ public static class TransactionRoute
         group.MapGet("/search", async (string? searchTerm, int pageNumber, int pageSize, ITransactionService service) =>
         {
             if (pageNumber < 1 || pageSize < 1)
+            {
+                logger.Warn("Invalid pagination parameters.");
                 return Results.BadRequest("Invalid pagination parameters.");
+            }
 
             var result = await service.SearchTransactionsAsync(searchTerm, pageNumber, pageSize);
 
@@ -72,7 +78,10 @@ public static class TransactionRoute
             ITransactionService service) =>
         {
             if (order_item_id != transaction.order_item_id)
+            {
+                logger.Warn("Order item ID mismatch. Order_item_Id: {Order_item_Id} and Order_item_Id: {Order_item_id_Body}", order_item_id, transaction.order_item_id);
                 return Results.BadRequest("Order item ID mismatch.");
+            }
 
             var result = await service.UpdateTransactionAsync(transaction);
 

@@ -29,7 +29,10 @@ public static class StoreRoute
         group.MapGet("/paginated", async (int pageNumber = 1, int pageSize = 10, IStoreService service = null!) =>
         {
             if (pageNumber < 1 || pageSize < 1)
+            {
+                logger.Warn("Invalid pagination parameters.");
                 return Results.BadRequest("Invalid pagination parameters.");
+            }
 
             var stores = await service.GetPaginatedStoresAsync(pageNumber, pageSize);
 
@@ -56,7 +59,10 @@ public static class StoreRoute
         group.MapGet("/search", async (string? searchTerm, int pageNumber, int pageSize, IStoreService service) =>
         {
             if (pageNumber < 1 || pageSize < 1)
+            {
+                logger.Warn("Invalid pagination parameters.");
                 return Results.BadRequest("Invalid pagination parameters.");
+            }
 
             var result = await service.SearchStoresAsync(searchTerm, pageNumber, pageSize);
 
@@ -85,7 +91,10 @@ public static class StoreRoute
             IStoreService service) =>
         {
             if (store_id != store.store_id)
+            {
+                logger.Warn("Store ID mismatch. Store_Id: {Store_Id} and Store_Id: {Store_id_Body}", store_id, store.store_id);
                 return Results.BadRequest("Store ID mismatch.");
+            }
 
             var result = await service.UpdateStoreAsync(store);
 

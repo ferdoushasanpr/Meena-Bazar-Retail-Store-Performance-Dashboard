@@ -14,7 +14,10 @@ public static class ProductRoute
         group.MapGet("/", async (int pageNumber = 1, int pageSize = 10, IProductService service = null!) =>
         {
             if (pageNumber < 1 || pageSize < 1)
+            {
+                logger.Warn("Invalid pagination parameters.");
                 return Results.BadRequest("Invalid pagination parameters.");
+            }
 
             var products = await service.GetAllProductsAsync(pageNumber, pageSize);
 
@@ -41,7 +44,10 @@ public static class ProductRoute
         group.MapGet("/search", async (string? searchTerm, int pageNumber = 1, int pageSize = 10, IProductService service = null!) =>
         {
             if (pageNumber < 1 || pageSize < 1)
+            {
+                logger.Warn("Invalid pagination parameters.");
                 return Results.BadRequest("Invalid pagination parameters.");
+            }
 
             var result = await service.SearchProductsAsync(searchTerm, pageNumber, pageSize);
 
@@ -70,7 +76,10 @@ public static class ProductRoute
             IProductService service) =>
         {
             if (product_id != product.product_id)
+            {
+                logger.Warn("Product ID mismatch. Product_Id: {Product_Id} and Product_Id: {Product_id_Body}", product_id, product.product_id);
                 return Results.BadRequest("Product ID mismatch.");
+            }
 
             var result = await service.UpdateProductAsync(product);
 

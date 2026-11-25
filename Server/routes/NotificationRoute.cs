@@ -36,6 +36,7 @@ public static class NotificationRoute
         {
             if (notification.notification_id != notification_id)
             {
+                logger.Warn("Notification ID mismatch. Notification_Id: {Notification_Id} and Notification_Id: {Notification_id_Body}", notification_id, notification.notification_id);
                 return Results.BadRequest("Notification ID Mismatched!");
             }
 
