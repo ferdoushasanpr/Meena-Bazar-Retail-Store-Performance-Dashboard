@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using NLog;
 using Server.Data;
+using Server.DTOs;
 using Server.Interfaces;
 using Server.Models;
 
@@ -134,7 +135,7 @@ public class TransactionService : ITransactionService
         }
     }
 
-    public async Task<bool> UpdateTransactionAsync(Transaction transaction)
+    public async Task<bool> UpdateTransactionAsync(TransactionRequest transaction)
     {
         try
         {
@@ -149,8 +150,6 @@ public class TransactionService : ITransactionService
             existingTransaction.quantity = transaction.quantity;
             existingTransaction.unit_price = transaction.unit_price;
             existingTransaction.discount_amount = transaction.discount_amount;
-            existingTransaction.line_net_amount = transaction.line_net_amount;
-            existingTransaction.line_vat_amount = transaction.line_vat_amount;
 
             var result = await _context.SaveChangesAsync() > 0;
 

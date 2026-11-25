@@ -1,4 +1,5 @@
 using NLog;
+using Server.DTOs;
 using Server.Interfaces;
 using Server.Models;
 
@@ -67,7 +68,7 @@ public static class TransactionRoute
 
         group.MapPut("/{order_item_id}", async (
             string order_item_id,
-            Transaction transaction,
+            TransactionRequest transaction,
             ITransactionService service) =>
         {
             if (order_item_id != transaction.order_item_id)
