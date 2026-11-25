@@ -404,6 +404,7 @@ export class DataExploration {
 
   onConfirmDelete(): void {
     const record = this.itemToDelete();
+    const user_id = this.userData().user_id;
     const token = this.token;
 
     if (!token) {
@@ -411,20 +412,23 @@ export class DataExploration {
       return;
     }
 
+    if (!user_id) {
+      this.toastService.showError("Need authentication!", "Error");
+      return;
+    }
+
     if (this.pageHeaderTitle() === 'Customers') {
       this.customerService.deleteCustomer(token, record.customer_id).subscribe({
         next: (response) => {
-          const data = this.userData();
-          if (data.user_id) {
-            this.notificationService.addNotification(token, {
-              user_id: data.user_id,
-              message: `deleted customer of customer id ${record.customer_id}.`,
-              isRead: 0
-            }).subscribe({
-              next: () => { console.log("Customer Deleted Successfully!") },
-              error: (error) => { console.error(error) }
-            });
-          }
+          this.notificationService.addNotification(token, {
+            user_id: user_id,
+            message: `deleted customer of customer id ${record.customer_id}.`,
+            isRead: 0
+          }).subscribe({
+            next: () => { console.log("Customer Deleted Successfully!") },
+            error: (error) => { console.error(error) }
+          });
+
           this.toastService.showSuccess("Delete", "Customer Deleted Successfully!");
           this.customerService.loadCustomerData(token, this.componentData().pageNumber);
         },
@@ -433,17 +437,15 @@ export class DataExploration {
     } else if (this.pageHeaderTitle() === 'Products') {
       this.productService.deleteProduct(token, record.product_id).subscribe({
         next: (response) => {
-          const data = this.userData();
-          if (data.user_id) {
-            this.notificationService.addNotification(token, {
-              user_id: data.user_id,
-              message: `deleted product of product id ${record.product_id}.`,
-              isRead: 0
-            }).subscribe({
-              next: () => { console.log("Product Deleted Successfully!") },
-              error: (error) => { console.error(error) }
-            });
-          }
+          this.notificationService.addNotification(token, {
+            user_id: user_id,
+            message: `deleted product of product id ${record.product_id}.`,
+            isRead: 0
+          }).subscribe({
+            next: () => { console.log("Product Deleted Successfully!") },
+            error: (error) => { console.error(error) }
+          });
+
           this.toastService.showSuccess("Delete", "Product Deleted Successfully!");
           this.productService.loadProductData(token, this.componentData().pageNumber);
         },
@@ -452,36 +454,49 @@ export class DataExploration {
     } else if (this.pageHeaderTitle() === 'Stores') {
       this.storeService.deleteStore(token, record.store_id).subscribe({
         next: (response) => {
-          const data = this.userData();
-          if (data.user_id) {
-            this.notificationService.addNotification(token, {
-              user_id: data.user_id,
-              message: `deleted store of store id ${record.store_id}.`,
-              isRead: 0
-            }).subscribe({
-              next: () => { console.log("Store Deleted Successfully!") },
-              error: (error) => { console.error(error) }
-            });
-          }
+          this.notificationService.addNotification(token, {
+            user_id: user_id,
+            message: `deleted store of store id ${record.store_id}.`,
+            isRead: 0
+          }).subscribe({
+            next: () => { console.log("Store Deleted Successfully!") },
+            error: (error) => { console.error(error) }
+          });
+
           this.toastService.showSuccess("Delete", "Store Deleted Successfully!");
           this.storeService.loadStoreData(token, this.componentData().pageNumber);
+        },
+        error: (error) => { this.toastService.showError("Something Went Wrong!", "Error") }
+      });
+    } else if (this.pageHeaderTitle() === 'Transactions') {
+      this.transactionService.deleteTransaction(token, record.order_item_id).subscribe({
+        next: (response) => {
+          this.notificationService.addNotification(token, {
+            user_id: user_id,
+            message: `deleted transaction of order item id ${record.order_item_id}.`,
+            isRead: 0
+          }).subscribe({
+            next: () => { console.log("Transaction Deleted Successfully!") },
+            error: (error) => { console.error(error) }
+          });
+
+          this.toastService.showSuccess("Delete", "Transaction Deleted Successfully!");
+          this.transactionService.loadTransactionsData(token, this.componentData().pageNumber);
         },
         error: (error) => { this.toastService.showError("Something Went Wrong!", "Error") }
       });
     } else if (this.pageHeaderTitle() === 'Users' && this.userRole === 'admin') {
       this.userService.deleteUser(record.user_id, token).subscribe({
         next: (response) => {
-          const data = this.userData();
-          if (data.user_id) {
-            this.notificationService.addNotification(token, {
-              user_id: data.user_id,
-              message: `deleted user of user id ${record.user_id}.`,
-              isRead: 0
-            }).subscribe({
-              next: () => { console.log("User Deleted Successfully!") },
-              error: (error) => { console.error(error) }
-            });
-          }
+          this.notificationService.addNotification(token, {
+            user_id: user_id,
+            message: `deleted user of user id ${record.user_id}.`,
+            isRead: 0
+          }).subscribe({
+            next: () => { console.log("User Deleted Successfully!") },
+            error: (error) => { console.error(error) }
+          });
+
           this.toastService.showSuccess("Delete", "User Deleted Successfully!");
           if (this.token) {
             this.userService.loadUserData(token, this.componentData().pageNumber);

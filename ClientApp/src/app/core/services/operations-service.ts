@@ -2,10 +2,10 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { StoreData, StoreDataResponse } from '../models/store';
 import { Observable } from 'rxjs';
-import { TransactionDataResponse } from '../models/transaction';
+import { TransactionData, TransactionDataResponse } from '../models/transaction';
 import { Customer, CustomerDataResponse } from '../models/customer';
 import { Product, ProductDataResponse } from '../models/product';
-import { OrderDataResponse } from '../models/order';
+import { Order, OrderDataResponse } from '../models/order';
 import { UserData, UserDataResponse } from '../models/user';
 import { NotificationData, NotificationResponse } from '../models/notification';
 
@@ -159,6 +159,13 @@ export class OperationsService {
             'Authorization': `Bearer ${token}`
         }
         return this.http.get<TransactionDataResponse>(`${this.apiUrlBase}/transactions/search?searchTerm=${searchTerm}&pageNumber=${pageNumber}&pageSize=${pageSize}`, { headers });
+    }
+
+    deleteTransactionData(token: string, id: string): Observable<TransactionData> {
+        const headers = {
+            'Authorization': `Bearer ${token}`
+        }
+        return this.http.delete<TransactionData>(`${this.apiUrlBase}/transactions/${id}`, { headers });
     }
 
     // User Operations

@@ -54,4 +54,8 @@ export class TransactionService {
             }
         });
     }
+
+    deleteTransaction(token: string, id: string) {
+        return this.operationsService.deleteTransactionData(token, id);
+    }
 }
