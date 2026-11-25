@@ -56,7 +56,7 @@ class NotificationService : INotificationService
             }
 
             notification.notification_id = $"N{nextId:D4}";
-            notification.createdAt = DateTime.UtcNow;
+            notification.createdAt = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Asia/Dhaka"));
 
             await _context.DemoNotifications.AddAsync(notification);
 

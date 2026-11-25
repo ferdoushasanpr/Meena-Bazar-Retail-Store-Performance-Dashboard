@@ -46,15 +46,17 @@ public class AuthService : IAuthService
                 nextId = int.Parse(lastUser.user_id.Substring(4)) + 1;
             }
 
+            var bd_time = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Asia/Dhaka"));
+
             var user = new User
             {
                 user_id = $"U{nextId:D5}",
                 user_name = request.user_name,
                 user_email = request.user_email,
                 user_role = "user",
-                user_signup = DateTime.UtcNow,
-                user_last_login_at = DateTime.UtcNow,
-                user_last_active_at = DateTime.UtcNow
+                user_signup = bd_time,
+                user_last_login_at = bd_time,
+                user_last_active_at = bd_time
             };
 
             user.user_password_hash =
@@ -101,7 +103,7 @@ public class AuthService : IAuthService
             }
 
             user.user_last_active_at = user.user_last_login_at;
-            user.user_last_login_at = DateTime.UtcNow;
+            user.user_last_login_at = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Asia/Dhaka"));
             await _context.SaveChangesAsync();
 
             logger.Info("User login successfully. User Email: {UserEmail} At {LastActive}", user.user_email, user.user_last_active_at);
@@ -131,7 +133,7 @@ public class AuthService : IAuthService
                 SecurityAlgorithms.HmacSha256
             );
 
-            var expiresAt = DateTime.UtcNow.AddMinutes(
+            var expiresAt = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Asia/Dhaka")).AddMinutes(
                 double.Parse(jwtSettings["ExpiresInMinutes"] ?? "60")
             );
 
