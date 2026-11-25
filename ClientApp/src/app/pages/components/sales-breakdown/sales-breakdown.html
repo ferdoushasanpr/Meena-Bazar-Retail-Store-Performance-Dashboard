@@ -63,11 +63,11 @@
             <app-loading message="Fetching records..." />
         </div>
         } @else {
-        <app-table-chart title="Store Category Performance"
+        <app-dynamic-table title="Store Category Performance"
             subtitle="Breakdown by store, category, sales volume, and transaction count"
-            [data]="storeCategorySalesData().data" [pageNumber]="storeCategorySalesData().pageNumber"
-            [pageSize]="storeCategorySalesData().pageSize" [totalRecords]="storeCategorySalesData().totalRecords"
-            [totalPages]="storeCategorySalesData().totalPages"
+            [data]="storeCategorySalesData().data" [canUpdate]="false" [canDelete]="false" [canSearch]="false"
+            [pageNumber]="storeCategorySalesData().pageNumber" [pageSize]="storeCategorySalesData().pageSize"
+            [totalRecords]="storeCategorySalesData().totalRecords" [totalPages]="storeCategorySalesData().totalPages"
             [hasPreviousPage]="storeCategorySalesData().hasPreviousPage"
             [hasNextPage]="storeCategorySalesData().hasNextPage" (pageChange)="onTableChartPageChange($event)" />
         }
