@@ -2,19 +2,15 @@
     <!-- Top Navigation Header -->
     <app-page-header [title]="pageHeaderTitle()" [subtitle]="pageHeaderSubtitle()" [isReport]="false" />
 
-    @if (componentDataLoading()) {
-    <div class="loading-error-container">
-        <app-loading message="Fetching records..." />
-    </div>
-    } @else if (componentDataError()) {
+    @if (componentDataError()) {
     <div class="loading-error-container">
         <app-error-display [message]="componentDataError() ?? 'Unable to Load Data. Please Try Again.'"
             (onLoad)="loadComponentData()" />
     </div>
     } @else {
-    <app-dynamic-table [title]="tableHeader().title" [subtitle]="tableHeader().subtitle" [data]="componentData().data"
-        [canUpdate]="canUpdate()" [canDelete]="userRole === 'admin'" [canSearch]="true"
-        [pageNumber]="componentData().pageNumber" [pageSize]="componentData().pageSize"
+    <app-dynamic-table [title]="tableHeader().title" [subtitle]="tableHeader().subtitle" [canUpdate]="canUpdate()"
+        [canDelete]="userRole === 'admin'" [canSearch]="true" [loading]="componentDataLoading()"
+        [data]="componentData().data" [pageNumber]="componentData().pageNumber" [pageSize]="componentData().pageSize"
         [totalRecords]="componentData().totalRecords" [totalPages]="componentData().totalPages"
         [hasPreviousPage]="componentData().hasPreviousPage" [hasNextPage]="componentData().hasNextPage"
         (pageChange)="onPageChange($event)" (updateRow)="handleUpdate($event)" (deleteRow)="handleDelete($event)"

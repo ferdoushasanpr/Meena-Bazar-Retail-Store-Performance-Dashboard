@@ -19,7 +19,7 @@ import { NotificationService } from '../../../services/notification-service';
 import { ErrorDisplay } from '../../../../shared/components/error-display/error-display';
 
 @Component({
-  imports: [PageHeader, Loading, ErrorDisplay, DynamicTable, ModalForm, DialogBox],
+  imports: [PageHeader, ErrorDisplay, DynamicTable, ModalForm, DialogBox],
   selector: 'app-data-exploration',
   styleUrl: './data-exploration.css',
   templateUrl: './data-exploration.html',
@@ -65,7 +65,7 @@ export class DataExploration {
       case 'Stores': return this.storeService.componentDataLoading();
       case 'Orders': return this.orderService.componentDataLoading();
       case 'Transactions': return this.transactionService.componentDataLoading();
-      default: return { data: [], pageNumber: 1, pageSize: 10, totalRecords: 0, totalPages: 0, hasPreviousPage: false, hasNextPage: false };
+      default: return false;
     }
   });
 

@@ -17,73 +17,82 @@
     </div>
     }
 
-    <div class="table-responsive">
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <!-- Dynamic Data Columns -->
-                    @for (col of columns(); track col.key) {
-                    <th class="sortable" [style.text-align]="col.align" (click)="toggleSort(col.key)">
-                        <div class="header-content"
-                            [style.justify-content]="col.align === 'right' ? 'flex-end' : 'flex-start'">
-                            <span>{{ col.header }}</span>
-                            <span class="sort-icon">
-                                @if (sortColumn() === col.key) {
-                                <i class="fa-solid" [class.fa-sort-up]="sortDirection() === 'asc'"
-                                    [class.fa-sort-down]="sortDirection() === 'desc'"></i>
-                                } @else {
-                                <i class="fa-solid fa-sort muted"></i>
-                                }
+    <div class="table-content-wrapper">
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <!-- Dynamic Data Columns -->
+                        @for (col of columns(); track col.key) {
+                        <th class="sortable" [style.text-align]="col.align" (click)="toggleSort(col.key)">
+                            <div class="header-content"
+                                [style.justify-content]="col.align === 'right' ? 'flex-end' : 'flex-start'">
+                                <span>{{ col.header }}</span>
+                                <span class="sort-icon">
+                                    @if (sortColumn() === col.key) {
+                                    <i class="fa-solid" [class.fa-sort-up]="sortDirection() === 'asc'"
+                                        [class.fa-sort-down]="sortDirection() === 'desc'"></i>
+                                    } @else {
+                                    <i class="fa-solid fa-sort muted"></i>
+                                    }
+                                </span>
+                            </div>
+                        </th>
+                        }
+                        @if (canUpdate()) {
+                        <th class="action-header center-align">Update</th>
+                        }
+
+                        @if (canDelete()) {
+                        <th class="action-header center-align">Delete</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (row of sortedData(); track $index) {
+                    <tr>
+                        <!-- Dynamic Data Cells -->
+                        @for (col of columns(); track col.key) {
+                        <td [style.text-align]="col.align">
+                            <span [class.number-val]="col.type !== 'text'">
+                                {{ formatCell(row[col.key], col.type) }}
                             </span>
-                        </div>
-                    </th>
-                    }
-                    @if (canUpdate()) {
-                    <th class="action-header center-align">Update</th>
-                    }
+                        </td>
+                        }
+                        @if (canUpdate()) {
+                        <td class="action-cell center-align">
+                            <button class="action-btn edit-btn" title="Edit Item" (click)="onUpdate(row)">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                        </td>
+                        }
 
-                    @if (canDelete()) {
-                    <th class="action-header center-align">Delete</th>
+                        @if (canDelete()) {
+                        <td class="action-cell center-align">
+                            <button class="action-btn delete-btn" title="Delete Item" (click)="onDelete(row)">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </td>
+                        }
+                    </tr>
+                    } @empty {
+                    <tr>
+                        <td [attr.colspan]="columns().length + 2" class="empty-state">
+                            No data records available.
+                        </td>
+                    </tr>
                     }
-                </tr>
-            </thead>
-            <tbody>
-                @for (row of sortedData(); track $index) {
-                <tr>
-                    <!-- Dynamic Data Cells -->
-                    @for (col of columns(); track col.key) {
-                    <td [style.text-align]="col.align">
-                        <span [class.number-val]="col.type !== 'text'">
-                            {{ formatCell(row[col.key], col.type) }}
-                        </span>
-                    </td>
-                    }
-                    @if (canUpdate()) {
-                    <td class="action-cell center-align">
-                        <button class="action-btn edit-btn" title="Edit Item" (click)="onUpdate(row)">
-                            <i class="fa-solid fa-pen-to-square"></i>
-                        </button>
-                    </td>
-                    }
-
-                    @if (canDelete()) {
-                    <td class="action-cell center-align">
-                        <button class="action-btn delete-btn" title="Delete Item" (click)="onDelete(row)">
-                            <i class="fa-solid fa-trash-can"></i>
-                        </button>
-                    </td>
-                    }
-                </tr>
-                } @empty {
-                <tr>
-                    <td [attr.colspan]="columns().length + 2" class="empty-state">
-                        No data records available.
-                    </td>
-                </tr>
-                }
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>
+        @if (loading()) {
+        <div class="table-loading-overlay">
+            <div class="loading-spinner"></div>
+            <span>Fetching records...</span>
+        </div>
+        }
     </div>
+
 
     <!-- Pagination Footer -->
     <div class="table-footer">
