@@ -49,6 +49,10 @@
     align-items: stretch;
 }
 
+.metrics-grid>.loading-error-container {
+    grid-column: 1 / -1;
+}
+
 .metric-item {
     display: block;
     min-width: 0;
@@ -66,6 +70,11 @@
     width: 100%;
     min-width: 0;
     align-items: stretch;
+}
+
+.charts-section>.loading-error-container {
+    grid-column: 1 / -1;
+    min-height: 300px;
 }
 
 .trend-chart {

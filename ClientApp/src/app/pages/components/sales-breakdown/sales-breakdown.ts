@@ -9,14 +9,14 @@ import { ReportExporter } from '../../services/report-exporter';
 import { Loading } from '../../../shared/components/loading/loading';
 import { ErrorDisplay } from '../../../shared/components/error-display/error-display';
 import { VerticalBarChart } from '../../../shared/components/vertical-bar-chart/vertical-bar-chart';
-import { TableChart } from '../../../shared/components/table-chart/table-chart';
 import { DonutChart } from '../../../shared/components/donut-chart/donut-chart';
 import { AuthService } from '../../../auth/services/auth-service';
 import { MetricCardProps } from '../../../core/models/props';
 import { MetricCard } from '../../../shared/components/metric-card/metric-card';
+import { DynamicTable } from '../../../shared/components/dynamic-table/dynamic-table';
 
 @Component({
-  imports: [FormsModule, PageHeader, Filter, Loading, ErrorDisplay, MetricCard, VerticalBarChart, DonutChart, HorizontalBarChart, TableChart],
+  imports: [FormsModule, PageHeader, Filter, Loading, ErrorDisplay, MetricCard, VerticalBarChart, DonutChart, HorizontalBarChart, DynamicTable],
   selector: 'app-sales-breakdown',
   styleUrl: './sales-breakdown.css',
   templateUrl: './sales-breakdown.html',
@@ -60,28 +60,6 @@ export class SalesBreakdown {
   storesSalesData = this.salesService.storesSalesData;
   productSalesData = this.salesService.productSalesData;
   storeCategorySalesData = this.salesService.storeCategorySalesData;
-
-  isLoading = computed(() => {
-    return this.salesCategoryLoading() || this.storeSalesLoading() || this.productSalesLoading() || this.storeCategorySalesLoading();;
-  });
-
-  hasError = computed(() => {
-    return !!(
-      this.salesCategoryError() ||
-      this.storesSalesError() ||
-      this.storeCategorySalesError() ||
-      this.productSalesError()
-    );
-  });
-
-  productCategoriesErrorMessage = computed(() => {
-    return (
-      this.salesCategoryError() ||
-      this.storesSalesError() ||
-      this.storeCategorySalesError() ||
-      this.productSalesError()
-    );
-  });
 
   totalCategoryCard = computed((): MetricCardProps => {
     const data = this.entityCountData();

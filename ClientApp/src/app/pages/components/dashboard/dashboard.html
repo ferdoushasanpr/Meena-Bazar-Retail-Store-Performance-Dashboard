@@ -4,18 +4,19 @@
         (exportReport)="exportConsolidatedReport()">
     </app-page-header>
 
-    @if (isLoading()) {
+    @if (entityCountError() || salesKpiError()) {
     <div class="loading-error-container">
-        <app-loading message="Fetching records..." />
-    </div>
-    } @else if (hasError()) {
-    <div class="loading-error-container">
-        <app-error-display [message]="dashboardErrorMessage() ?? 'Unable to Load Data. Please Try Again.'"
-            (onLoad)="onLoadComponent()" />
+        <app-error-display message="Unable to Load Data. Please Try Again." (onLoad)="onLoadComponent()" />
     </div>
     } @else {
     <!-- Metric Cards -->
     <section class="metrics-grid">
+        @if (entityCountLoading() || salesKpiLoading() || dailySalesError() || monthlySalesError() || yearlySalesError()
+        || productSalesError() || salesCategoryError() || brandSalesError()) {
+        <div class="loading-error-container">
+            <app-loading message="Fetching records..." />
+        </div>
+        } @else {
         <app-metric-card class="metric-item" [card]="totalCustomerCard()">
         </app-metric-card>
 
@@ -39,26 +40,51 @@
 
         <app-metric-card class="metric-item" [card]="avgDailySalesCard()">
         </app-metric-card>
+        }
     </section>
 
     <!-- Charts Section -->
     <section class="charts-section">
-        <!-- Trend Chart: Full Width -->
+        <!-- Trend Chart -->
+        @if (dailySalesLoading() || monthlySalesLoading() || yearlySalesLoading()) {
+        <div class="loading-error-container">
+            <app-loading message="Fetching records..." />
+        </div>
+        } @else {
         <app-trend-chart class="trend-chart" [dailyData]="dailySalesData()" [monthlyData]="monthlySalesData()"
             [yearlyData]="yearlySalesData()">
         </app-trend-chart>
+        }
 
         <!-- Product Sales Chart -->
+        @if (productSalesLoading()) {
+        <div class="loading-error-container">
+            <app-loading message="Fetching records..." />
+        </div>
+        } @else {
         <app-horizontal-bar-chart class="product-chart" [data]="productSalesData()" labelKey="product_name"
             salesKey="total_Sales" (pageChange)="onPageChange($event)" />
+        }
 
         <!-- Category Donut Chart -->
+        @if (salesCategoryLoading()) {
+        <div class="loading-error-container">
+            <app-loading message="Fetching records..." />
+        </div>
+        } @else {
         <app-donut-chart class="donut-chart" [data]="salesCategoryData()">
         </app-donut-chart>
+        }
 
-        <!-- Brand Sales Chart: Full Width -->
+        <!-- Brand Sales Chart -->
+        @if (brandSalesLoading()) {
+        <div class="loading-error-container">
+            <app-loading message="Fetching records..." />
+        </div>
+        } @else {
         <app-horizontal-bar-chart class="bar-chart" [data]="brandSalesData()" labelKey="brand" salesKey="total_Sales">
         </app-horizontal-bar-chart>
+        }
     </section>
     }
 </div>

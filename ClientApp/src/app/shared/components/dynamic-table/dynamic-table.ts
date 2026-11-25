@@ -17,9 +17,11 @@ export class DynamicTable {
   // Data Inputs
   title = input<string>('Order Items');
   subtitle = input<string>('');
+  loading = input<boolean>(false);
   data = input<any[]>([]);
   canUpdate = input.required<boolean>();
   canDelete = input.required<boolean>();
+  canSearch = input.required<boolean>();
 
   // Pagination Inputs
   pageNumber = input<number>(1);

@@ -60,34 +60,6 @@ export class Dashboard implements OnInit {
   productSalesData = this.salesService.productSalesData;
   brandSalesData = this.salesService.brandSalesData;
 
-  isLoading = computed(() => {
-    return this.entityCountLoading() || this.salesKpiLoading() || this.salesCategoryLoading() || this.dailySalesLoading() || this.monthlySalesLoading() || this.yearlySalesLoading() || this.brandSalesLoading() || this.productSalesLoading();
-  });
-
-  hasError = computed(() => {
-    return !!(
-      this.entityCountError() ||
-      this.salesKpiError() ||
-      this.salesCategoryError() ||
-      this.dailySalesError() ||
-      this.monthlySalesError() ||
-      this.yearlySalesError() ||
-      this.brandSalesError()
-    );
-  });
-
-  dashboardErrorMessage = computed(() => {
-    return (
-      this.entityCountError() ||
-      this.salesKpiError() ||
-      this.salesCategoryError() ||
-      this.dailySalesError() ||
-      this.monthlySalesError() ||
-      this.yearlySalesError() ||
-      this.brandSalesError()
-    );
-  });
-
   totalCustomerCard = computed((): MetricCardProps => {
     const data = this.entityCountData();
 

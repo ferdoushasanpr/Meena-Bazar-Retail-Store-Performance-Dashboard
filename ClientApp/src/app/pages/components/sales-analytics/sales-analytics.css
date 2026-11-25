@@ -47,39 +47,51 @@
     align-items: stretch;
 }
 
+.metrics-grid>.loading-error-container {
+    grid-column: 1 / -1;
+}
+
 .metric-item {
     display: block;
     min-width: 0;
 }
 
 .charts-section {
-    display: grid;
-    grid-template-columns: minmax(0, 1.85fr) minmax(0, 1fr);
-    grid-template-areas:
-        "trend trend"
-        "bars  donut";
-    gap: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
     width: 100%;
     min-width: 0;
-    align-items: stretch;
 }
 
 .trend-chart {
-    grid-area: trend;
+    display: block;
     width: 100%;
     min-width: 0;
 }
 
-.product-chart {
-    grid-area: bars;
+.charts-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    gap: 20px;
+    align-items: stretch;
     width: 100%;
     min-width: 0;
 }
 
+.product-chart,
 .donut-chart {
-    grid-area: donut;
+    display: block;
     width: 100%;
     min-width: 0;
+    max-width: 100%;
+}
+
+.charts-section>.loading-error-container,
+.charts-row>.loading-error-container {
+    width: 100%;
+    min-height: 300px;
+    grid-column: 1 / -1;
 }
 
 app-trend-chart,
@@ -108,7 +120,6 @@ app-donut-chart {
 }
 
 @media (max-width: 1439px) {
-
     .container {
         padding: 22px 24px;
     }
@@ -116,14 +127,6 @@ app-donut-chart {
     .metrics-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
         margin-bottom: 20px;
-    }
-
-    .charts-section {
-        grid-template-columns:
-            minmax(0, 1.5fr) minmax(0, 1fr);
-        grid-template-areas:
-            "trend donut"
-            "bars  donut";
     }
 }
 
@@ -139,12 +142,12 @@ app-donut-chart {
     }
 
     .charts-section {
-        grid-template-columns: minmax(0, 1fr);
-        grid-template-areas:
-            "trend"
-            "bars"
-            "donut";
         gap: 14px;
+    }
+
+    .charts-row {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 16px;
     }
 }
 
@@ -161,12 +164,11 @@ app-donut-chart {
     }
 
     .charts-section {
-        grid-template-columns: minmax(0, 1fr);
-        grid-template-areas:
-            "trend"
-            "bars"
-            "donut";
-        gap: 12px;
+        gap: 14px;
+    }
+
+    .charts-row {
+        gap: 14px;
     }
 
     .trend-chart {

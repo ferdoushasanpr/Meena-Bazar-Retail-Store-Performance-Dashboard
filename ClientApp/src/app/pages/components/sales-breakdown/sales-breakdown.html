@@ -6,46 +6,71 @@
     <!-- Filter Control Bar -->
     <app-filter [isStoreFilter]="false" (filterCriteria)="loadCurrentFilter($event)" />
 
-    @if (isLoading()) {
+    @if (salesCategoryError() || storesSalesError() || storeCategorySalesError() || productSalesError()) {
     <div class="loading-error-container">
-        <app-loading message="Fetching records..." />
-    </div>
-    } @else if (hasError()) {
-    <div class="loading-error-container">
-        <app-error-display [message]="productCategoriesErrorMessage() ?? 'Unable to Load Data. Please Try Again.'"
-            (onLoad)="loadSalesData()" />
+        <app-error-display message="Unable to Load Data. Please Try Again." (onLoad)="loadSalesData()" />
     </div>
     } @else {
     <section class="metrics-grid">
+        @if (entityCountLoading()) {
+        <div class="loading-error-container">
+            <app-loading message="Fetching records..." />
+        </div>
+        } @else {
         <app-metric-card class="metric-item" [card]="totalCategoryCard()">
         </app-metric-card>
 
         <app-metric-card class="metric-item" [card]="totalProductCard()">
         </app-metric-card>
+        }
     </section>
 
     <div class="charts-section">
         <!-- Vertical Bar Chart with Store Selector -->
+        @if (salesCategoryLoading()) {
+        <div class="loading-error-container">
+            <app-loading message="Fetching records..." />
+        </div>
+        } @else {
         <app-vertical-bar-chart title="Category Sales Performance"
             subtitle="Revenue and volume performance per category" [data]="salesCategoryData()" labelKey="category" />
+        }
 
         <div class="charts-row">
             <!-- Store Sales Breakdown -->
+            @if (storeSalesLoading()) {
+            <div class="loading-error-container">
+                <app-loading message="Fetching records..." />
+            </div>
+            } @else {
             <app-donut-chart class="donut-chart" [data]="storesSalesData()">
             </app-donut-chart>
+            }
 
             <!-- Product Sales -->
+            @if (productSalesLoading()) {
+            <div class="loading-error-container">
+                <app-loading message="Fetching records..." />
+            </div>
+            } @else {
             <app-horizontal-bar-chart [data]="productSalesData()" labelKey="product_name" salesKey="total_Sales"
                 (pageChange)="onHorizontalBarChartPageChange($event)" />
+            }
         </div>
 
-        <app-table-chart title="Store Category Performance"
+        @if (productSalesLoading()) {
+        <div class="loading-error-container">
+            <app-loading message="Fetching records..." />
+        </div>
+        } @else {
+        <app-dynamic-table title="Store Category Performance"
             subtitle="Breakdown by store, category, sales volume, and transaction count"
-            [data]="storeCategorySalesData().data" [pageNumber]="storeCategorySalesData().pageNumber"
-            [pageSize]="storeCategorySalesData().pageSize" [totalRecords]="storeCategorySalesData().totalRecords"
-            [totalPages]="storeCategorySalesData().totalPages"
+            [data]="storeCategorySalesData().data" [canUpdate]="false" [canDelete]="false" [canSearch]="false"
+            [pageNumber]="storeCategorySalesData().pageNumber" [pageSize]="storeCategorySalesData().pageSize"
+            [totalRecords]="storeCategorySalesData().totalRecords" [totalPages]="storeCategorySalesData().totalPages"
             [hasPreviousPage]="storeCategorySalesData().hasPreviousPage"
             [hasNextPage]="storeCategorySalesData().hasNextPage" (pageChange)="onTableChartPageChange($event)" />
+        }
     </div>
     }
 </div>
