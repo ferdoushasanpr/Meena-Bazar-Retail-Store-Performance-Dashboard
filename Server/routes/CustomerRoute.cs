@@ -17,7 +17,10 @@ public static class CustomerRoute
             int pageSize = 10, ICustomerService service = null!) =>
         {
             if (pageNumber < 1 || pageSize < 1 || pageSize > 100)
+            {
+                logger.Warn("Invalid pagination parameters.");
                 return Results.BadRequest("Invalid pagination parameters.");
+            }
 
             var customers = await service.GetAllCustomersAsync(pageNumber, pageSize);
 
@@ -44,7 +47,10 @@ public static class CustomerRoute
         group.MapGet("/search", async (string? searchTerm, int pageNumber = 1, int pageSize = 10, ICustomerService service = null!) =>
         {
             if (pageNumber < 1 || pageSize < 1)
+            {
+                logger.Warn("Invalid pagination parameters.");
                 return Results.BadRequest("Invalid pagination parameters.");
+            }
 
             var result = await service.SearchCustomersAsync(searchTerm, pageNumber, pageSize);
 
@@ -73,7 +79,10 @@ public static class CustomerRoute
             ICustomerService service) =>
         {
             if (customer_id != customer.customer_id)
+            {
+                logger.Warn("Customer ID mismatch. Customer_Id: {Customer_Id} and Customer_Id: {Customer_id_Body}", customer_id, customer.customer_id);
                 return Results.BadRequest("Customer ID mismatch.");
+            }
 
             var result = await service.UpdateCustomerAsync(customer);
 

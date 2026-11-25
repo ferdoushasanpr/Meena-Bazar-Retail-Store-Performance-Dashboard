@@ -18,7 +18,10 @@ public static class UserRoute
         IUserService userService, HttpContext context, int pageNumber = 1, int pageSize = 10) =>
         {
             if (pageNumber < 1 || pageSize < 1 || pageSize > 100)
+            {
+                logger.Warn("Invalid pagination parameters.");
                 return Results.BadRequest("Invalid pagination parameters.");
+            }
 
             var isAdmin = context.User.IsInRole("admin");
 
@@ -74,7 +77,10 @@ public static class UserRoute
                 return Results.Json(new { message = "Access Denied." }, statusCode: StatusCodes.Status403Forbidden);
 
             if (pageNumber < 1 || pageSize < 1 || pageSize > 100)
+            {
+                logger.Warn("Invalid pagination parameters.");
                 return Results.BadRequest("Invalid pagination parameters.");
+            }
 
             var result = await userService.SearchUsersAsync(searchTerm, pageNumber, pageSize);
 
@@ -89,7 +95,10 @@ public static class UserRoute
             HttpContext context) =>
         {
             if (user_id != request.user_id)
+            {
+                logger.Warn("User ID mismatch. User_Id: {User_Id} and User_Id: {User_id_Body}", user_id, request.user_id);
                 return Results.BadRequest("User ID mismatch.");
+            }
 
             var currentUserId = context.User.FindFirst(
                 System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;

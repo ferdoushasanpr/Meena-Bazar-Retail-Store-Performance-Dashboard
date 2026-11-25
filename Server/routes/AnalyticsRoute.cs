@@ -32,11 +32,17 @@ public static class AnalyticsRoute
         IAnalyticsService service) =>
         {
             if (pageNumber < 1 || pageSize < 1)
+            {
+                logger.Warn("Invalid pagination parameters.");
                 return Results.BadRequest("Invalid pagination parameters.");
+            }
 
             if (startDate >= endDate)
+            {
+                logger.Warn("startDate must be earlier than endDate.");
                 return Results.BadRequest(
                     "startDate must be earlier than endDate.");
+            }
 
             var result = await service.GetSalesByStoreAndCategoryAsync(
                 pageNumber,
@@ -58,11 +64,17 @@ public static class AnalyticsRoute
             IAnalyticsService service) =>
         {
             if (pageNumber < 1 || pageSize < 1)
+            {
+                logger.Warn("Invalid pagination parameters.");
                 return Results.BadRequest("Invalid pagination parameters.");
+            }
 
             if (startDate >= endDate)
+            {
+                logger.Warn("startDate must be earlier than endDate.");
                 return Results.BadRequest(
                     "startDate must be earlier than endDate.");
+            }
 
             var result = await service.GetSalesByStoreAndProductAsync(
                 pageNumber,
@@ -78,8 +90,11 @@ public static class AnalyticsRoute
         group.MapGet("/stores", async (DateTime? startDate, DateTime? endDate, IAnalyticsService service) =>
         {
             if (startDate >= endDate)
+            {
+                logger.Warn("startDate must be earlier than endDate.");
                 return Results.BadRequest(
                     "startDate must be earlier than endDate.");
+            }
 
             var result = await service.GetStorePerformanceAsync(startDate, endDate);
             logger.Info("Retrieved store sales. From: {StartDate} - To: {EndDate}", startDate, endDate);
@@ -94,11 +109,17 @@ public static class AnalyticsRoute
         IAnalyticsService service) =>
         {
             if (pageNumber < 1 || pageSize < 1)
+            {
+                logger.Warn("Invalid pagination parameters.");
                 return Results.BadRequest("Invalid pagination parameters.");
+            }
 
             if (startDate >= endDate)
+            {
+                logger.Warn("startDate must be earlier than endDate.");
                 return Results.BadRequest(
                     "startDate must be earlier than endDate.");
+            }
 
             var result = await service.GetProductPerformanceAsync(
                 pageNumber,
@@ -113,8 +134,11 @@ public static class AnalyticsRoute
         group.MapGet("/categories", async (DateTime? startDate, DateTime? endDate, IAnalyticsService service) =>
         {
             if (startDate >= endDate)
+            {
+                logger.Warn("startDate must be earlier than endDate.");
                 return Results.BadRequest(
                     "startDate must be earlier than endDate.");
+            }
 
             var result = await service.GetCategoryPerformanceAsync(startDate, endDate);
             logger.Info("Retrieved categories sales. From: {StartDate} - To: {EndDate}", startDate, endDate);
@@ -154,8 +178,11 @@ public static class AnalyticsRoute
             IAnalyticsService service) =>
         {
             if (startDate >= endDate)
+            {
+                logger.Warn("startDate must be earlier than endDate.");
                 return Results.BadRequest(
                     "startDate must be earlier than endDate.");
+            }
 
             return Results.Ok(await service.GetFilteredKpiSummaryAsync(
                 startDate, endDate, storeId));
@@ -168,8 +195,11 @@ public static class AnalyticsRoute
             IAnalyticsService service) =>
         {
             if (startDate >= endDate)
+            {
+                logger.Warn("startDate must be earlier than endDate.");
                 return Results.BadRequest(
                     "startDate must be earlier than endDate.");
+            }
 
             var result = await service.GetFilteredDailySalesAsync(
                 startDate, endDate, storeId);
@@ -185,8 +215,11 @@ public static class AnalyticsRoute
             IAnalyticsService service) =>
         {
             if (startDate >= endDate)
+            {
+                logger.Warn("startDate must be earlier than endDate.");
                 return Results.BadRequest(
                     "startDate must be earlier than endDate.");
+            }
 
             var result = await service.GetFilteredStoreCategorySalesAsync(
                 startDate, endDate, storeId);

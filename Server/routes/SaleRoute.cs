@@ -1,4 +1,5 @@
 using NLog;
+using Server.DTOs;
 using Server.Interfaces;
 using Server.Models;
 
@@ -14,7 +15,10 @@ public static class SaleRoute
         group.MapGet("/", async (int pageNumber = 1, int pageSize = 10, ISaleService service = null!) =>
         {
             if (pageNumber < 1 || pageSize < 1)
+            {
+                logger.Warn("Invalid pagination parameters.");
                 return Results.BadRequest("Invalid pagination parameters.");
+            }
 
             var sales = await service.GetAllSalesAsync(pageNumber, pageSize);
 
@@ -41,7 +45,10 @@ public static class SaleRoute
         group.MapGet("/search", async (string? searchTerm, int pageNumber, int pageSize, ISaleService service) =>
         {
             if (pageNumber < 1 || pageSize < 1)
+            {
+                logger.Warn("Invalid pagination parameters.");
                 return Results.BadRequest("Invalid pagination parameters.");
+            }
 
             var result = await service.SearchSalesAsync(searchTerm, pageNumber, pageSize);
 
@@ -66,11 +73,14 @@ public static class SaleRoute
 
         group.MapPut("/{order_id}", async (
             string order_id,
-            Sale sale,
+            OrderRequest sale,
             ISaleService service) =>
         {
             if (order_id != sale.order_id)
+            {
+                logger.Warn("Order ID mismatch. Order_Id: {Order_Id} and Order_Id: {Order_id_Body}", order_id, sale.order_id);
                 return Results.BadRequest("Order ID mismatch.");
+            }
 
             var result = await service.UpdateSaleAsync(sale);
 
