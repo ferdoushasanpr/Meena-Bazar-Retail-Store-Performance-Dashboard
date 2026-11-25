@@ -1,4 +1,5 @@
 using NLog;
+using Server.DTOs;
 using Server.Interfaces;
 using Server.Models;
 
@@ -66,7 +67,7 @@ public static class SaleRoute
 
         group.MapPut("/{order_id}", async (
             string order_id,
-            Sale sale,
+            OrderRequest sale,
             ISaleService service) =>
         {
             if (order_id != sale.order_id)
