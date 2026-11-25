@@ -468,6 +468,23 @@ export class DataExploration {
         },
         error: (error) => { this.toastService.showError("Something Went Wrong!", "Error") }
       });
+    } else if (this.pageHeaderTitle() === 'Orders') {
+      this.orderService.deleteOrder(token, record.order_id).subscribe({
+        next: (response) => {
+          this.notificationService.addNotification(token, {
+            user_id: user_id,
+            message: `deleted order of order id ${record.order_id}.`,
+            isRead: 0
+          }).subscribe({
+            next: () => { console.log("Order Deleted Successfully!") },
+            error: (error) => { console.error(error) }
+          });
+
+          this.toastService.showSuccess("Delete", "Order Deleted Successfully!");
+          this.orderService.loadOrderData(token, this.componentData().pageNumber);
+        },
+        error: (error) => { this.toastService.showError("Something Went Wrong!", "Error") }
+      });
     } else if (this.pageHeaderTitle() === 'Transactions') {
       this.transactionService.deleteTransaction(token, record.order_item_id).subscribe({
         next: (response) => {

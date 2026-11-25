@@ -56,4 +56,8 @@ export class OrderService {
             }
         })
     }
+
+    deleteOrder(token: string, id: string) {
+        return this.operationsService.deleteOrderData(token, id);
+    }
 }
