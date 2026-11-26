@@ -46,14 +46,6 @@ export class Settings {
   showNewPassword = signal<boolean>(false);
   showConfirmPassword = signal<boolean>(false);
 
-  hasError = computed(() => {
-    return !!(this.userDataError());
-  });
-
-  settingsErrorMessage = computed(() => {
-    return (this.userDataError());
-  });
-
   // Settings Form
   settingsForm: FormGroup = this.fb.group(
     {

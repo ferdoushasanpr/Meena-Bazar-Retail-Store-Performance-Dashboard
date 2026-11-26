@@ -1,15 +1,15 @@
 <div class="container">
     <!-- Top Page Header -->
-    <app-page-header [title]="pageHeaderTitle" [subtitle]="pageHeaderSubtitle" [isReport]="false" />
+    <app-page-header [title]="pageHeaderTitle" [subtitle]="pageHeaderSubtitle" [isReport]="false"
+        (refreshPage)="loadComponentData()" />
 
     @if (userDataLoading()) {
     <div class="loading-error-container">
         <app-loading message="Fetching records..." />
     </div>
-    } @else if (hasError()) {
+    } @else if (userDataError()) {
     <div class="loading-error-container">
-        <app-error-display [message]="settingsErrorMessage() ?? 'Unable to Load Data. Please Try Again.'"
-            (onLoad)="loadComponentData()" />
+        <app-error-display [message]="'Unable to Load Data. Please Try Again.'" (onLoad)="loadComponentData()" />
     </div>
     } @else {
     <!-- Main Unified Form Card -->

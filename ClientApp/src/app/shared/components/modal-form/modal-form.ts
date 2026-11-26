@@ -42,6 +42,22 @@ export class ModalForm {
     city: ['', [Validators.required, Validators.maxLength(50)]]
   });
 
+  orderForm: FormGroup = this.fb.group({
+    store_id: ['', [Validators.required]],
+    customer_id: ['', [Validators.required]],
+    order_channel: ['', [Validators.required]],
+    payment_method: ['', [Validators.required]],
+    order_status: ['', [Validators.required]],
+  });
+
+  transactionForm: FormGroup = this.fb.group({
+    order_id: ['', [Validators.required]],
+    product_id: ['', [Validators.required]],
+    quantity: [0, [Validators.required]],
+    unit_price: [0, [Validators.required]],
+    discount_amount: [0, [Validators.required]]
+  });
+
   userForm: FormGroup = this.fb.group({
     user_name: ['', [Validators.required, Validators.maxLength(50)]],
     user_email: ['', [Validators.required, Validators.email, Validators.maxLength(50)]],
@@ -75,6 +91,22 @@ export class ModalForm {
             store_name: data.store_name || '',
             city: data.city || ''
           });
+        } else if (type === 'Order') {
+          this.orderForm.patchValue({
+            store_id: data.store_id || '',
+            customer_id: data.customer_id || '',
+            order_channel: data.order_channel || '',
+            payment_method: data.payment_method || '',
+            order_status: data.order_status || ''
+          });
+        } else if (type === 'Transaction') {
+          this.transactionForm.patchValue({
+            order_id: data.order_id || '',
+            product_id: data.product_id || '',
+            quantity: data.quantity ?? 0,
+            unit_price: data.unit_price ?? 0,
+            discount_amount: data.discount_amount ?? 0
+          });
         } else if (type === 'User') {
           this.userForm.patchValue({
             user_name: data.user_name || '',
@@ -97,12 +129,14 @@ export class ModalForm {
     if (type === 'Customer') form = this.customerForm;
     else if (type === 'Product') form = this.productForm;
     else if (type === 'Store') form = this.storeForm;
+    else if (type === 'Order') form = this.orderForm;
+    else if (type === 'Transaction') form = this.transactionForm;
     else form = this.userForm;
 
     if (form.valid) {
       this.saveData.emit({
         type,
-        id: this.initialData()[`${type.toLowerCase()}_id`],
+        id: this.initialData()[type === 'Transaction' ? 'order_item_id' : `${type.toLowerCase()}_id`],
         data: form.value
       });
     } else {

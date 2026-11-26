@@ -19,6 +19,11 @@ export class PageHeader {
   subtitle = input.required<string>();
   isReport = input<boolean>(false);
   exportReport = output<void>();
+  refreshPage = output<void>();
+
+  onRefreshPage(): void {
+    this.refreshPage.emit();
+  }
 
   onExportReport(): void {
     this.toastService.showSuccess("Download", "Report Downloaded Successfully!");

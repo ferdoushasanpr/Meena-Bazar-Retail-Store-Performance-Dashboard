@@ -68,6 +68,19 @@ export class AddData {
     this.activeTab.set(tab);
   }
 
+  onResetComponent(): void {
+    const currentTab = this.activeTab();
+
+    if (currentTab === 'Customer')
+      this.customerForm.reset();
+    else if (currentTab === 'Product')
+      this.productForm.reset();
+    else
+      this.storeForm.reset();
+
+    this.activeTab.set("Customer");
+  }
+
   // Form Submissions
   onCustomerSubmit(): void {
     const token = this.authData()?.token;

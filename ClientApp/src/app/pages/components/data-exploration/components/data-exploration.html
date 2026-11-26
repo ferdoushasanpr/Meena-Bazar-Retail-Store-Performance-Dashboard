@@ -1,6 +1,7 @@
 <div class="container">
     <!-- Top Navigation Header -->
-    <app-page-header [title]="pageHeaderTitle()" [subtitle]="pageHeaderSubtitle()" [isReport]="false" />
+    <app-page-header [title]="pageHeaderTitle()" [subtitle]="pageHeaderSubtitle()" [isReport]="false"
+        (refreshPage)="loadComponentData()" />
 
     @if (componentDataError()) {
     <div class="loading-error-container">

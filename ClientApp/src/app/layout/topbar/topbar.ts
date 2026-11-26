@@ -20,7 +20,7 @@ export class Topbar implements OnInit {
   // User Data
   authData = this.authService.authData;
 
-  lastUpdatedTime: string = '10:42 AM';
+  username = signal<string | null>(this.authData()!.userName);
   pathSegments = signal<string[]>([]);
   isNotificationsOpen = signal<boolean>(false);
   notifications = this.notificationService.notifications;
@@ -57,16 +57,21 @@ export class Topbar implements OnInit {
 
   updateMarkAsRead(id: string): void {
     const token = this.authData()?.token;
+
+    if (!token) return;
+
     const data = this.notifications().find(item => item.notification_id === id);
-    if (data && token) {
-      data.isRead = 1;
-      this.notificationService.markAsReadNotification(token, id, data).subscribe({
-        next: (response) => { console.log("The Notifications is Read.") },
-        error: (error) => {
-          console.error(error);
-        }
-      })
-    }
+
+    if (!data) return;
+
+    this.notifications.update(arr => arr.map(item => item.notification_id === id ? { ...item, isRead: 1 } : item));
+
+    this.notificationService.markAsReadNotification(token, id, data).subscribe({
+      next: (response) => { console.log("The Notifications is Read.") },
+      error: (error) => {
+        console.error(error);
+      }
+    });
   }
 
   onLogout(): void {

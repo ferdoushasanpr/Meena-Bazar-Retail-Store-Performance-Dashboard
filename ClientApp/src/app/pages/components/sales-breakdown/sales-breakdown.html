@@ -1,7 +1,7 @@
 <div class="container">
     <!-- Top Navigation Header -->
     <app-page-header [title]="pageHeaderTitle" [subtitle]="pageHeaderSubtitle" [isReport]="true"
-        (exportReport)="exportConsolidatedReport()" />
+        (exportReport)="exportConsolidatedReport()" (refreshPage)="loadSalesData()" />
 
     <!-- Filter Control Bar -->
     <app-filter [isStoreFilter]="false" (filterCriteria)="loadCurrentFilter($event)" />

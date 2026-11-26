@@ -12,7 +12,6 @@ import { ReportExporter } from '../../services/report-exporter';
 import { Loading } from '../../../shared/components/loading/loading';
 import { ErrorDisplay } from '../../../shared/components/error-display/error-display';
 import { DonutChart } from '../../../shared/components/donut-chart/donut-chart';
-import { TableChart } from '../../../shared/components/table-chart/table-chart';
 import { formatDate } from '../../../shared/utilities/date';
 import { HorizontalBarChart } from '../../../shared/components/horizontal-bar-chart/horizontal-bar-chart';
 import { AuthService } from '../../../auth/services/auth-service';
