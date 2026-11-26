@@ -23,10 +23,10 @@ export class OrderService {
         hasNextPage: false,
     });
 
-    loadSearchOrderData(token: string, pageNumber: number, searchTerm?: string) {
+    loadSearchOrderData(pageNumber: number, searchTerm?: string) {
         this.componentDataLoading.set(true);
         this.componentDataError.set(null);
-        this.operationsService.searchOrdersData(token, pageNumber, undefined, searchTerm).subscribe({
+        this.operationsService.searchOrdersData(pageNumber, undefined, searchTerm).subscribe({
             next: (response) => {
                 this.componentData.set(response);
                 this.componentDataLoading.set(false);
@@ -40,10 +40,10 @@ export class OrderService {
         });
     }
 
-    loadOrderData(token: string, pageNumber: number, pageSize?: number) {
+    loadOrderData(pageNumber: number, pageSize?: number) {
         this.componentDataLoading.set(true);
         this.componentDataError.set(null);
-        this.operationsService.getOrdersData(token, pageNumber, pageSize).subscribe({
+        this.operationsService.getOrdersData(pageNumber, pageSize).subscribe({
             next: (response) => {
                 this.componentData.set(response);
                 this.componentDataLoading.set(false);
@@ -57,11 +57,11 @@ export class OrderService {
         })
     }
 
-    updateOrder(token: string, id: string, data: any) {
-        return this.operationsService.updateOrderData(token, data, id);
+    updateOrder(id: string, data: any) {
+        return this.operationsService.updateOrderData(data, id);
     }
 
-    deleteOrder(token: string, id: string) {
-        return this.operationsService.deleteOrderData(token, id);
+    deleteOrder(id: string) {
+        return this.operationsService.deleteOrderData(id);
     }
 }

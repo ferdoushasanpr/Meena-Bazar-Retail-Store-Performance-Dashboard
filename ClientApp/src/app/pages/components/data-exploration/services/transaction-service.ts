@@ -21,10 +21,10 @@ export class TransactionService {
         hasNextPage: false,
     });
 
-    loadSearchTransactionData(token: string, pageNumber: number, searchTerm?: string) {
+    loadSearchTransactionData(pageNumber: number, searchTerm?: string) {
         this.componentDataLoading.set(true);
         this.componentDataError.set(null);
-        this.operationsService.searchTransactionsData(token, pageNumber, undefined, searchTerm).subscribe({
+        this.operationsService.searchTransactionsData(pageNumber, undefined, searchTerm).subscribe({
             next: (response) => {
                 this.componentData.set(response);
                 this.componentDataLoading.set(false);
@@ -38,10 +38,10 @@ export class TransactionService {
         });
     }
 
-    loadTransactionsData(token: string, pageNumber: number): void {
+    loadTransactionsData(pageNumber: number): void {
         this.componentDataLoading.set(true);
         this.componentDataError.set(null);
-        this.operationsService.getTransactionsData(token, pageNumber).subscribe({
+        this.operationsService.getTransactionsData(pageNumber).subscribe({
             next: (response) => {
                 this.componentData.set(response);
                 this.componentDataLoading.set(false);
@@ -55,11 +55,11 @@ export class TransactionService {
         });
     }
 
-    updateTransaction(token: string, id: string, data: any) {
-        return this.operationsService.updateTransactionData(token, data, id);
+    updateTransaction(id: string, data: any) {
+        return this.operationsService.updateTransactionData(data, id);
     }
 
-    deleteTransaction(token: string, id: string) {
-        return this.operationsService.deleteTransactionData(token, id);
+    deleteTransaction(id: string) {
+        return this.operationsService.deleteTransactionData(id);
     }
 }

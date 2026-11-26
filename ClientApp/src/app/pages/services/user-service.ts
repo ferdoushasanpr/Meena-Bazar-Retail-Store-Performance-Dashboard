@@ -37,10 +37,10 @@ export class UserService {
         user_last_active_at: ""
     });
 
-    loadSearchUserData(pageNumber: number, token: string, searchTerm?: string) {
+    loadSearchUserData(pageNumber: number, searchTerm?: string) {
         this.componentDataLoading.set(true);
         this.componentDataError.set(null);
-        this.operationService.searchUsersData(pageNumber, undefined, token, searchTerm).subscribe({
+        this.operationService.searchUsersData(pageNumber, undefined, searchTerm).subscribe({
             next: (response) => {
                 this.componentData.set(response);
                 this.componentDataLoading.set(false);
@@ -54,10 +54,10 @@ export class UserService {
         });
     }
 
-    loadUserData(token: string, pageNumber: number, pageSize: number = 10) {
+    loadUserData(pageNumber: number, pageSize: number = 10) {
         this.componentDataLoading.set(true);
         this.componentDataError.set(null);
-        this.operationService.getUsersData(pageNumber, pageSize, token).subscribe({
+        this.operationService.getUsersData(pageNumber, pageSize).subscribe({
             next: (response) => {
                 this.componentData.set(response);
                 this.componentDataLoading.set(false);
@@ -71,10 +71,10 @@ export class UserService {
         });
     }
 
-    getUserById(user_id: string, token: string) {
+    getUserById(user_id: string) {
         this.userDataLoading.set(true);
         this.userDataError.set(null);
-        return this.operationService.getUserData(user_id, token).subscribe({
+        return this.operationService.getUserData(user_id).subscribe({
             next: (response) => {
                 this.userData.set(response);
                 this.userDataLoading.set(false);
@@ -86,11 +86,11 @@ export class UserService {
         });
     }
 
-    updateUser(user_id: string, user: any, token: string) {
-        return this.operationService.updateUserData(user_id, user, token);
+    updateUser(user_id: string, user: any) {
+        return this.operationService.updateUserData(user_id, user);
     }
 
-    deleteUser(id: string, token: string) {
-        return this.operationService.deleteUserData(id, token);
+    deleteUser(id: string) {
+        return this.operationService.deleteUserData(id);
     }
 }

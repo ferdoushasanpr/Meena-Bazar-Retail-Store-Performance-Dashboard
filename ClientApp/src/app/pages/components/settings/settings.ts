@@ -105,7 +105,7 @@ export class Settings {
       const formValue = this.settingsForm.getRawValue();
       const auth = this.authData();
 
-      if (!auth?.userId || !auth?.token) {
+      if (!auth?.userId) {
         return;
       }
 
@@ -119,13 +119,13 @@ export class Settings {
         user.updated_password = formValue.newPassword;
       }
 
-      this.userService.updateUser(auth.userId, user, auth.token).subscribe({
+      this.userService.updateUser(auth.userId, user).subscribe({
         next: (response) => {
           this.isSubmitting.set(false);
           this.toastService.showSuccess("Update", "Account settings updated successfully!");
           this.settingsForm.patchValue({ currentPassword: '', newPassword: '', confirmPassword: '' });
           this.settingsForm.markAsPristine();
-          this.userService.getUserById(auth.userId, auth.token);
+          this.userService.getUserById(auth.userId);
         },
         error: (error) => { this.toastService.showError("Something Went Wrong!", "Error") }
       });

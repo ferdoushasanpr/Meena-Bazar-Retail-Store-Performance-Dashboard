@@ -8,7 +8,6 @@ import { StoreService } from '../data-exploration/services/store-service';
 import { ToastService } from '../../services/toast-service';
 import { NotificationService } from '../../services/notification-service';
 import { UserService } from '../../services/user-service';
-import { AuthService } from '../../../auth/services/auth-service';
 
 export type DataTab = 'Customer' | 'Product' | 'Store';
 
@@ -21,7 +20,6 @@ export type DataTab = 'Customer' | 'Product' | 'Store';
 export class AddData {
   private router = inject(Router);
   private fb = inject(FormBuilder);
-  private authService = inject(AuthService);
   private customerService = inject(CustomerService);
   private productService = inject(ProductService);
   private storeService = inject(StoreService);
@@ -35,7 +33,6 @@ export class AddData {
     'Upload and manage your data sources to power insightful analytics, accurate reporting, and meaningful business insights.';
 
   // User Data
-  authData = this.authService.authData;
   userData = this.userService.userData;
 
   // Active Tab State
@@ -83,21 +80,25 @@ export class AddData {
 
   // Form Submissions
   onCustomerSubmit(): void {
-    const token = this.authData()?.token;
-    if (this.customerForm.valid && token) {
-      this.customerService.addCustomer(token, this.customerForm.value).subscribe({
+    const userId = this.userData().user_id;
+
+    if (!userId) {
+      this.toastService.showError("Authentication error!", "Error");
+      return;
+    }
+
+    if (this.customerForm.valid && userId) {
+      this.customerService.addCustomer(this.customerForm.value).subscribe({
         next: (response) => {
-          const data = this.userData();
-          if (data.user_id) {
-            this.notificationService.addNotification(token, {
-              user_id: data.user_id,
-              message: "created new customer.",
-              isRead: 0
-            }).subscribe({
-              next: () => { console.log("Customer Added Successfully!") },
-              error: (error) => { console.error(error) }
-            });
-          }
+          this.notificationService.addNotification({
+            user_id: userId,
+            message: "created new customer.",
+            isRead: 0
+          }).subscribe({
+            next: () => { console.log("Customer Added Successfully!") },
+            error: (error) => { console.error(error) }
+          });
+
           this.toastService.showSuccess("Added", "Customer Added Successfully!");
           this.router.navigate(['data-explorer/customers']);
         },
@@ -111,21 +112,25 @@ export class AddData {
   }
 
   onProductSubmit(): void {
-    const token = this.authData()?.token;
-    if (this.productForm.valid && token) {
-      this.productService.addProduct(token, this.productForm.value).subscribe({
+    const userId = this.userData().user_id;
+
+    if (!userId) {
+      this.toastService.showError("Authentication error!", "Error");
+      return;
+    }
+
+    if (this.productForm.valid && userId) {
+      this.productService.addProduct(this.productForm.value).subscribe({
         next: (response) => {
-          const data = this.userData();
-          if (data.user_id) {
-            this.notificationService.addNotification(token, {
-              user_id: data.user_id,
-              message: "created new product.",
-              isRead: 0
-            }).subscribe({
-              next: () => { console.log("Product Added Successfully!") },
-              error: (error) => { console.error(error) }
-            });
-          }
+          this.notificationService.addNotification({
+            user_id: userId,
+            message: "created new product.",
+            isRead: 0
+          }).subscribe({
+            next: () => { console.log("Product Added Successfully!") },
+            error: (error) => { console.error(error) }
+          });
+
           this.toastService.showSuccess("Added", "Product Added Successfully!");
           this.router.navigate(['data-explorer/products']);
         },
@@ -139,21 +144,25 @@ export class AddData {
   }
 
   onStoreSubmit(): void {
-    const token = this.authData()?.token;
-    if (this.storeForm.valid && token) {
-      this.storeService.addStore(token, this.storeForm.value).subscribe({
+    const userId = this.userData().user_id;
+
+    if (!userId) {
+      this.toastService.showError("Authentication error!", "Error");
+      return;
+    }
+
+    if (this.storeForm.valid) {
+      this.storeService.addStore(this.storeForm.value).subscribe({
         next: (response) => {
-          const data = this.userData();
-          if (data.user_id) {
-            this.notificationService.addNotification(token, {
-              user_id: data.user_id,
-              message: "created new store.",
-              isRead: 0
-            }).subscribe({
-              next: () => { console.log("Store Added Successfully!") },
-              error: (error) => { console.error(error) }
-            });
-          }
+          this.notificationService.addNotification({
+            user_id: userId,
+            message: "created new store.",
+            isRead: 0
+          }).subscribe({
+            next: () => { console.log("Store Added Successfully!") },
+            error: (error) => { console.error(error) }
+          });
+
           this.toastService.showSuccess("Added", "Store Added Successfully!");
           this.router.navigate(['data-explorer/stores']);
         },

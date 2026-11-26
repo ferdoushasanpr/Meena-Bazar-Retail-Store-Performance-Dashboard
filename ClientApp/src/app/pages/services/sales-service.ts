@@ -105,10 +105,10 @@ export class SalesService {
     storesSalesData = signal<StoreSalesData[]>([]);
     storesArr = signal<StoreData[]>([]);
 
-    loadEntityCountData(token: string): void {
+    loadEntityCountData(): void {
         this.entityCountLoading.set(true);
         this.entityCountError.set(null);
-        this.businessKpiService.getEntityCountData(token).subscribe({
+        this.businessKpiService.getEntityCountData().subscribe({
             next: (response) => {
                 this.entityCountData.set(response);
                 this.entityCountLoading.set(false);
@@ -117,10 +117,10 @@ export class SalesService {
         });
     }
 
-    loadSalesKpiData(token: string): void {
+    loadSalesKpiData(): void {
         this.salesKpiLoading.set(true);
         this.salesKpiError.set(null);
-        this.businessKpiService.getSalesData(token).subscribe({
+        this.businessKpiService.getSalesData().subscribe({
             next: (response) => {
                 this.salesKpiData.set(response);
                 this.salesKpiLoading.set(false);
@@ -134,10 +134,10 @@ export class SalesService {
         });
     }
 
-    loadSalesCategoryData(token: string, startDate?: string, endDate?: string): void {
+    loadSalesCategoryData(startDate?: string, endDate?: string): void {
         this.salesCategoryLoading.set(true);
         this.salesCategoryError.set(null);
-        this.businessKpiService.getSalesCategoryData(token, startDate, endDate).subscribe({
+        this.businessKpiService.getSalesCategoryData(startDate, endDate).subscribe({
             next: (response) => {
                 this.salesCategoryData.set(response);
                 this.salesCategoryLoading.set(false);
@@ -151,10 +151,10 @@ export class SalesService {
         });
     }
 
-    loadDailySalesData(token: string): void {
+    loadDailySalesData(): void {
         this.dailySalesLoading.set(true);
         this.dailySalesError.set(null);
-        this.businessKpiService.getDailySalesData(token).subscribe({
+        this.businessKpiService.getDailySalesData().subscribe({
             next: (response) => {
                 this.dailySalesData.set(response);
                 this.dailySalesLoading.set(false);
@@ -168,10 +168,10 @@ export class SalesService {
         });
     }
 
-    loadMonthlySalesData(token: string): void {
+    loadMonthlySalesData(): void {
         this.monthlySalesLoading.set(true);
         this.monthlySalesError.set(null);
-        this.businessKpiService.getMonthlySalesData(token).subscribe({
+        this.businessKpiService.getMonthlySalesData().subscribe({
             next: (response) => {
                 this.monthlySalesData.set(response);
                 this.monthlySalesLoading.set(false);
@@ -185,10 +185,10 @@ export class SalesService {
         });
     }
 
-    loadYearlySalesData(token: string): void {
+    loadYearlySalesData(): void {
         this.yearlySalesLoading.set(true);
         this.yearlySalesError.set(null);
-        this.businessKpiService.getYearlySalesData(token).subscribe({
+        this.businessKpiService.getYearlySalesData().subscribe({
             next: (response) => {
                 this.yearlySalesData.set(response);
                 this.yearlySalesLoading.set(false);
@@ -202,10 +202,10 @@ export class SalesService {
         });
     }
 
-    loadBrandSalesData(token: string): void {
+    loadBrandSalesData(): void {
         this.brandSalesLoading.set(true);
         this.brandSalesError.set(null);
-        this.businessKpiService.getBrandSalesData(token).subscribe({
+        this.businessKpiService.getBrandSalesData().subscribe({
             next: (response) => {
                 this.brandSalesData.set(response);
                 this.brandSalesLoading.set(false);
@@ -219,10 +219,10 @@ export class SalesService {
         });
     }
 
-    loadFilteredSalesData(token: string, startDate: string, endDate: string, storeId?: string): void {
+    loadFilteredSalesData(startDate: string, endDate: string, storeId?: string): void {
         this.salesKpiLoading.set(true);
         this.salesKpiError.set(null);
-        this.businessKpiService.getFilteredSalesData(token, startDate, endDate, storeId).subscribe({
+        this.businessKpiService.getFilteredSalesData(startDate, endDate, storeId).subscribe({
             next: (response) => {
                 this.salesKpiData.set(response);
                 this.salesKpiLoading.set(false);
@@ -236,10 +236,10 @@ export class SalesService {
         });
     }
 
-    loadDailyStoreSalesData(token: string, startDate: string, endDate: string, storeId: string): void {
+    loadDailyStoreSalesData(startDate: string, endDate: string, storeId: string): void {
         this.dailyStoreSaleLoading.set(true);
         this.dailyStoreSaleError.set(null);
-        this.businessKpiService.getDailyStoresSalesData(token, startDate, endDate, storeId).subscribe({
+        this.businessKpiService.getDailyStoresSalesData(startDate, endDate, storeId).subscribe({
             next: (response) => {
                 this.dailyStoreSalesData.set(response);
                 this.dailyStoreSaleLoading.set(false);
@@ -253,10 +253,10 @@ export class SalesService {
         });
     }
 
-    loadFilteredStoreCategorySalesData(token: string, startDate: string, endDate: string, storeId?: string): void {
+    loadFilteredStoreCategorySalesData(startDate: string, endDate: string, storeId?: string): void {
         this.filteredStoreCategorySalesLoading.set(true);
         this.filteredStoreCategorySalesError.set(null);
-        this.businessKpiService.getFilteredStoreCategorySalesData(token, startDate, endDate, storeId).subscribe({
+        this.businessKpiService.getFilteredStoreCategorySalesData(startDate, endDate, storeId).subscribe({
             next: (response) => {
                 this.filteredStoreCategorySalesData.set(response);
                 this.filteredStoreCategorySalesLoading.set(false);
@@ -270,17 +270,17 @@ export class SalesService {
         });
     }
 
-    loadStoresData(token: string): void {
-        this.operationsService.getStoresData(token).subscribe({
+    loadStoresData(): void {
+        this.operationsService.getStoresData().subscribe({
             next: (response) => { this.storesArr.set(response); },
             error: (error) => { console.error(error) }
         });
     }
 
-    loadStoresSalesData(token: string, startDate: string, endDate: string): void {
+    loadStoresSalesData(startDate: string, endDate: string): void {
         this.storesSalesLoading.set(true);
         this.storesSalesError.set(null);
-        this.businessKpiService.getStoresSalesData(token, startDate, endDate).subscribe({
+        this.businessKpiService.getStoresSalesData(startDate, endDate).subscribe({
             next: (response) => {
                 this.storesSalesData.set(response);
                 this.storesSalesLoading.set(false);
@@ -294,10 +294,10 @@ export class SalesService {
         });
     }
 
-    loadStoreProductSalesData(token: string, pageNumber: number = 1, startDate?: string, endDate?: string, storeId?: string): void {
+    loadStoreProductSalesData(pageNumber: number = 1, startDate?: string, endDate?: string, storeId?: string): void {
         this.paginatedSalesLoading.set(true);
         this.paginatedSalesError.set(null);
-        this.businessKpiService.getStoreProductSalesData(token, pageNumber, 10, storeId, startDate, endDate).subscribe({
+        this.businessKpiService.getStoreProductSalesData(pageNumber, 10, storeId, startDate, endDate).subscribe({
             next: (response) => {
                 this.paginatedSalesData.set(response);
                 this.paginatedSalesLoading.set(false);
@@ -311,10 +311,10 @@ export class SalesService {
         });
     }
 
-    loadStoreCategorySalesData(token: string, pageNumber: number = 1, storeId?: string, startDate?: string, endDate?: string): void {
+    loadStoreCategorySalesData(pageNumber: number = 1, storeId?: string, startDate?: string, endDate?: string): void {
         this.storeCategorySalesLoading.set(true);
         this.storeCategorySalesError.set(null);
-        this.businessKpiService.getStoreCategorySalesData(token, pageNumber, 10, storeId, startDate, endDate).subscribe({
+        this.businessKpiService.getStoreCategorySalesData(pageNumber, 10, storeId, startDate, endDate).subscribe({
             next: (response) => {
                 this.storeCategorySalesData.set(response);
                 this.storeCategorySalesLoading.set(false);
@@ -328,10 +328,10 @@ export class SalesService {
         });
     }
 
-    loadProductSalesData(token: string, pageNumber: number = 1, startDate?: string, endDate?: string): void {
+    loadProductSalesData(pageNumber: number = 1, startDate?: string, endDate?: string): void {
         this.productSalesLoading.set(true);
         this.productSalesError.set(null);
-        this.businessKpiService.getProductSalesData(token, pageNumber, 10, startDate, endDate).subscribe({
+        this.businessKpiService.getProductSalesData(pageNumber, 10, startDate, endDate).subscribe({
             next: (response) => {
                 this.productSalesData.set(response);
                 this.productSalesLoading.set(false);

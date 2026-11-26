@@ -15,13 +15,13 @@ export class NotificationService {
     notificationsDataLoading = signal<boolean>(false);
     notifications = signal<NotificationResponse[]>([]);
 
-    addNotification(token: string, notification: NotificationData) {
-        return this.operationService.addNotificationData(token, notification);
+    addNotification(notification: NotificationData) {
+        return this.operationService.addNotificationData(notification);
     }
 
-    getNotifications(token: string) {
+    getNotifications() {
         this.notificationsDataLoading.set(true);
-        return this.operationService.getNotificationsData(token).subscribe({
+        return this.operationService.getNotificationsData().subscribe({
             next: (response) => {
                 this.notifications.set(response);
                 this.notificationsDataLoading.set(false);
@@ -30,12 +30,12 @@ export class NotificationService {
         });
     }
 
-    markAsReadNotification(token: string, notification_id: string, notification: NotificationResponse) {
-        return this.operationService.updateNotificationData(token, notification_id, notification);
+    markAsReadNotification(notification_id: string, notification: NotificationResponse) {
+        return this.operationService.updateNotificationData(notification_id, notification);
     }
 
     // SignalR connection
-    async startNotificationConnection(token: string): Promise<void> {
+    async startNotificationConnection(): Promise<void> {
         if (this.hubConnection) {
             return;
         }
@@ -64,7 +64,7 @@ export class NotificationService {
 
         this.hubConnection.onreconnected(() => {
             this.connectionStatus.set(true);
-            this.getNotifications(token);
+            this.getNotifications();
         });
 
         this.hubConnection.onclose(() => {

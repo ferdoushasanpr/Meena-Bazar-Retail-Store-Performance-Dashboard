@@ -23,14 +23,14 @@ export class CustomerService {
         hasNextPage: false,
     });
 
-    addCustomer(token: string, data: any) {
-        return this.operationsService.addCustomerData(token, data);
+    addCustomer(data: any) {
+        return this.operationsService.addCustomerData(data);
     }
 
-    loadSearchCustomerData(token: string, pageNumber: number, searchTerm?: string) {
+    loadSearchCustomerData(pageNumber: number, searchTerm?: string) {
         this.componentDataLoading.set(true);
         this.componentDataError.set(null);
-        this.operationsService.searchCustomersData(token, pageNumber, undefined, searchTerm).subscribe({
+        this.operationsService.searchCustomersData(pageNumber, undefined, searchTerm).subscribe({
             next: (response) => {
                 this.componentData.set(response);
                 this.componentDataLoading.set(false);
@@ -44,10 +44,10 @@ export class CustomerService {
         });
     }
 
-    loadCustomerData(token: string, pageNumber: number, pageSize?: number) {
+    loadCustomerData(pageNumber: number, pageSize?: number) {
         this.componentDataLoading.set(true);
         this.componentDataError.set(null);
-        this.operationsService.getCustomersData(token, pageNumber, pageSize).subscribe({
+        this.operationsService.getCustomersData(pageNumber, pageSize).subscribe({
             next: (response) => {
                 this.componentData.set(response);
                 this.componentDataLoading.set(false);
@@ -61,11 +61,11 @@ export class CustomerService {
         })
     }
 
-    updateCustomer(token: string, id: string, data: any) {
-        return this.operationsService.updateCustomerData(token, data, id);
+    updateCustomer(id: string, data: any) {
+        return this.operationsService.updateCustomerData(data, id);
     }
 
-    deleteCustomer(token: string, id: string) {
-        return this.operationsService.deleteCustomerData(token, id);
+    deleteCustomer(id: string) {
+        return this.operationsService.deleteCustomerData(id);
     }
 }
