@@ -10,7 +10,6 @@ import { SalesService } from '../../services/sales-service';
 import { ReportExporter } from '../../services/report-exporter';
 import { Loading } from '../../../shared/components/loading/loading';
 import { ErrorDisplay } from '../../../shared/components/error-display/error-display';
-import { AuthService } from '../../../auth/services/auth-service';
 
 @Component({
   imports: [FormsModule, PageHeader, Loading, ErrorDisplay, MetricCard, TrendChart, HorizontalBarChart, DonutChart],
@@ -19,16 +18,12 @@ import { AuthService } from '../../../auth/services/auth-service';
   templateUrl: './dashboard.html',
 })
 export class Dashboard implements OnInit {
-  private authService = inject(AuthService);
   private salesService = inject(SalesService);
   private reportExportService = inject(ReportExporter);
 
   //Page Header Component Info
   pageHeaderTitle = "Sales Overview";
   pageHeaderSubtitle = "Monitor revenue, transactions, and retail performance across your stores.";
-
-  // User Data
-  authData = this.authService.authData;
 
   // Loading States
   entityCountLoading = this.salesService.entityCountLoading;
@@ -153,24 +148,18 @@ export class Dashboard implements OnInit {
   }
 
   onLoadComponent(): void {
-    const token = this.authData()?.token;
-
-    if (token) {
-      this.salesService.loadEntityCountData(token);
-      this.salesService.loadSalesKpiData(token);
-      this.salesService.loadSalesCategoryData(token);
-      this.salesService.loadDailySalesData(token);
-      this.salesService.loadMonthlySalesData(token);
-      this.salesService.loadYearlySalesData(token);
-      this.salesService.loadProductSalesData(token);
-      this.salesService.loadBrandSalesData(token);
-    }
+    this.salesService.loadEntityCountData();
+    this.salesService.loadSalesKpiData();
+    this.salesService.loadSalesCategoryData();
+    this.salesService.loadDailySalesData();
+    this.salesService.loadMonthlySalesData();
+    this.salesService.loadYearlySalesData();
+    this.salesService.loadProductSalesData();
+    this.salesService.loadBrandSalesData();
   }
 
   onPageChange(pageNumber: number): void {
-    const token = this.authData()?.token;
-    if (token)
-      this.salesService.loadProductSalesData(token, pageNumber);
+    this.salesService.loadProductSalesData(pageNumber);
 
   }
 

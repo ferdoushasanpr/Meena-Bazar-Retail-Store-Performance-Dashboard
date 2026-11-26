@@ -23,14 +23,14 @@ export class StoreService {
         hasNextPage: false,
     });
 
-    addStore(token: string, data: any) {
-        return this.operationsService.addStoreData(token, data);
+    addStore(data: any) {
+        return this.operationsService.addStoreData(data);
     }
 
-    loadSearchStoreData(token: string, pageNumber: number, searchTerm?: string) {
+    loadSearchStoreData(pageNumber: number, searchTerm?: string) {
         this.componentDataLoading.set(true);
         this.componentDataError.set(null);
-        this.operationsService.searchStoresData(token, pageNumber, undefined, searchTerm).subscribe({
+        this.operationsService.searchStoresData(pageNumber, undefined, searchTerm).subscribe({
             next: (response) => {
                 this.componentData.set(response);
                 this.componentDataLoading.set(false);
@@ -44,10 +44,10 @@ export class StoreService {
         });
     }
 
-    loadStoreData(token: string, pageNumber: number, pageSize?: number) {
+    loadStoreData(pageNumber: number, pageSize?: number) {
         this.componentDataLoading.set(true);
         this.componentDataError.set(null);
-        this.operationsService.getStoresPaginatedData(token, pageNumber, pageSize).subscribe({
+        this.operationsService.getStoresPaginatedData(pageNumber, pageSize).subscribe({
             next: (response) => {
                 this.componentData.set(response);
                 this.componentDataLoading.set(false);
@@ -61,11 +61,11 @@ export class StoreService {
         })
     }
 
-    updateStore(token: string, id: string, data: any) {
-        return this.operationsService.updateStoreData(token, data, id);
+    updateStore(id: string, data: any) {
+        return this.operationsService.updateStoreData(data, id);
     }
 
-    deleteStore(token: string, id: string) {
-        return this.operationsService.deleteStoreData(token, id);
+    deleteStore(id: string) {
+        return this.operationsService.deleteStoreData(id);
     }
 }

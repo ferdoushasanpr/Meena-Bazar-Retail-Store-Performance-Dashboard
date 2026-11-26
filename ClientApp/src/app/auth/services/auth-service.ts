@@ -34,7 +34,7 @@ export class AuthService {
 
         const parsedData: AuthData = JSON.parse(data)
         this.authData.set(parsedData);
-        this.userService.getUserById(parsedData.userId, parsedData.token);
+        this.userService.getUserById(parsedData.userId);
         return true;
     }
 
@@ -45,7 +45,7 @@ export class AuthService {
             next: (response) => {
                 this.authData.set(response.data);
                 localStorage.setItem('data', JSON.stringify(response.data));
-                this.userService.getUserById(response.data.userId, response.data.token);
+                this.userService.getUserById(response.data.userId);
                 this.router.navigate(['/']);
                 this.isSubmitting.set(false);
             },
@@ -63,7 +63,7 @@ export class AuthService {
             next: (response) => {
                 this.authData.set(response.data);
                 localStorage.setItem('data', JSON.stringify(response.data));
-                this.userService.getUserById(response.data.userId, response.data.token);
+                this.userService.getUserById(response.data.userId);
                 this.router.navigate(['/']);
                 this.isSubmitting.set(false);
             },
