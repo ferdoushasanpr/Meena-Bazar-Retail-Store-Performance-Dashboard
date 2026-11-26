@@ -187,6 +187,7 @@ export class DataExploration {
       this.activeEntityType.set('Order');
       this.orderService.loadOrderData(token, 1);
     } else if (this.pageHeaderTitle() === 'Transactions') {
+      this.activeEntityType.set('Transaction');
       this.transactionService.loadTransactionsData(token, 1);
     } else if (this.pageHeaderTitle() === 'Users' && this.userRole === 'admin') {
       this.activeEntityType.set('User');
@@ -311,7 +312,7 @@ export class DataExploration {
       return;
     }
 
-    payload.data[`${payload.type.toLowerCase()}_id`] = payload.id;
+    payload.data[payload.type === 'Transaction' ? 'order_item_id' : `${payload.type.toLowerCase()}_id`] = payload.id;
 
     if (payload.type === "Customer") {
       this.customerService.updateCustomer(token, payload.id, payload.data).subscribe({
@@ -382,6 +383,24 @@ export class DataExploration {
           this.isModalOpen.set(false);
           this.toastService.showSuccess("Update", "Order Updated Successfully!");
           this.orderService.loadOrderData(token, this.componentData().pageNumber);
+        },
+        error: (error) => { this.toastService.showError("Something Went Wrong!", "Error") }
+      });
+    } else if (payload.type === "Transaction") {
+      this.transactionService.updateTransaction(token, payload.id, payload.data).subscribe({
+        next: (response) => {
+          this.notificationService.addNotification(token, {
+            user_id: user_id,
+            message: `updated transaction of order item id ${payload.id}.`,
+            isRead: 0
+          }).subscribe({
+            next: () => { console.log("Transaction Updated Successfully!") },
+            error: (error) => { console.error(error) }
+          });
+
+          this.isModalOpen.set(false);
+          this.toastService.showSuccess("Update", "Transaction Updated Successfully!");
+          this.transactionService.loadTransactionsData(token, this.componentData().pageNumber);
         },
         error: (error) => { this.toastService.showError("Something Went Wrong!", "Error") }
       });

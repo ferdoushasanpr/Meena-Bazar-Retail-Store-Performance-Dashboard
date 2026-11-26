@@ -55,6 +55,10 @@ export class TransactionService {
         });
     }
 
+    updateTransaction(token: string, id: string, data: any) {
+        return this.operationsService.updateTransactionData(token, data, id);
+    }
+
     deleteTransaction(token: string, id: string) {
         return this.operationsService.deleteTransactionData(token, id);
     }

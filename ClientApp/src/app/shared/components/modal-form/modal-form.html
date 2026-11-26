@@ -136,7 +136,7 @@
             </form>
             }
 
-            <!-- STORE UPDATE FORM -->
+            <!-- ORDER UPDATE FORM -->
             @if (entityType() === 'Order') {
             <form [formGroup]="orderForm" class="update-form">
                 <div class="form-grid">
@@ -177,6 +177,57 @@
                         <input id="update_order_status" type="text" formControlName="order_status" />
                         @if (orderForm.get('order_status')?.invalid && orderForm.get('order_status')?.touched) {
                         <span class="error-msg">Order status is required.</span>
+                        }
+                    </div>
+                </div>
+            </form>
+            }
+
+            <!-- TRANSACTION UPDATE FORM -->
+            @if (entityType() === 'Transaction') {
+            <form [formGroup]="transactionForm" class="update-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="update_order_id">Order ID *</label>
+                        <input id="update_order_id" type="text" formControlName="order_id" />
+                        @if (transactionForm.get('order_id')?.invalid && transactionForm.get('order_id')?.touched) {
+                        <span class="error-msg">Order id is required.</span>
+                        }
+                    </div>
+
+                    <div class="form-group">
+                        <label for="update_product_id">Product ID *</label>
+                        <input id="update_product_id" type="text" formControlName="product_id" />
+                        @if (transactionForm.get('product_id')?.invalid && transactionForm.get('product_id')?.touched)
+                        {
+                        <span class="error-msg">Product id is required.</span>
+                        }
+                    </div>
+
+                    <div class="form-group">
+                        <label for="update_quantity">Quantity *</label>
+                        <input id="update_quantity" type="number" formControlName="quantity" />
+                        @if (transactionForm.get('quantity')?.invalid &&
+                        transactionForm.get('quantity')?.touched) {
+                        <span class="error-msg">Quantity is required.</span>
+                        }
+                    </div>
+
+                    <div class="form-group">
+                        <label for="update_unit_price">Unit Price *</label>
+                        <input id="update_unit_price" type="number" formControlName="unit_price" />
+                        @if (transactionForm.get('unit_price')?.invalid &&
+                        transactionForm.get('unit_price')?.touched) {
+                        <span class="error-msg">Unit price is required.</span>
+                        }
+                    </div>
+
+                    <div class="form-group">
+                        <label for="update_discount_amount">Discount Amount *</label>
+                        <input id="update_discount_amount" type="number" formControlName="discount_amount" />
+                        @if (transactionForm.get('discount_amount')?.invalid &&
+                        transactionForm.get('discount_amount')?.touched) {
+                        <span class="error-msg">Discount amount is required.</span>
                         }
                     </div>
                 </div>
