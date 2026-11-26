@@ -20,7 +20,7 @@ export class Topbar implements OnInit {
   // User Data
   authData = this.authService.authData;
 
-  lastUpdatedTime: string = '10:42 AM';
+  username = signal<string | null>(this.authData()!.userName);
   pathSegments = signal<string[]>([]);
   isNotificationsOpen = signal<boolean>(false);
   notifications = this.notificationService.notifications;
