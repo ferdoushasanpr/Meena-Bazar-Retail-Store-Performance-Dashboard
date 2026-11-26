@@ -21,7 +21,8 @@
                 Last active: <strong>{{ userData().user_last_active_at | date:'dd MMM yyyy, hh:mm a' }}</strong>
             </span>
 
-            <button class="icon-btn" type="button" title="Refresh Data" aria-label="Refresh Data">
+            <button class="icon-btn" type="button" title="Refresh Data" aria-label="Refresh Data"
+                (click)="onRefreshPage()">
                 <i class="fa-solid fa-rotate-right"></i>
             </button>
         </div>
